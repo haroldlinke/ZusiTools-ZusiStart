@@ -1,0 +1,107 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:ZusiStart.Controls">
+
+    <Style TargetType="{x:Type local:MultiButtonControl}">
+        <Setter Property="Background" Value="{DynamicResource Dark.Transparent.Background}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Blue.Transparent.Background}"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="MinWidth" Value="120"/>
+        <Setter Property="ButtonStyle">
+            <Setter.Value>
+                <Style TargetType="{x:Type RadioButton}">
+                    <!--<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>-->
+                    <Setter Property="Background" Value="{DynamicResource Dark.Transparent.Background}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource Blue.Transparent.Background}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource Generic.Dark.Foreground}"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    <Setter Property="Padding" Value="6"/>
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="MinWidth" Value="120"/>
+                    <Setter Property="SnapsToDevicePixels" Value="True"/>
+                    <Setter Property="GroupName" Value="_internal:mbc_"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type RadioButton}">
+                                <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" 
+                                        Background="{TemplateBinding Background}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                                    <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" 
+                                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter Property="Background" TargetName="border" Value="{DynamicResource Bright.Transparent.Background}"/>
+                                        <Setter Property="Foreground" Value="Black"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" TargetName="border" Value="{DynamicResource Bright2.Transparent.Background}"/>
+                                        <Setter Property="Foreground" Value="Black"/>
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Background" TargetName="border" Value="{DynamicResource Dark.Transparent.Background}"/>
+                                        <Setter Property="Foreground" Value="Gray"/>
+                                    </Trigger>
+
+                                    <DataTrigger Binding="{Binding IsFirst}" Value="False">
+                                        <Setter TargetName="border" Property="BorderThickness" Value="1,0,0,0"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsFirst}" Value="True">
+                                        <Setter TargetName="border" Property="BorderThickness" Value="0"/>
+                                    </DataTrigger>
+
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding IsFirst}" Value="True"/>
+                                            <Condition Binding="{Binding IsLast}" Value="False"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter TargetName="border" Property="CornerRadius" Value="6,0,0,6"/>
+                                    </MultiDataTrigger>
+
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding IsFirst}" Value="False"/>
+                                            <Condition Binding="{Binding IsLast}" Value="True"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter TargetName="border" Property="CornerRadius" Value="0,6,6,0"/>
+                                    </MultiDataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:MultiButtonControl}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                        <ItemsPresenter/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Grid>
+                        <RadioButton Content="{Binding Header}" IsChecked="{Binding IsSelected}" IsEnabled="{Binding IsEnabled}"
+                                     Style="{Binding ButtonStyle, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultiButtonControl}}}"/>
+                    </Grid>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

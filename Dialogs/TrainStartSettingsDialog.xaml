@@ -1,0 +1,78 @@
+﻿<Window x:Class="ZusiStart.Dialogs.TrainStartSettingsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ZusiStart.Dialogs"
+        mc:Ignorable="d"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Title="TrainStartSettings" WindowStyle="None" AllowsTransparency="True" ResizeMode="NoResize" Background="{x:Null}" UseLayoutRounding="True" SnapsToDevicePixels="True" ShowInTaskbar="False" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner" Height="361">
+
+    <Border BorderBrush="Gold" BorderThickness="6,2" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,0,12,24" CornerRadius="12" Background="{DynamicResource Bright.Transparent.Background}" MinWidth="450">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Border Grid.ColumnSpan="2" Background="{StaticResource Blue.Transparent.Background}" Margin="-12,0,-12,0" Padding="6" CornerRadius="6,6,0,0">
+                <TextBlock Text="Einstellungen" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" Foreground="FloralWhite"/>
+            </Border>
+
+            <!--<ToggleButton Grid.Row="1" Margin="0,0,12,0" Grid.RowSpan="2" IsChecked="{Binding ForbidAlternativePicLibSources, Mode=TwoWay}" VerticalAlignment="Bottom" Style="{StaticResource SemaphoreToggleButtonStyle}"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="Nur integrierte Vorschaubilder-Bibliothek verwenden" Margin="0,12,0,0"/>
+            <TextBlock Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10">
+                <Run>Für die Vorschaubilder der Züge wird nur die integrierte Vorschaubilder-Biliothek verwendet.</Run>
+                <LineBreak/>
+                <Run>Eine eventuell vorhandene, selbst erstellte Vorschaubilder-Bibliothek wird ignoriert (Hp1).</Run>
+            </TextBlock>-->
+
+            <ToggleButton Grid.Row="4" Margin="0,0,12,0" Grid.RowSpan="2" IsChecked="{Binding StartViaThrottle, Mode=TwoWay}" VerticalAlignment="Bottom" Style="{StaticResource SemaphoreToggleButtonStyle}"/>
+            <TextBlock Grid.Row="4" Grid.Column="1" Text="Start des Zuges via Fahrpult-Schnittstelle" Margin="0,12,0,0"/>
+            <TextBlock Grid.Row="5" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10">
+                <Run>Zum Starten eines Zuges wird die integrierte Fahrpult-Schnittstelle des Zusi verwendet (Hp1).</Run>
+                <LineBreak/>
+                <Run>Die Alternative ist der Start eines Zuges über die Kommandozeile (Hp0).</Run>
+            </TextBlock>
+<!--
+            <ToggleButton Grid.Row="8" Margin="0,0,12,0" Grid.RowSpan="2" IsChecked="{Binding OptimiseSchedule, Mode=TwoWay}" VerticalAlignment="Bottom" Style="{StaticResource SemaphoreToggleButtonStyle}"/>
+            <TextBlock Grid.Row="8" Grid.Column="1" Text="Fahrplan Optimierung" Margin="0,12,0,0"/>
+            <TextBlock Grid.Row="9" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10">
+                <Run>Es wird ein temporärer Fahrplan mit ausgewählten Zügen erstellt  (Hp1).</Run>
+                <LineBreak/>
+                <Run>Das Auswahlkriterium kann mit der nächsten Option eingestellt werden.</Run>
+            </TextBlock>
+
+            <ToggleButton Grid.Row="12" Margin="0,0,12,0" Grid.RowSpan="2" IsChecked="{Binding OptimiseScheduleCriteria, Mode=TwoWay}" VerticalAlignment="Bottom" Style="{StaticResource SemaphoreToggleButtonStyle}"/>
+            <TextBlock Grid.Row="12" Grid.Column="1" Text="Fahrplan Optimierung (Kriterium)" Margin="0,12,0,0"/>
+            <TextBlock Grid.Row="13" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10">
+                <Run>Es werden alle Züge ausgewählt, die während der Fahrzeit des ausgewählten Zuges fahrem  (Hp1).</Run>
+                <LineBreak/>
+                <Run>Alternative: Es werden alle Züge ausgewählt, die höchstens 1 Stunde vor Abfahrt des Zuges starten und während der Fahrzeit des ausgewählten Zuges fahrem  .</Run>
+            </TextBlock>
+-->
+
+            <StackPanel Orientation="Horizontal" Grid.Row="17" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0,12,0,0">
+                <Button Command="{x:Static local:TrainStartSettingsDialog.OkCommand}" Content="Ü_bernehmen" IsDefault="True" Style="{StaticResource ZusiStartGreenButtonStyle}" Margin="0,0,6,0"/>
+                <Button Content="Abbrechen" IsCancel="True" Style="{StaticResource ZusiStartRedButtonStyle}"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

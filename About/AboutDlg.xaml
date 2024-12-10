@@ -1,0 +1,87 @@
+﻿<Window x:Class="ZusiStart.About.AboutDlg"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ZusiStart.About"
+        xmlns:s="clr-namespace:Sovoma;assembly=Sovoma"
+        xmlns:b="clr-namespace:Sovoma.ControlsKit.Behaviors;assembly=Sovoma.ControlsKit"
+        xmlns:sl="clr-namespace:Sovoma.WPF.Converter;assembly=Sovoma.WPF"      
+        mc:Ignorable="d"
+        b:DialogBehavior.IsDialog="True"
+        Title="Über ZusiMeter" UseLayoutRounding="True" SnapsToDevicePixels="True" ResizeMode="NoResize" ShowInTaskbar="False" SizeToContent="WidthAndHeight" MaxWidth="650" WindowStartupLocation="CenterOwner" WindowStyle="None" AllowsTransparency="True" Background="{x:Null}">
+
+  <Window.Resources>
+    <sl:VersionStringConverter x:Key="VersionStringConverter"/>
+  </Window.Resources>
+
+  <Window.Triggers>
+    <EventTrigger RoutedEvent="Window.Loaded">
+      <BeginStoryboard>
+        <Storyboard>
+          <DoubleAnimation Storyboard.TargetProperty="(Window.Opacity)" From="0.0" To="1.0" Duration="0:0:0:0.600" AutoReverse="False" RepeatBehavior="1x"/>
+        </Storyboard>
+      </BeginStoryboard>
+    </EventTrigger>
+  </Window.Triggers>
+
+  <Border Padding="12,0,12,6" CornerRadius="6" Background="{DynamicResource Bright.Transparent.Background}" BorderBrush="Goldenrod" BorderThickness="6,2">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition/>
+      </Grid.RowDefinitions>
+
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Image Source="LGPLv3_Logo.png" Grid.RowSpan="4" Width="130" VerticalAlignment="Top" Margin="0,12,0,0" Grid.ColumnSpan="2" HorizontalAlignment="Right"/>
+
+        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="48" FontWeight="Bold" FontStyle="Italic" Foreground="#FFBBBD93"
+                           Text="{Binding Source={x:Static s:AsmInfo.Product}, Mode=OneWay}">
+          <TextBlock.Effect>
+            <DropShadowEffect/>
+          </TextBlock.Effect>
+        </TextBlock>
+        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="16" FontWeight="Bold" Grid.Row="1">
+                    <Run>Version</Run>
+                    <Run Text="{Binding ConverterParameter=%V, Converter={StaticResource VersionStringConverter}, Source={x:Static s:AsmInfo.Version}, Mode=OneWay}"/>
+        </TextBlock>
+        <TextBlock HorizontalAlignment="Left" Text="{Binding Source={x:Static s:AsmInfo.Copyright}, Mode=OneWay}" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" Grid.Row="2"/>
+        <TextBlock HorizontalAlignment="Left" Text="{Binding Source={x:Static s:AsmInfo.SupportEMail}, Mode=OneWay}" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" Grid.Row="3"/>
+      </Grid>
+
+      <TextBlock TextWrapping="Wrap" Grid.Row="1" Margin="0,12,0,0">
+                <Run FontStyle="Italic" Text="{Binding Source={x:Static s:AsmInfo.Product}, Mode=OneWay}"/> <Run>wird unter der GNU Lesser General Public License veröffentlicht. Eine deutsche Übersetzung der Lizenz kann unter</Run> 
+                <Hyperlink>http://www.gnu.de/documents/lgpl-3.0.de.html</Hyperlink>
+                <Run>abgerufen werden.</Run>
+      </TextBlock>
+
+      <TextBlock Text="Besonderer Dank geht an" Grid.Row="2" Margin="0,12,0,0" FontWeight="Bold"/>
+
+      <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="3" Margin="0,6,0,0">
+            <!--<Run>Robin Andersson</Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">NApp.Update.Framework</Run><LineBreak/>-->
+            <Run>Nick Babcock</Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">DDS-Images</Run><LineBreak/>
+            <Run>Mark Heath</Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">NAudio</Run><LineBreak/>
+            <Run>The Apache Software Foundation</Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">log4net</Run><LineBreak/>
+            <!--<Run>The CefSharp Authors</Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">Chromium-Browserkomponente für WPF</Run><LineBreak/>
+            <Run>The Chromium Embedded Framework Authors</Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">Chromium-Browserkomponente</Run><LineBreak/>-->
+            <Run>Andrew Ward</Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">NVorbis, NAudio.Vorbis</Run><LineBreak/>
+            <Run>Jochen Kühner</Run><Run FontStyle="Italic" FontSize="9" Foreground="Gray">WPFExtendedToolkit</Run><Hyperlink FontSize="9">https://github.com/dotnetprojects/WpfExtendedToolkit</Hyperlink>
+      </TextBlock>
+      <Button Command="{x:Static local:AboutDlg.CommandClose}" Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="4" 
+                    Style="{DynamicResource ZusiStartButtonStyle}" IsDefault="True" Margin="0,12,0,6"/>
+    </Grid>
+  </Border>
+</Window>

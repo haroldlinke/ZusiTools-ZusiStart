@@ -1,0 +1,30 @@
+﻿<Window x:Class="ZusiStart.Dialogs.DataLoaderWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:s="clr-namespace:Sovoma;assembly=Sovoma"
+        xmlns:local="clr-namespace:ZusiStart.Dialogs"
+        xmlns:sck="clr-namespace:Sovoma.ControlsKit;assembly=Sovoma.ControlsKit"
+        x:Name="window"
+        mc:Ignorable="d" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterOwner" AllowsTransparency="True" ResizeMode="NoResize" Background="{x:Null}" SnapsToDevicePixels="True" UseLayoutRounding="True" SizeToContent="WidthAndHeight">
+
+  <Border BorderBrush="Gold" BorderThickness="6,2" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24,10,24,24" CornerRadius="12" Background="{DynamicResource Blue.Transparent.Background}" MinWidth="450">
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+      <TextBlock Text="Zusi • Zugauswahl" HorizontalAlignment="Center" FontSize="36" FontWeight="Bold" Foreground="Goldenrod"/>
+      <TextBlock HorizontalAlignment="Center" FontSize="14" Foreground="White">
+                <Run>Version</Run>
+                <Run Text="{Binding Source={x:Static s:AsmInfo.Version}, Converter={StaticResource VersionStringConverter}, ConverterParameter=%V, Mode=OneWay}"/>
+                <Run>•</Run>
+                <Run Text="{Binding Source={x:Static s:AsmInfo.Copyright}, Mode=OneWay}"/>
+      </TextBlock>
+
+      <TextBlock Text="{Binding TextPatient, ElementName=window, Mode=OneWay}" HorizontalAlignment="Center" FontSize="14" Foreground="White" Margin="0,14,0,0"/>
+      <TextBlock Text="{Binding TextLoad, ElementName=window, Mode=OneWay}" HorizontalAlignment="Center" FontSize="14" Foreground="White"/>
+
+      <!--<ProgressBar x:Name="pbLoaded" Height="10" Width="240" Margin="0,9,0,0" HorizontalAlignment="Center"/>
+      <TextBlock x:Name="percentageText" FontSize="16" HorizontalAlignment="Center" Margin="0,10,0,0"/>-->
+      <sck:Spinner x:Name="Waitspinner" HorizontalAlignment="Center" VerticalAlignment="Center" Width="40" Height="40" Foreground="White" Margin="0,12,0,0"/>
+    </StackPanel>
+  </Border>
+</Window>

@@ -1,0 +1,156 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <WebView2EnableCsWinRTProjection>False</WebView2EnableCsWinRTProjection>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <Description>ZusiStart</Description>
+    <Copyright>Holger Maaß, Harold Linke</Copyright>
+    <Authors>Holger Maaß, Harold Linke</Authors>
+    <Version>6.1.4</Version>
+    <Title>ZusiStart</Title>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <Platforms>AnyCPU;x64</Platforms>
+    <StartupObject>ZusiStart.Startup</StartupObject>
+    <ApplicationIcon>Resources\zusistart.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--<PackageReference Include="CefSharp.Common.NETCore" Version="131.2.70" />
+    <PackageReference Include="CefSharp.Wpf.NETCore" Version="131.2.70" />
+    <PackageReference Include="chromiumembeddedframework.runtime" Version="131.2.7" />-->
+    <PackageReference Include="IpcCommLib" Version="6.2.0" />
+    <PackageReference Include="log4net" Version="2.0.17" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2903.40" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.122" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.8" />
+    <PackageReference Include="ZusiFahrpultLib" Version="6.2.5.7" />
+    <PackageReference Include="ZusiKlassenLib" Version="6.4.6" />
+    <PackageReference Include="ZusiMeterGaugesLib" Version="6.5.5.17" />
+    <PackageReference Include="ZusiPicLib" Version="6.5.1.22" />
+  </ItemGroup>
+  <ItemGroup>
+      
+    <None Include="develop.pfx" />
+    <None Include="LICENSE" />
+    <None Include="log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+    <Content Include="Resources\zusistart.ico" />
+    <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Default.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Err500.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\classes.family">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\default0.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\default1.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\default2.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\default3.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Update\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="zusistart.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="About\LGPLv3_Logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\DummyPage.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\bkgnd_2.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\bkgnd_3.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\default4.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\bkgnd_4.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\bkgnd_1.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="help\ZusiStart_Docu_Deutsch.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\default0.JPG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\default1.JPG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\default2.JPG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\default3.JPG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\NotFound.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\zusistart.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <!--
+  <ItemGroup>
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x64" Version="131.2.7" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="chromiumembeddedframework.runtime.win-arm64" Version="131.2.7" />
+  </ItemGroup>
+  -->
+
+</Project>

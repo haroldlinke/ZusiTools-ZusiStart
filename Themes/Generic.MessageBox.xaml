@@ -1,0 +1,19 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:xc="http://schemas.xceed.com/wpf/xaml/toolkit">
+
+    <Style TargetType="{x:Type xc:MessageBox}">
+        <Setter Property="Background" Value="{DynamicResource Bright.Transparent.Background}"/>
+        <Setter Property="WindowBackground" Value="{DynamicResource Bright3.Transparent.Background}"/>
+        <Setter Property="BorderBrush" Value="Gray"/>
+        <Setter Property="WindowBorderBrush" Value="Gold"/>
+        <Setter Property="CaptionForeground" Value="Black"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="OkButtonStyle" Value="{DynamicResource ZusiStartButtonStyle}"/>
+        <Setter Property="NoButtonStyle" Value="{DynamicResource ZusiStartRedButtonStyle}"/>
+        <Setter Property="NoButtonContent" Value="Nein"/>
+        <Setter Property="YesButtonStyle" Value="{DynamicResource ZusiStartGreenButtonStyle}"/>
+        <Setter Property="YesButtonContent" Value="Ja"/>
+    </Style>
+    
+</ResourceDictionary>

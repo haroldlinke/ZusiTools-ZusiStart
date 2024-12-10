@@ -1,0 +1,129 @@
+﻿<Window x:Class="ZusiStart.DummyWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ZusiStart"
+        xmlns:prop="clr-namespace:ZusiStart.Properties"
+        xmlns:ed="Microsoft.Xaml.Behaviors.Wpf"
+        xmlns:ex="http://schemas.microsoft.com/expression/2010/drawing"
+        xmlns:slcv="clr-namespace:Sovoma.WPF.Converter;assembly=Sovoma.WPF"
+        mc:Ignorable="d"
+        Background="{x:Null}" AllowsTransparency="True" WindowStyle="None" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Topmost="True" WindowStartupLocation="CenterScreen" UseLayoutRounding="True" SnapsToDevicePixels="True">
+
+  <Window.Resources>
+    <SolidColorBrush x:Key="Blue.Transparent.Background" Color="#DA1B3F80"/>
+    <SolidColorBrush x:Key="Bright.Transparent.Background" Color="#DDF0F8FF"/>
+
+    <local:Step2BrushConverter x:Key="Step2BrushConverter"/>
+    <slcv:VersionStringConverter x:Key="VersionStringConverter"/>
+
+    <Style x:Key="FocusVisual">
+      <Setter Property="Control.Template">
+        <Setter.Value>
+          <ControlTemplate>
+            <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <Style x:Key="ButtonStyle2" TargetType="{x:Type Button}">
+      <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+      <Setter Property="Background" Value="{DynamicResource Bright.Transparent.Background}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource Blue.Transparent.Background}"/>
+      <Setter Property="Foreground" Value="Black"/>
+      <Setter Property="BorderThickness" Value="2"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="Padding" Value="6"/>
+      <Setter Property="FontSize" Value="14"/>
+      <Setter Property="MinWidth" Value="120"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type Button}">
+            <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true" CornerRadius="6">
+              <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="BorderBrush" TargetName="border" Value="Orange"/>
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" TargetName="border" Value="{DynamicResource Blue.Transparent.Background}"/>
+                <Setter Property="BorderBrush" TargetName="border" Value="OrangeRed"/>
+              </Trigger>
+              <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="Gray"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </Window.Resources>
+
+  <Border BorderBrush="Gold" BorderThickness="6,2" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24,10,24,24" CornerRadius="12" Background="{DynamicResource Blue.Transparent.Background}" MinWidth="450">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+
+        <RowDefinition Height="12px"/>
+
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="97*"/>
+        <ColumnDefinition Width="98*"/>
+      </Grid.ColumnDefinitions>
+      <TextBlock Text="ZusiStart" HorizontalAlignment="Left" FontSize="24" FontWeight="Bold" Foreground="Goldenrod" Grid.ColumnSpan="3" Margin="144,0,0,0"/>
+      <TextBlock HorizontalAlignment="Left" FontSize="10" Foreground="White" Grid.ColumnSpan="3" Grid.Row="1" Margin="63,0,0,0">
+                <Run Text="{Binding Source={x:Static prop:AsmInfo.Version}, Converter={StaticResource VersionStringConverter}, ConverterParameter=Version %M.%m, Mode=OneWay}"/>
+                <Run>•</Run>
+                <Run Text="{Binding Source={x:Static prop:AsmInfo.Copyright}, Mode=OneWay}"/>
+                <Run>• All rights reserved</Run>
+      </TextBlock>
+      <!--
+            <ed:RegularPolygon InnerRadius="1" PointCount="3" Stretch="Fill" Stroke="Black" Width="16" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Center" Height="16" Grid.Row="4"
+                               Fill="{Binding Step, Converter={StaticResource Step2BrushConverter}, ConverterParameter=0, Mode=OneWay}">
+                <ed:RegularPolygon.RenderTransform>
+                    <RotateTransform Angle="90"/>
+                </ed:RegularPolygon.RenderTransform>
+            </ed:RegularPolygon>
+            <Label Content="Sammle die Fahrzeuge zusammen ..." Foreground="WhiteSmoke" Grid.Column="1" Grid.Row="4"/>
+            <TextBlock Margin="24,0,0,0" Text="{Binding FoundVehicles, Mode=OneWay}" Foreground="WhiteSmoke" Grid.Row="5" Grid.Column="1"/>
+            <ed:RegularPolygon InnerRadius="1" PointCount="3" Stretch="Fill" Stroke="Black" Width="16" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Center" Height="16" Grid.Row="6"
+                               Fill="{Binding Step, Converter={StaticResource Step2BrushConverter}, ConverterParameter=1, Mode=OneWay}">
+                <ed:RegularPolygon.RenderTransform>
+                    <RotateTransform Angle="90"/>
+                </ed:RegularPolygon.RenderTransform>
+            </ed:RegularPolygon>
+            <Label Content="Fotografiere jedes Fahrzeug von rechts und links ..." Foreground="WhiteSmoke" Grid.Row="6" Grid.Column="1"/>
+            <ProgressBar Margin="24,0,0,0" Height="12" Value="{Binding ProgressPhotographing, Mode=OneWay}" Grid.Row="7" Grid.Column="1"/>
+            <ed:RegularPolygon InnerRadius="1" PointCount="3" Stretch="Fill" Stroke="Black" Width="16" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Center" Height="16" Grid.Row="8"
+                               Fill="{Binding Step, Converter={StaticResource Step2BrushConverter}, ConverterParameter=2, Mode=OneWay}">
+                <ed:RegularPolygon.RenderTransform>
+                    <RotateTransform Angle="90"/>
+                </ed:RegularPolygon.RenderTransform>
+            </ed:RegularPolygon>
+       -->
+      <Label Content="Erzeuge Fahrzeugbilder ..." Foreground="WhiteSmoke" Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2"/>
+      <!--<ProgressBar Name="VehicleProgressBar" Margin="24,0,0,0" Height="12" Grid.Row="9" Grid.Column="1" Minimum="0" Maximum="100" Grid.ColumnSpan="2"/>
+      <TextBlock x:Name="percentageText" Text="000" FontSize="16" HorizontalAlignment="Left" Grid.Row="10" Margin="0,10,0,0" Grid.ColumnSpan="2"/>-->
+
+      <!--<Button Margin="0,24,0,0" Command="{Binding CurrentCommand, Mode=OneWay}" HorizontalAlignment="Center" Content="{Binding Command.Text, RelativeSource={RelativeSource Self}, Mode=OneWay}" Grid.Row="10" Grid.ColumnSpan="2"
+                    Style="{DynamicResource ButtonStyle2}"/>-->
+    </Grid>
+  </Border>
+</Window>

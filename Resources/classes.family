@@ -1,0 +1,366 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Families>
+	<!-- Dampfloks -->
+	<Family name="T 16.1">
+		<Class name="94"/>
+	</Family>
+
+	<!-- E-Loks -->
+
+	<Family name="BR 103">
+		<Class name="e03"/>
+		<Class name="103"/>
+	</Family>
+
+	<Family name="BR 110">
+		<Class name="e10"/>
+		<Class name="110"/>
+		<Class name="115"/>
+	</Family>
+
+	<Family name="BR 112">
+		<Class name="112"/>
+		<Class name="113"/>
+		<Class name="114"/>
+	</Family>
+
+	<Family name="BR 140">
+		<Class name="e40"/>
+		<Class name="e40.11"/>
+		<Class name="139"/>
+		<Class name="140"/>
+	</Family>
+
+	<Family name="BR 141">
+		<Class name="e41"/>
+		<Class name="141"/>
+	</Family>
+
+	<Family name="BR 143">
+		<Class name="143"/>
+		<Class name="243"/>
+	</Family>
+
+	<Family name="BR 150">
+		<Class name="e50"/>
+		<Class name="150"/>
+	</Family>
+
+	<Family name="BR 155">
+		<Class name="155"/>
+		<Class name="250"/>
+	</Family>
+
+	<Family name="BR 1042">
+		<Class name="1042"/>
+		<Class name="1142"/>
+	</Family>
+
+	<Family name="BR 1044">
+		<Class name="1044"/>
+		<Class name="1044.01"/>
+		<Class name="1144"/>
+	</Family>
+
+	<Family name="Traxx">
+		<Class name="Traxx"/>
+		<Class name="145"/>
+		<Class name="146"/>
+		<Class name="185"/>
+		<Class name="186"/>
+		<Class name="482"/>
+	</Family>
+
+	<Family name="Traxx 3">
+		<Class name="147"/>
+		<Class name="187"/>
+	</Family>
+
+	<Family name="EuroSprinter">
+		<Class name="eg"/>
+		<Class name="152"/>
+		<Class name="189"/>
+		<Class name="470"/>
+	</Family>
+
+	<Family name="Taurus">
+		<Class name="182"/>
+		<Class name="1116"/>
+	</Family>
+
+	<Family name="Taurus 3">
+		<Class name="1216"/>
+	</Family>
+
+	<Family name="Vectron">
+		<Class name="eu46"/>
+		<Class name="193"/>
+		<Class name="383"/>
+		<Class name="475"/>
+		<Class name="1193"/>
+		<Class name="5170"/>
+	</Family>
+
+	<Family name="Re 4/4 II">
+		<Class name="421"/>
+	</Family>
+
+	<!-- Dieselloks -->
+
+	<Family name="BR 211/212">
+		<Class name="v100"/>
+		<Class name="211"/>
+		<Class name="212"/>
+		<Class name="214"/>
+		<Class name="714"/>
+	</Family>
+
+	<Family name="BR 215">
+		<Class name="v160"/>
+		<Class name="v160lg"/>
+		<Class name="215"/>
+		<Class name="215lg"/>
+	</Family>
+
+	<Family name="BR 216">
+		<Class name="216"/>
+		<Class name="216lg"/>
+	</Family>
+
+	<Family name="BR 218">
+		<Class name="218"/>
+		<Class name="218lg"/>
+	</Family>
+
+	<Family name="BR 220">
+		<Class name="v200.0"/>
+		<Class name="v200.1"/>
+		<Class name="220"/>
+		<Class name="221"/>
+	</Family>
+
+	<Family name="BR 228">
+		<Class name="v180"/>
+		<Class name="118"/>
+		<Class name="228"/>
+	</Family>
+
+	<Family name="BR 260">
+		<Class name="v60"/>
+		<Class name="260"/>
+		<Class name="363"/>
+		<Class name="365"/>
+	</Family>
+
+	<Family name="BR 290">
+		<Class name="v90"/>
+		<Class name="290"/>
+		<Class name="294"/>
+	</Family>
+
+	<Family name="Eurorunner Diesel">
+		<Class name="253"/>
+		<Class name="2016"/>
+	</Family>
+
+	<Family name="Koef I">
+		<Class name="köi"/>
+		<Class name="311"/>
+	</Family>
+
+	<Family name="Koef II">
+		<Class name="köfii"/>
+		<Class name="322"/>
+		<Class name="323"/>
+	</Family>
+
+	<Family name="Koef III">
+		<Class name="köfiii"/>
+		<Class name="332"/>
+		<Class name="333"/>
+	</Family>
+
+	<Family name="Traxx Diesel">
+		<Class name="245"/>
+		<Class name="246"/>
+		<Class name="285"/>
+	</Family>
+
+	<!-- Elektrotriebwagen -->
+
+	<Family name="BR 422" israilcar="yes">
+		<Class name="422">
+			<Car name="433" idmajor="1" idminor="1"/>
+		</Class>
+	</Family>
+
+	<Family name="BR 423" israilcar="yes">
+		<Class name="423">
+			<Car name="433" idmajor="1" idminor="1"/>
+		</Class>
+	</Family>
+
+	<Family name="BR 424" israilcar="yes">
+		<Class name="424">
+			<Car name="434" idmajor="1" idminor="1"/>
+		</Class>
+	</Family>
+
+	<Family name="BR 425" israilcar="yes">
+		<Class name="425">
+			<Car name="435" idmajor="2" idminor="1"/>
+		</Class>
+	</Family>
+
+	<Family name="BR 426" israilcar="yes">
+		<Class name="426">
+			<Car name="426" idmajor="2" idminor="1" rotation="1"/>
+		</Class>
+	</Family>
+
+	<Family name="FLIRT" israilcar="yes">
+		<Class name="427">
+			<Car name="827" idmajor="2" idminor="1"/>
+		</Class>
+		<Class name="428">
+			<Car name="828" idmajor="1" idminor="1"/>
+		</Class>
+		<Class name="429">
+			<Car name="829" idmajor="3" idminor="1"/>
+		</Class>
+	</Family>
+
+	<Family name="BR 430" israilcar="yes">
+		<Class name="430">
+			<Car name="433" idmajor="1" idminor="1"/>
+		</Class>
+	</Family>
+
+	<Family name="BR 450" israilcar="yes">
+		<Class name="450" wagen="AB">
+			<Car name="450" wagen="C" idmajor="1" idminor="1"/>
+			<Car name="450" wagen="AB" idmajor="1" idminor="1" rotation="1"/>
+		</Class>
+	</Family>
+
+	<Family name="FLIRT 3" israilcar="yes">
+		<Class name="1428">
+			<Car name="1828" idmajor="1" idminor="1"/>
+		</Class>
+		<Class name="1429">
+			<Car name="1829" idmajor="3" idminor="1"/>
+		</Class>
+		<Class name="1430">
+			<Car name="1829" idmajor="3" idminor="1"/>
+		</Class>
+	</Family>
+
+	<Family name="ICE 1" israilcar="yes">
+		<Class name="401">
+			<Car name="Avmz 801" idmajor="1" idminor="1"/>
+		</Class>
+	</Family>
+
+	<Family name="ICE 2" israilcar="yes">
+		<Class name="402">
+			<Car name="Apmz 805" idmajor="1" idminor="1"/>
+		</Class>
+	</Family>
+
+	<Family name="ICE 3" israilcar="yes">
+		<Class name="403">
+			<Car name="403.1" idmajor="1" idminor="1"/>
+		</Class>
+		<Class name="406">
+			<Car name="406.1" idmajor="3" idminor="1"/>
+		</Class>
+	</Family>
+
+	<Family name="ICE-S" israilcar="yes">
+		<Class name="410">
+			<Car name="Apmz 805" idmajor="1" idminor="1"/>
+		</Class>
+	</Family>
+
+	<Family name="ICE-T" israilcar="yes">
+		<Class name="411">
+			<Car name="411.1" idmajor="1" idminor="1"/>
+		</Class>
+		<Class name="415">
+			<Car name="415.1" idmajor="3" idminor="1"/>
+		</Class>
+	</Family>
+
+	<Family name="ICE 4" israilcar="yes">
+		<Class name="412">
+			<Car name="2412.8" idmajor="1" idminor="1"/>
+		</Class>
+	</Family>
+
+	<Family name="Talent 2" israilcar="yes">
+		<Class name="442">
+			<Car name="443" idmajor="3" idminor="1"/>
+		</Class>
+		<Class name="9442">
+			<Car name="9843" idmajor="1" idminor="2"/>
+		</Class>
+	</Family>
+
+	<!-- Dieseltriebwagen -->
+
+	<Family name="VT 11.5" israilcar="yes">
+		<Class name="vt11.5">
+			<Car name="VM 11.51" idmajor="1" idminor="1"/>
+		</Class>
+		<Class name="601">
+			<Car name="901.1" idmajor="2" idminor="1"/>
+		</Class>
+	</Family>
+
+	<Family name="BR 611" israilcar="yes">
+		<Class name="611">
+			<Car name="611" idmajor="1" idminor="2" rotation="1"/>
+		</Class>
+	</Family>
+
+	<Family name="BR 612" israilcar="yes">
+		<Class name="612" wagen="A">
+			<Car name="612" idmajor="1" idminor="1" wagen="A" rotation="1"/>
+		</Class>
+	</Family>
+
+	<Family name="BR 614" israilcar="yes">
+		<Class name="614">
+			<Car name="914" idmajor="1" idminor="1"/>
+		</Class>
+	</Family>
+
+	<Family name="BR 628" israilcar="yes">
+		<Class name="628" wagen="A">
+			<Car name="628" wagen="C" idmajor="1" idminor="1" rotation="1"/>
+		</Class>
+	</Family>
+
+	<Family name="Desiro Classic" israilcar="yes">
+		<Class name="642" wagen="A">
+			<Car name="642" wagen="B" idmajor="1" idminor="1" rotation="1"/>
+		</Class>
+	</Family>
+
+	<Family name="LINT 41" israilcar="yes">
+		<Class name="648" wagen="A">
+			<Car name="648" wagen="B" idmajor="1" idminor="1"/>
+		</Class>
+	</Family>
+
+	<Family name="RegioShuttle RS1" israilcar="yes">
+		<Class name="650"/>
+	</Family>
+
+	<Family name="Talent" israilcar="yes">
+		<Class name="643" wagen="A">
+			<Car name="943" idmajor="1" idminor="1"/>
+			<Car name="643" wagen="B" idmajor="1" idminor="1"/>
+		</Class>
+	</Family>
+</Families>

@@ -1,0 +1,51 @@
+﻿<Window x:Class="ZusiStart.Dialogs.ResetDataDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ZusiStart.Dialogs"
+        mc:Ignorable="d" AllowsTransparency="True" WindowStyle="None" ShowInTaskbar="False" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Background="{x:Null}" WindowStartupLocation="CenterOwner" UseLayoutRounding="True" SnapsToDevicePixels="True">
+
+    <Window.DataContext>
+        <Binding RelativeSource="{RelativeSource Self}"/>
+    </Window.DataContext>
+
+    <Border BorderBrush="Gold" BorderThickness="6,2" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,0,12,24" CornerRadius="12" Background="{DynamicResource Bright.Transparent.Background}" MinWidth="450">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Border Grid.ColumnSpan="2" Background="{StaticResource Blue.Transparent.Background}" Margin="-12,0,-12,0" Padding="6" CornerRadius="6,6,0,0">
+                <TextBlock Text="Daten zurücksetzen" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" Foreground="FloralWhite"/>
+            </Border>
+            
+            <ToggleButton Grid.Row="1" Margin="0,0,12,0" Grid.RowSpan="2" IsChecked="{Binding DeleteCache, Mode=TwoWay}" VerticalAlignment="Bottom" Visibility="Collapsed" Style="{DynamicResource SemaphoreToggleButtonStyle}"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="Löschen des Zwischenspeichers der Fahrplandaten" Margin="0,12,0,0" Visibility="Collapsed"/>
+            <TextBlock Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Text="Beim nächsten Programmstart werden alle Fahrpläne eingelesen und der Zwischenspeicher der Fahrplandaten neu erstellt" Margin="12,0,0,0" FontSize="10" Visibility="Collapsed"/>
+            
+            <ToggleButton Grid.Row="3" Margin="0,0,12,0" Grid.RowSpan="2" IsChecked="{Binding DeletePictures, Mode=TwoWay}" VerticalAlignment="Bottom" Visibility="Collapsed" Style="{DynamicResource SemaphoreToggleButtonStyle}"/>
+            <TextBlock Grid.Row="3" Grid.Column="1" Text="Löschen der Vorschaubilder der Fahrzeuge" Margin="0,6,0,0" Visibility="Collapsed"/>
+            <TextBlock Grid.Row="4" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Text="Beim nächsten Programmstart werden die Vorschaubilder neu erstellt. Dieser Vorgang kann mehrere Minuten dauern." Margin="12,0,0,0" FontSize="10" Visibility="Collapsed"/>
+            
+            <ToggleButton Grid.Row="5" Margin="0,0,12,0" Grid.RowSpan="2" IsChecked="{Binding DeleteRecentTrains, Mode=TwoWay}" VerticalAlignment="Bottom" Style="{DynamicResource SemaphoreToggleButtonStyle}"/>
+            <TextBlock Grid.Row="5" Grid.Column="1" Text="Löschen der Lieblingszüge" Margin="0,6,0,0"/>
+            <TextBlock Grid.Row="6" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" MinHeight="27" Text="Das Löschen der Lieblingszüge kann nicht rückgängig gemacht werden." Margin="12,0,0,0" FontSize="10"/>
+            
+            <StackPanel Orientation="Horizontal" Grid.Row="7" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0,12,0,0">
+                <Button Command="{x:Static local:ResetDataDialog.OkCommand}" Content="Zurücksetzen" IsDefault="True" Style="{StaticResource ZusiStartGreenButtonStyle}" Margin="0,0,6,0"/>
+                <Button Content="Abbrechen" IsCancel="True" Style="{StaticResource ZusiStartRedButtonStyle}"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>
