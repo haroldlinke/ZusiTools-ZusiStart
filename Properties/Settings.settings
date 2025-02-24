@@ -12,10 +12,10 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="OptimiseSchedule" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="OptimiseScheduleCriteria" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
+    <Setting Name="Use_LS3_Renderer_DLL" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="ForbidAlternativePicLibSources" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

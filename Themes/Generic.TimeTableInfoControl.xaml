@@ -82,6 +82,7 @@
               <Grid Grid.Row="1" Margin="0,10,0,6">
                 <local:BeadsControl Foreground="{DynamicResource TimeTableInfoControl.Beads}" DotBrush="Gray" HorizontalAlignment="Center"
                                                     Source="{Binding Source, RelativeSource={RelativeSource TemplatedParent}}"/>
+                <StackPanel>
                 <Border Background="{DynamicResource Dark.Transparent.Background}" BorderBrush="Orange" BorderThickness="1" CornerRadius="{TemplateBinding CornerRadius}" 
                                         VerticalAlignment="Top" Padding="5,3" HorizontalAlignment="Left" Panel.ZIndex="1"
                                         Visibility="{Binding IsDecoTrain, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}">
@@ -92,6 +93,12 @@
                                         Visibility="{Binding IsRunningTrain, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}">
                   <TextBlock Text="Start im fahrenden Zug"/>
                 </Border>
+                <Border Background="{DynamicResource Dark.Transparent.Background}" BorderBrush="Orange" BorderThickness="1" CornerRadius="{TemplateBinding CornerRadius}" 
+                        VerticalAlignment="Top" Padding="5,3" HorizontalAlignment="Right" Panel.ZIndex="1"
+                        Visibility="{Binding IsFISavailable, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}">
+                  <TextBlock Text="FIS-Ansagen"/>
+                </Border>
+                </StackPanel>
               </Grid>
               <Grid Grid.Row="2">
                 <ScrollViewer x:Name="PART_PicsScroller" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled" HorizontalAlignment="Center">

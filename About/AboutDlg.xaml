@@ -74,11 +74,14 @@
             <!--<Run>Robin Andersson</Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">NApp.Update.Framework</Run><LineBreak/>-->
             <Run>Nick Babcock</Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">DDS-Images</Run><LineBreak/>
             <Run>Mark Heath</Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">NAudio</Run><LineBreak/>
-            <Run>The Apache Software Foundation</Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">log4net</Run><LineBreak/>
+            <Run>The Apache Software Foundation</Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">log4net </Run><LineBreak/>
             <!--<Run>The CefSharp Authors</Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">Chromium-Browserkomponente für WPF</Run><LineBreak/>
             <Run>The Chromium Embedded Framework Authors</Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">Chromium-Browserkomponente</Run><LineBreak/>-->
             <Run>Andrew Ward</Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">NVorbis, NAudio.Vorbis</Run><LineBreak/>
-            <Run>Jochen Kühner</Run><Run FontStyle="Italic" FontSize="9" Foreground="Gray">WPFExtendedToolkit</Run><Hyperlink FontSize="9">https://github.com/dotnetprojects/WpfExtendedToolkit</Hyperlink>
+            <Run>Jochen Kühner</Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">WPFExtendedToolkit</Run> <Hyperlink FontSize="9">https://github.com/dotnetprojects/WpfExtendedToolkit</Hyperlink><LineBreak/>
+            <Run>Johannes </Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">LS3-Renderer</Run> <Hyperlink FontSize="9">https://github.com/zusitools/zusitools/tree/master</Hyperlink><LineBreak/>
+            <Run>Frank Wenzel </Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">Zusi Streckenkarte</Run> <Hyperlink FontSize="9">https://zusi-sk.eu</Hyperlink><LineBreak/>
+            <Run>Jonathan Pilborough </Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">ZusiDatenbank</Run> <Hyperlink FontSize="9">https://www.zusidatenbank.de/</Hyperlink>
       </TextBlock>
       <Button Command="{x:Static local:AboutDlg.CommandClose}" Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="4" 
                     Style="{DynamicResource ZusiStartButtonStyle}" IsDefault="True" Margin="0,12,0,6"/>

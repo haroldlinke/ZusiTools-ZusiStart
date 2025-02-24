@@ -26,8 +26,8 @@ namespace ZusiStart
 #endif
 #endif
             // setup log4net
-            GlobalContext.Properties["LogPath"] = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            log4net.Config.XmlConfigurator.Configure();
+            //GlobalContext.Properties["LogPath"] = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            //log4net.Config.XmlConfigurator.Configure();
         }
 
         protected override void OnStartup(StartupEventArgs e)

@@ -10,100 +10,167 @@
 
 using System.Windows;
 
-namespace ZusiStart.Properties {
-    
-    
-    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.6.0.0")]
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool BremsstellungAnzeigen {
-            get {
-                return ((bool)(this["BremsstellungAnzeigen"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+namespace ZusiStart.Properties
+{
+
+
+  [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+  [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.6.0.0")]
+  internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase
+  {
+
+    private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
+
+    public static Settings Default
+    {
+      get
+      {
+        return defaultInstance;
+      }
+    }
+
+    [global::System.Configuration.ApplicationScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("True")]
+    public bool BremsstellungAnzeigen
+    {
+      get
+      {
+        return ((bool)(this["BremsstellungAnzeigen"]));
+      }
+    }
+
+    [global::System.Configuration.ApplicationScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
 <ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
   <string>NeueModule</string>
   <string>Test</string>
   <string>Deutschland\Test</string>
 </ArrayOfString>")]
-        public global::System.Collections.Specialized.StringCollection FoldersToExclude {
-            get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["FoldersToExclude"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("51581")]
-        public int HttpServerPort {
-            get {
-                return ((int)(this["HttpServerPort"]));
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int TrainStartMode {
-            get {
-                return ((int)(this["TrainStartMode"]));
-            }
-            set {
-                this["TrainStartMode"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int OptimiseSchedule {
-            get {
-                return ((int)(this["OptimiseSchedule"]));
-            }
-            set {
-                this["OptimiseSchedule"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int OptimiseScheduleCriteria {
-            get {
-                return ((int)(this["OptimiseScheduleCriteria"]));
-            }
-            set {
-                this["OptimiseScheduleCriteria"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ForbidAlternativePicLibSources {
-            get {
-                return ((bool)(this["ForbidAlternativePicLibSources"]));
-            }
-            set {
-                this["ForbidAlternativePicLibSources"] = value;
-            }
-        }
+    public global::System.Collections.Specialized.StringCollection FoldersToExclude
+    {
+      get
+      {
+        return ((global::System.Collections.Specialized.StringCollection)(this["FoldersToExclude"]));
+      }
+    }
+
+    [global::System.Configuration.ApplicationScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("51581")]
+    public int HttpServerPort
+    {
+      get
+      {
+        return ((int)(this["HttpServerPort"]));
+      }
+    }
+
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("0")]
+    public int TrainStartMode
+    {
+      get
+      {
+        return ((int)(this["TrainStartMode"]));
+      }
+      set
+      {
+        this["TrainStartMode"] = value;
+      }
+    }
+
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("1")]
+    public int OptimiseSchedule
+    {
+      get
+      {
+        return ((int)(this["OptimiseSchedule"]));
+      }
+      set
+      {
+        this["OptimiseSchedule"] = value;
+      }
+    }
+
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("1")]
+    public int Use_LS3_Renderer_DLL
+    {
+      get
+      {
+        return ((int)(this["Use_LS3_Renderer_DLL"]));
+      }
+      set
+      {
+        this["Use_LS3_Renderer_DLL"] = value;
+      }
+    }
+
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("1")]
+    public int StartBildfahrplan
+    {
+      get
+      {
+        return ((int)(this["StartBildfahrplan"]));
+      }
+      set
+      {
+        this["StartBildfahrplan"] = value;
+      }
+    }
+
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("1")]
+    public int StartFIS
+    {
+      get
+      {
+        return ((int)(this["StartFIS"]));
+      }
+      set
+      {
+        this["StartFIS"] = value;
+      }
+    }
+
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("1")]
+    public int StartZusiMeter
+    {
+      get
+      {
+        return ((int)(this["StartZusiMeter"]));
+      }
+      set
+      {
+        this["StartZusiMeter"] = value;
+      }
+    }
+
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("False")]
+    public bool ForbidAlternativePicLibSources
+    {
+      get
+      {
+        return ((bool)(this["ForbidAlternativePicLibSources"]));
+      }
+      set
+      {
+        this["ForbidAlternativePicLibSources"] = value;
+      }
+    }
     [global::System.Configuration.UserScopedSettingAttribute()]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Configuration.DefaultSettingValueAttribute("0")]
@@ -176,6 +243,96 @@ namespace ZusiStart.Properties {
       set
       {
         this["WindowState"] = value;
+      }
+    }
+
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("0")]
+    public double WindowZDBTop
+    {
+      get
+      {
+        return ((double)(this["WindowZDBTop"]));
+      }
+      set
+      {
+        this["WindowZDBTop"] = value;
+      }
+    }
+
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("0")]
+    public double WindowZDBLeft
+    {
+      get
+      {
+        return ((double)(this["WindowZDBLeft"]));
+      }
+      set
+      {
+        this["WindowZDBLeft"] = value;
+      }
+    }
+
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("0")]
+    public double WindowZDBWidth
+    {
+      get
+      {
+        return ((double)(this["WindowZDBWidth"]));
+      }
+      set
+      {
+        this["WindowZDBWidth"] = value;
+      }
+    }
+
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("0")]
+    public double WindowZDBHeight
+    {
+      get
+      {
+        return ((double)(this["WindowZDBHeight"]));
+      }
+      set
+      {
+        this["WindowZDBHeight"] = value;
+      }
+    }
+
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("0")]
+    public WindowState WindowZDBState
+    {
+      get
+      {
+        return ((WindowState)(this["WindowZDBState"]));
+      }
+      set
+      {
+        this["WindowZDBState"] = value;
+      }
+    }
+
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("0")]
+    public int WindowZDBScreen
+    {
+      get
+      {
+        return ((int)(this["WindowZDBScreen"]));
+      }
+      set
+      {
+        this["WindowZDBScreen"] = value;
       }
     }
 

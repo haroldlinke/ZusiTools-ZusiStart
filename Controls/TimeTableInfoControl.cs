@@ -126,6 +126,19 @@ namespace ZusiStart.Controls
     }
 
     //---------------------------------------------------------------------
+    private static readonly DependencyPropertyKey _isFISavailableKey = DependencyProperty.RegisterReadOnly(
+        "IsFISavailable",
+        typeof(bool),
+        typeof(TimeTableInfoControl),
+        new PropertyMetadata(false));
+    public static readonly DependencyProperty IsFISavailableProperty = _isFISavailableKey.DependencyProperty;
+    public bool IsFISavailable
+    {
+      get { return (bool)GetValue(IsFISavailableProperty); }
+      private set { SetValue(_isFISavailableKey, value); }
+    }
+
+    //---------------------------------------------------------------------
     public static readonly DependencyProperty KindProperty = DependencyProperty.Register(
         "Kind",
         typeof(string),
@@ -274,6 +287,7 @@ namespace ZusiStart.Controls
         Kind = null;
         Number = null;
         IsRunningTrain = false;
+        IsFISavailable = false;
         if (Properties.Settings.Default.BremsstellungAnzeigen)
         {
           Bremsstellung = Bremsstellung.G;
@@ -286,6 +300,7 @@ namespace ZusiStart.Controls
         Number = zug.Nummer;
         IsDecoTrain = zug.IsDecoTrain;
         IsRunningTrain = zug.StartSpeed != 0;
+        IsFISavailable = DataManager.Instance.check_for_FIS(zug);
         if (Properties.Settings.Default.BremsstellungAnzeigen)
         {
           Bremsstellung = zug.Bremsstellung;
@@ -354,6 +369,11 @@ namespace ZusiStart.Controls
       TrainLength = 0; // Math.Round(zr.Length, 0);
       TrainMass = Math.Round(zr.Mass * 0.001);
       string cachepath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\ZusiStart\\cache";
+      //if (Properties.Settings.Default.Use_LS3_Renderer_DLL == 1)
+      //{
+      //  cachepath = cachepath + "1";
+      //}
+      DataManager.Instance.cachepath = cachepath;
 
       if (!System.IO.Directory.Exists(cachepath))
       {
@@ -443,12 +463,15 @@ namespace ZusiStart.Controls
               br = br + "-r";
             double front_margin = grd.Margin.Left;
             double rear_margin = grd.Margin.Right;
+            // fzg.Name
+            // *test* br = string.Format("{0}-{1}-{2} ({3}-{4})", fzg.Name, fv.IDHaupt, fv.IDNeben, (int)Math.Round(front_margin,0), (int)Math.Round(rear_margin,0)).ToLower();
             TextBlock txt = new()
             {
               Text = br,
               Foreground = Brushes.Black,
               //Background = Brushes.Gray,
               FontStyle = FontStyles.Italic,
+              // *test* FontSize = 8,
               HorizontalAlignment = HorizontalAlignment.Center,
               VerticalAlignment = VerticalAlignment.Bottom,
               Margin = new Thickness(-front_margin, 0, -rear_margin, -12)

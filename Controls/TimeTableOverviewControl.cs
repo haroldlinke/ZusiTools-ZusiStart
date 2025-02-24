@@ -46,7 +46,7 @@ namespace ZusiStart.Controls
     public class TimeTableInfo
     {
         public DateTime? Date { get; private set; }
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         //---------------------------------------------------------------------
         public TimeTableInfo(TimeTable timeTable)
@@ -280,7 +280,7 @@ namespace ZusiStart.Controls
                 else
                 {
                     OnSelectedTimeTableChanged(value.Date.Value, members, _preferredSelection);
-                    _preferredSelection = 0;
+                    //_preferredSelection = 0;
                 }
             }
         }

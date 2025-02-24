@@ -13,7 +13,7 @@
     <Description>ZusiStart</Description>
     <Copyright>Holger Maaß, Harold Linke</Copyright>
     <Authors>Holger Maaß, Harold Linke</Authors>
-    <Version>6.1.4</Version>
+    <Version>6.2.16</Version>
     <Title>ZusiStart</Title>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Platforms>AnyCPU;x64</Platforms>
@@ -30,10 +30,12 @@
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2903.40" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.122" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.8" />
-    <PackageReference Include="ZusiFahrpultLib" Version="6.2.5.7" />
-    <PackageReference Include="ZusiKlassenLib" Version="6.4.6" />
-    <PackageReference Include="ZusiMeterGaugesLib" Version="6.5.5.17" />
-    <PackageReference Include="ZusiPicLib" Version="6.5.1.22" />
+    <PackageReference Include="ZusiDisplayLib" Version="6.2.1" />
+    <PackageReference Include="ZusiFahrpultLib" Version="6.2.5.9" />
+    <PackageReference Include="ZusiKlassenLib" Version="6.5.19" />
+    <PackageReference Include="ZusiMeterGaugesLib" Version="6.5.5.20" />
+    <PackageReference Include="ZusiPicLib" Version="6.5.2" />
+    <PackageReference Include="Zusisuplib" Version="1.0.6" />
   </ItemGroup>
   <ItemGroup>
       
@@ -49,6 +51,15 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <COMReference Include="IWshRuntimeLibrary">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>0</VersionMinor>
+      <VersionMajor>1</VersionMajor>
+      <Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
     <Content Include="Resources\zusistart.ico" />
     <None Include="README.md" />
   </ItemGroup>
