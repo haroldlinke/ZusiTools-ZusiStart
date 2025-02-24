@@ -1,0 +1,151 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
+
+
+namespace ZusiStart.Miscellaneous
+{
+
+  public static class LS3RenderWrapper
+  {
+    private const string DllName = "libls3render.dll";
+    /**
+      * Initialisiert die OpenGL-Umgebung.
+      *
+      * @return 1 bei Erfolg, 0 bei Fehlschlag.
+      */
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int ls3render_Init();
+
+    /**
+      * Raeumt die OpenGL-Umgebung auf.
+      *
+      * @return 1 bei Erfolg, 0 bei Fehlschlag.
+      */
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int ls3render_Cleanup();
+
+    /**
+  * Setzt die Aufloesung der Ausgabedatei.
+  * Macht vorherige Rueckgabewerte von @ref ls3render_GetBildbreite, @ref ls3render_GetBildhoehe und @ref ls3render_GetAusgabepufferGroesse ungueltig.
+  * @param PixelProMeter Ein Meter im Modell entspricht so vielen Pixeln in der Ausgabedatei.
+  */
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void ls3render_SetPixelProMeter(int PixelProMeter);
+
+    /**
+     * Aktiviert Multisampling (Multisample Anti Aliasing) mit der angegebenen Anzahl von Samples pro Pixel.
+     * @param Samples Anzahl Samples pro Pixel. Ein Wert von 0 deaktiviert Multisampling.
+     */
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void ls3render_SetMultisampling(int Samples);
+
+    /**
+ * Fuegt ein neues Fahrzeug hinzu.
+ *
+ * Macht vorherige Rueckgabewerte von @ref ls3render_GetBildbreite, @ref ls3render_GetBildhoehe und @ref ls3render_GetAusgabepufferGroesse ungueltig.
+ *
+ * @param Dateiname Der Dateiname des Fahrzeugs (Dateisystempfad, kein Zusi-Pfad)
+ *
+ * @param OffsetX Die horizontale Position des Fahrzeugnullpunktes in Metern. Hoehere Werte -> weiter rechts.
+ *
+ * @param Fahrzeuglaenge Die Fahrzeuglaenge in Metern (angegeben in den Fahrzeug-Grunddaten).
+ * @param Gedreht Ob das Fahrzeug gedreht eingereiht ist.
+ *
+ * @param StromabnehmerHoehe Die Einbauhoehe des Stromabnehmers in Metern (angegeben in den Fahrzeug-Grunddaten).
+ * @param Stromabnehmer1Oben 1, wenn Stromabnehmer 1 gehoben ist, sonst 0.
+ * @param Stromabnehmer2Oben 1, wenn Stromabnehmer 2 gehoben ist, sonst 0.
+ * @param Stromabnehmer3Oben 1, wenn Stromabnehmer 3 gehoben ist, sonst 0.
+ * @param Stromabnehmer4Oben 1, wenn Stromabnehmer 4 gehoben ist, sonst 0.
+ *
+ * @return 1 bei Erfolg, 0 bei Fehlschlag.
+ */
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int ls3render_AddFahrzeug(
+        [MarshalAs(UnmanagedType.LPStr)] string Dateiname,
+        float OffsetX,
+        float Fahrzeuglaenge,
+        int Gedreht,
+        float StromabnehmerHoehe,
+        int Stromabnehmer1Oben,
+        int Stromabnehmer2Oben,
+        int Stromabnehmer3Oben,
+        int Stromabnehmer4Oben
+    );
+
+    /**
+ * Fuegt die 3D-Datei einer Fahrzeugbeladung zum zuletzt hinzugefügten Fahrzeug hinzu.
+ *
+ * Macht vorherige Rueckgabewerte von @ref ls3render_GetBildbreite, @ref ls3render_GetBildhoehe und @ref ls3render_GetAusgabepufferGroesse ungueltig.
+ *
+ * @param Dateiname Der Dateiname des Fahrzeugs (Dateisystempfad, kein Zusi-Pfad)
+ *
+ * @param OffsetX Die X-Koordinate der Beladung, wie in der Beladungs-Baugruppe im Fahrzeug angegeben
+ * @param OffsetY Die Y-Koordinate der Beladung, wie in der Beladungs-Baugruppe im Fahrzeug angegeben
+ * @param OffsetZ Die Z-Koordinate der Beladung, wie in der Beladungs-Baugruppe im Fahrzeug angegeben
+ * @param PhiX Die X-Drehung der Beladung im Bogenmaß, wie in der Beladungs-Baugruppe im Fahrzeug angegeben
+ * @param PhiY Die Y-Drehung der Beladung im Bogenmaß, wie in der Beladungs-Baugruppe im Fahrzeug angegeben
+ * @param PhiZ Die Z-Drehung der Beladung im Bogenmaß, wie in der Beladungs-Baugruppe im Fahrzeug angegeben
+ *
+ * @return 1 bei Erfolg, 0 bei Fehlschlag.
+ */
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int ls3render_AddBeladung(
+        [MarshalAs(UnmanagedType.LPStr)] string Dateiname,
+        float OffsetX,
+        float OffsetY,
+        float OffsetZ,
+        float PhiX,
+        float PhiY,
+        float PhiZ
+    );
+
+    /**
+ * @return Die Breite des zu rendernden Bildes in Pixeln.
+ */
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int ls3render_GetBildbreite();
+
+    /**
+ * @return Die Hoehe des zu rendernden Bildes in Pixeln.
+ */
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int ls3render_GetBildhoehe();
+
+    /**
+ * @return Die Groesse des notwendigen Ausgabepuffers in Bytes.
+ */
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int ls3render_GetAusgabepufferGroesse();
+
+    /**
+ * Rendert die Szene und schreibt das Ergebnis als unkomprimierte RGBA-Daten in den angegebenen Ausgabepuffer.
+ * @param Ausgabepuffer Ein Zeiger auf den Ausgabepuffer, der mindestens so gross sein muss wie durch @ref ls3render_GetAusgabepufferGroesse angegeben.
+ * @return 1 bei Erfolg, 0 bei Fehlschlag.
+ */
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int ls3render_Render(IntPtr Ausgabepuffer);
+
+    /**
+ * Entfernt alle Fahrzeuge.
+ *
+ * Macht vorherige Rueckgabewerte von @ref ls3render_GetBildbreite, @ref ls3render_GetBildhoehe und @ref ls3render_GetAusgabepufferGroesse ungueltig.
+ */
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void ls3render_Reset();
+  }
+}
+

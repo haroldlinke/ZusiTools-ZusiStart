@@ -218,12 +218,18 @@ namespace ZusiStart.Miscellaneous
             {
                 string trainFile = xr.Element("train").Value;
                 Zug z = trains.FirstOrDefault(t =>
-                {
-                    DataPathType dpt = DataPathType.Unknown;
-                    string s = Zusi.GetAbsolutePathOf(t.GetDocument().Filename, ref dpt);
-                    return dpt != DataPathType.Unknown;
+                {                    DataPathType dpt = DataPathType.Unknown;
+                    string s = Zusi.GetRelativePathOf(t.GetDocument().Filename, ref dpt);
+                  return s == trainFile; // dpt != DataPathType.Unknown;
                 });
-                if (z != null)
+        //string trainFile = xr.Element("train").Value;
+        //Zug z = trains.FirstOrDefault(t =>
+        //{
+        //  DataPathType dpt = DataPathType.Unknown;
+        //  string s = Zusi.GetAbsolutePathOf(t.GetDocument().Filename, ref dpt);
+        //  return dpt != DataPathType.Unknown;
+        //});
+        if (z != null)
                 {
                     TimeTable timeTable = timeTables.FirstOrDefault(tt => tt.ID == z.BelongsToTimeTable);
                     ZusiDocumentBase doc = timeTable?.GetDocument();

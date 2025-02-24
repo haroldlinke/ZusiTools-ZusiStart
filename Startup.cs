@@ -3,162 +3,255 @@ using Sovoma.WPF;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Zusisuplib;
+using log4net;
+using Microsoft.VisualBasic.Logging;
+using Sovoma;
+
+using IWshRuntimeLibrary; // Make sure to add the reference
+
 
 namespace ZusiStart
 {
-    class Startup
+
+
+
+  public class ShortcutCreator
+  {
+    public static void CreateShortcutOnDesktop(string shortcutName, string targetPath, string iconLocation)
     {
-        private static readonly string _appGuid = "5DED5276-60FF-419F-B64D-864637E44C6C";
+      // add icon to desktop
+      string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+      string shortcutLocation = Path.Combine(desktopPath, shortcutName + ".lnk");
+
+      WshShell shell = new WshShell();
+      IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutLocation);
+
+      shortcut.Description = shortcutName;
+      shortcut.TargetPath = targetPath; // Path to the executable
+      shortcut.IconLocation = iconLocation; // Path to the icon file
+      shortcut.Save();
+    }
+
+    public static void CreateShortcutInQuickLaunch(string shortcutName, string targetPath, string iconLocation)
+    {
+      string quickLaunchPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Microsoft\Internet Explorer\Quick Launch");
+      string shortcutLocation = Path.Combine(quickLaunchPath, shortcutName + ".lnk");
+
+      WshShell shell = new WshShell();
+      IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutLocation);
+
+      shortcut.Description = "My WPF Application";
+      shortcut.TargetPath = targetPath; // Path to the executable
+      shortcut.IconLocation = iconLocation; // Path to the icon file
+      shortcut.Save();
+    }
+  }
 
 
-        static public void ZUSI_write_ext_menuval_to_Regkey(string keyVal, int EntryIdx = 0, string BezeichnerSprache = "Deutsch", string Bezeichnertext = "", string Vatermenu = "", int MenuIndex = 5, string Datei = "", string Parameter = "")
+
+
+class Startup
+  {
+    private static readonly string _appGuid = "5DED5276-60FF-419F-B64D-864637E44C6C";
+
+    private static readonly ILog _log = LogManager.GetLogger(typeof(App));
+
+    private static void create_Registry_entry_HKCU()
+    {
+      // Installation only: add ZusiMeter to ZUSI Menu
+      Zusiaccess.CreateZUSIMenuEntry(Bezeichnertext: "&ZusiStart", Vatermenu: "SpTBXSubmenuItemSimulation", MenuIndex: 5);
+    }
+
+    private static void create_Registry_entry_HKUS()
+    {
+      // Installation only: add ZusiMeter to ZUSI Menu
+      // add menu entry for all users - needs admin rights
+      foreach (var userSid in Registry.Users.GetSubKeyNames())
+      {
+        CreateZUSIMenuEntryHKUsers(userid: userSid, Bezeichnertext: "&ZusiStart", Vatermenu: "SpTBXSubmenuItemSimulation", MenuIndex: 5);
+      }
+    }
+
+
+    // Registry HKEY_Users for ´defined User
+    static public void ZUSI_write_ext_menuval_to_Regkey_HKUS(string keyVal, int EntryIdx = 0, string BezeichnerSprache = "Deutsch", string Bezeichnertext = "", string Vatermenu = "", int MenuIndex = 5, string Datei = "", string? Parameter = "")
+    {
+      RegistryKey? key;
+
+      try
+      {
+        key = Registry.Users.OpenSubKey(keyVal, true);
+        if (key != null)
         {
-            RegistryKey key;
-
-            try
-            {
-                key = Registry.CurrentUser.OpenSubKey(keyVal, true);
-                if (key != null)
-                {
-                    Debug.WriteLine($"create_ZUSI_menu_entry key {keyVal} found");
-                }
-                else
-                    Debug.WriteLine($"create_ZUSI_menu_entry key {keyVal} NOT found");
-                try
-                {
-                    key = Registry.CurrentUser.CreateSubKey(keyVal);
-                    Debug.WriteLine($"create_ZUSI_menu_entry key {keyVal} created");
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine($"Error in create_ZUSI_menu_entry {e}");
-                    return;
-                }
-            }
-            catch
-            {
-                Debug.WriteLine($"create_ZUSI_menu_entry key {keyVal} NOT found");
-                try
-                {
-                    key = Registry.CurrentUser.CreateSubKey(keyVal);
-                    Debug.WriteLine($"create_ZUSI_menu_entry key {keyVal} created");
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine($"Error in create_ZUSI_menu_entry {e}");
-                    return;
-                }
-            }
-
-            try
-            {
-                key.SetValue("BezeichnerSprache" + EntryIdx.ToString(), BezeichnerSprache, RegistryValueKind.String);
-                key.SetValue("BezeichnerText" + EntryIdx.ToString(), Bezeichnertext, RegistryValueKind.String);
-                key.SetValue("Vatermenu", Vatermenu, RegistryValueKind.String);
-                key.SetValue("MenuIndex", MenuIndex, RegistryValueKind.DWord);
-                key.SetValue("Datei", Datei, RegistryValueKind.String);
-                key.SetValue("Parameter", Parameter, RegistryValueKind.String);
-                Debug.WriteLine($"create_ZUSI_menu_entry added key data for Fahrplanerstellung {keyVal}");
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine($"Error in create_ZUSI_menu_entry_2 {e}");
-            }
-            finally
-            {
-                key?.Close();
-            }
+          _log.Debug($"create_ZUSI_menu_entry key {keyVal} found");
         }
-
-        static public void CreateZUSIMenuEntry(string execFilePathname)
+        else
+          _log.Debug($"create_ZUSI_menu_entry key {keyVal} NOT found");
+        try
         {
- 
-            // Check for ZUSI version
-            bool noZusiEntry = false;
-            bool zusiSteam = false;
-            bool checkZusiSteam = false;
-            string keyVal = @"Software\Zusi3\Fahrsim\Einstellungen";
-
-            try
-            {
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(keyVal, true))
-                {
-                    Debug.WriteLine($"create_ZUSI_menu_entry key {keyVal} found");
-                    checkZusiSteam = false;
-                    zusiSteam = false;
-                }
-            }
-            catch
-            {
-                checkZusiSteam = true;
-            }
-
-            if (checkZusiSteam)
-            {
-                try
-                {
-                    keyVal = @"Software\Zusi3\Fahrsimsteam\Einstellungen";
-                    using (RegistryKey key = Registry.CurrentUser.OpenSubKey(keyVal, true))
-                    {
-                        Debug.WriteLine($"create_ZUSI_menu_entry key {keyVal} found");
-                        zusiSteam = true;
-                    }
-                }
-                catch
-                {
-                    zusiSteam = false;
-                    noZusiEntry = true;
-                }
-            }
-
-            if (noZusiEntry)
-            {
-                Debug.WriteLine("create_ZUSI_menu_entry no ZUSI entry found");
-                return;
-            }
-
-            bool zusiKeyOk = true;
-            string keyVal0;
-
-            if (zusiSteam)
-            {
-                keyVal0 = @"Software\Zusi3\Fahrsimsteam\Einstellungen\MenuZusiStart";
-            }
-            else
-            {
-                keyVal0 = @"Software\Zusi3\Fahrsim\Einstellungen\MenuZusiStart";
-            }
-
-            if (zusiKeyOk)
-            {
-                ZUSI_write_ext_menuval_to_Regkey(keyVal0, 0, "Deutsch", "&ZusiStart", "SpTBXSubmenuItemSimulation", 5, execFilePathname, "-fpn \"_@@fpn@@\" -trn \"_@@trn@@\" -zn \"_@@#@@\" ");
-            }
+          key = Registry.Users.CreateSubKey(keyVal);
+          _log.Debug($"create_ZUSI_menu_entry key {keyVal} created");
         }
+        catch (Exception e)
+        {
+          _log.Debug($"Error in create_ZUSI_menu_entry {e}");
+          return;
+        }
+      }
+      catch
+      {
+        _log.Debug($"create_ZUSI_menu_entry key {keyVal} NOT found");
+        try
+        {
+          key = Registry.Users.CreateSubKey(keyVal);
+          _log.Debug($"create_ZUSI_menu_entry key {keyVal} created");
+        }
+        catch (Exception e)
+        {
+          _log.Debug($"Error in create_ZUSI_menu_entry {e}");
+          return;
+        }
+      }
 
- 
+      try
+      {
+        key.SetValue("BezeichnerSprache" + EntryIdx.ToString(), BezeichnerSprache, RegistryValueKind.String);
+        key.SetValue("BezeichnerText" + EntryIdx.ToString(), Bezeichnertext, RegistryValueKind.String);
+        key.SetValue("Vatermenu", Vatermenu, RegistryValueKind.String);
+        key.SetValue("MenuIndex", MenuIndex, RegistryValueKind.DWord);
+        key.SetValue("Datei", Datei, RegistryValueKind.String);
+        if (!string.IsNullOrEmpty(Parameter))
+          key.SetValue("Parameter", Parameter, RegistryValueKind.String);
+        _log.Debug($"create_ZUSI_menu_entry added key data for Fahrplanerstellung {keyVal}");
+      }
+      catch (Exception e)
+      {
+        _log.Debug($"Error in create_ZUSI_menu_entry_2 {e}");
+      }
+      finally
+      {
+        key?.Close();
+      }
+    }
+
+    public static void CreateZUSIMenuEntryHKUsers(string userid = "", string BezeichnerSprache = "Deutsch", string Bezeichnertext = "", string Vatermenu = "", int MenuIndex = 5, string? Params = "")
+    {
+      bool nozusifound = false;
+      bool zusisteamfound = false;
+      bool zusi3found = false;
+      string keyval = userid + "\\Software\\Zusi3\\Fahrsim\\Einstellungen";
+      string text2 = Process.GetCurrentProcess().MainModule?.FileName;
+      if (text2 == null)
+      {
+        return;
+      }
+      zusi3found = false;
+      zusisteamfound = false;
+      nozusifound = false;
+
+      try  // check for Zusi3 entry
+      {
+        using (Registry.Users.OpenSubKey(keyval, writable: true))
+        {
+          _log.Debug("create_ZUSI_menu_entry key " + keyval + " found");
+          zusi3found = true;
+          nozusifound = true;
+        }
+      }
+      catch
+      {
+        zusi3found = false;
+        nozusifound = false;
+      }
+
+      if (!zusi3found)
+      {
+        try
+        {
+          keyval = userid + "\\Software\\Zusi3\\Fahrsimsteam\\Einstellungen";
+          using (Registry.Users.OpenSubKey(keyval, writable: true))
+          {
+            _log.Debug("create_ZUSI_menu_entry key " + keyval + " found");
+            zusisteamfound = true;
+            nozusifound = false;
+          }
+        }
+        catch
+        {
+          zusisteamfound = false;
+          nozusifound = true;
+        }
+      }
+
+      if (nozusifound)
+      {
+        _log.Debug("create_ZUSI_menu_entry no ZUSI entry found");
+        return;
+      }
+
+
+      string menu_keyVal = ((!zusisteamfound) ? (userid + "\\SOFTWARE\\Zusi3\\Fahrsim\\Einstellungen\\Menu" + Bezeichnertext) : (userid + "\\SOFTWARE\\Zusi3\\Fahrsimsteam\\Einstellungen\\Menu" + Bezeichnertext));
+
+      ZUSI_write_ext_menuval_to_Regkey_HKUS(menu_keyVal, 0, "Deutsch", Bezeichnertext, Vatermenu, MenuIndex, text2, Params);
+
+    }
 
     //---------------------------------------------------------------------
     [STAThread]
-        static void Main()
+    static void Main()
+    {
+      using SingleInstanceApplicationLock appLock = new(_appGuid);
+      if (!appLock.TryAcquireExclusiveLock())
+      {
+        MessageBox.Show("ZusiStart wird bereits ausgeführt.", "Hinweis", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+        return;
+      }
+
+      string[] commandLineArgs = Environment.GetCommandLineArgs();
+      bool testflag = false;
+
+      GlobalContext.Properties["LogPath"] = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+      log4net.Config.XmlConfigurator.Configure();
+      _log.Debug(" ");
+      _log.Debug("**************************************************************************");
+      _log.Debug("*");
+      _log.Debug("* ZusiStart started - Version:" + AsmInfo.Version.ToString());
+      _log.Debug("*");
+      _log.Debug("**************************************************************************");
+
+      string? executablePath = Process.GetCurrentProcess().MainModule?.FileName;
+
+      if ((commandLineArgs.Length == 2 && commandLineArgs[1] == "*Installation*") || testflag)
+      {
+        // Installation only: add ZusiStart to ZUSI Menu
+        create_Registry_entry_HKCU();
+        create_Registry_entry_HKUS(); // if program runs as administrator menu has to be added to all users
+
+        // determine icon path
+        string icon_path = Path.Combine(Path.GetDirectoryName(executablePath), @"Resources\zusistart.ico");
+
+        // Call the method to create the shortcut
+        ShortcutCreator.CreateShortcutOnDesktop("ZusiStart", executablePath, icon_path);
+        ShortcutCreator.CreateShortcutInQuickLaunch("ZusiStart", executablePath, icon_path);
+      }
+      else
+      {
+       
+
+        if (executablePath != null)
         {
-            using SingleInstanceApplicationLock appLock = new(_appGuid);
-            if (!appLock.TryAcquireExclusiveLock())
-            {
-                MessageBox.Show("ZusiStart wird bereits ausgeführt.", "Hinweis", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                return;
-            }
-
-            string executablePath = Process.GetCurrentProcess().MainModule.FileName;
-
-            CreateZUSIMenuEntry(executablePath);
-
-            App app = new();
-            app.InitializeComponent();
-            _ = app.Run();
+          Directory.SetCurrentDirectory(Path.GetDirectoryName(executablePath));
         }
+        App app = new();
+        app.InitializeComponent();
+        _ = app.Run();
+      }
     }
+  }
 }

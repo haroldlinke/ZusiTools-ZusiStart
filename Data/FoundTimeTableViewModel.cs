@@ -13,63 +13,68 @@ using ZusiStart.Miscellaneous;
 
 namespace ZusiStart.Data
 {
-    //=========================================================================
-    public class FoundTimeTable
+  //=========================================================================
+  public class FoundTimeTable
+  {
+    public TimeTable TimeTable { get; set; }
+    public List<Zug> Trains { get; set; }
+    public List<TimeTable> Timetables { get; set; }
+  }
+
+  //=========================================================================
+  public class FoundTimeTableViewModel : BaseTreeViewViewModel<FoundTimeTableViewModel, FoundTimeTable>
+  {
+    //private static readonly string _ttPath = Zusi.ZusiDataPath + @"Timetables\";
+
+    //---------------------------------------------------------------------
+    public static FoundTimeTableViewModel BuildViewModel(IEnumerable<FoundTimeTable>? source)
     {
-        public TimeTable TimeTable { get; set; }
-        public List<Zug> Trains { get; set; }
+      FoundTimeTableViewModel root = new FoundTimeTableViewModel("root");
+
+      foreach (var m in source.GroupBy(stt => stt.TimeTable.GetTitle()))
+      {
+        root.Children.Add(new FoundTimeTableViewModel(m));
+      }
+
+      root.Initialize();
+      return root;
     }
 
-    //=========================================================================
-    public class FoundTimeTableViewModel : BaseTreeViewViewModel<FoundTimeTableViewModel, FoundTimeTable>
+    //---------------------------------------------------------------------
+    public FoundTimeTableViewModel(FoundTimeTableViewModel? parent, bool expanded, bool selected)
+        : base(parent, expanded, selected)
+    { }
+
+    //---------------------------------------------------------------------
+    private FoundTimeTableViewModel(string caption)
+        : this(null, true, false)
     {
-        //private static readonly string _ttPath = Zusi.ZusiDataPath + @"Timetables\";
+      _displayName = caption;
+    }
 
-        //---------------------------------------------------------------------
-        public static FoundTimeTableViewModel BuildViewModel(IEnumerable<FoundTimeTable>? source)
-        {
-            FoundTimeTableViewModel root = new FoundTimeTableViewModel("root");
+    //---------------------------------------------------------------------
+    private FoundTimeTableViewModel(IGrouping<string, FoundTimeTable> g)
+        : this(null, true, false)
+    {
+      _displayName = g.Key;
+      IsBold = true;
 
-            foreach (var m in source.GroupBy(stt => stt.TimeTable.GetTitle()))
-            {
-                root.Children.Add(new FoundTimeTableViewModel(m));
-            }
+      //foreach (var stt in g.OrderBy(s => s.TimeTable.StartTime.Value))
+      //{
+      //    Children.Add(new FoundTimeTableViewModel(stt));
+      //}
+      foreach (var stt in g.OrderBy(s => s.TimeTable.Name))
+      {
+        Children.Add(new FoundTimeTableViewModel(stt));
+      }
+    }
 
-            root.Initialize();
-            return root;
-        }
-
-        //---------------------------------------------------------------------
-        public FoundTimeTableViewModel(FoundTimeTableViewModel? parent, bool expanded, bool selected)
-            : base(parent, expanded, selected)
-        { }
-
-        //---------------------------------------------------------------------
-        private FoundTimeTableViewModel(string caption)
-            : this(null, true, false)
-        {
-            _displayName = caption;
-        }
-
-        //---------------------------------------------------------------------
-        private FoundTimeTableViewModel(IGrouping<string, FoundTimeTable> g)
-            : this(null, true, false)
-        {
-            _displayName = g.Key;
-            IsBold = true;
-
-            foreach (var stt in g.OrderBy(s => s.TimeTable.StartTime.Value))
-            {
-                Children.Add(new FoundTimeTableViewModel(stt));
-            }
-        }
-
-        //---------------------------------------------------------------------
-        private FoundTimeTableViewModel(FoundTimeTable stt)
+    //---------------------------------------------------------------------
+    private FoundTimeTableViewModel(FoundTimeTable stt)
             : this(null, false, false)
-        {
-            _displayName =stt.TimeTable.StartTime.Value.ToString(@"dd.MM.yyyy ab H U\hr") + " ("+ stt.TimeTable.Name + ")";
-            _object = stt;
-        }
+    {
+      _displayName = stt.TimeTable.Name + " (" + stt.TimeTable.StartTime.Value.ToString(@"dd.MM.yyyy ab H U\hr") + ")";
+      _object = stt;
     }
+  }
 }

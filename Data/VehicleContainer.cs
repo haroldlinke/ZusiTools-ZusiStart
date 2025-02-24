@@ -121,6 +121,7 @@ namespace ZusiStart.Data
           _margins[i] = new Thickness();
         }
         string cachepath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\ZusiStart\\cache";
+        DataManager.Instance.cachepath = cachepath;
         if (!System.IO.Directory.Exists(cachepath))
         {
           try

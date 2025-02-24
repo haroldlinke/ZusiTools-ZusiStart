@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZusiKlassenLib;
 using ZusiKlassenLib.Common;
+using ZusiKlassenLib.Fahrplan;
 using ZusiKlassenLib.TimeTable;
 using ZusiStart.Miscellaneous;
 
@@ -35,9 +36,15 @@ namespace ZusiStart.Data
       TimeTable = timeTable;
       if (timeTable.Begruessungsdatei != null && !string.IsNullOrEmpty(timeTable.Begruessungsdatei.Dateiname))
       {
-        Address = $"http://localhost:{HttpMiniServer.Port}/" + timeTable.Begruessungsdatei.Dateiname.Replace('\\', '/');
-        Begruessungsdatei = $"file:///{Path.Combine(Zusi.DataPath[DataPathType.Official], timeTable.Begruessungsdatei.Dateiname).Replace("\\", "/")}";
+        //Address = $"http://localhost:{HttpMiniServer.Port}/" + timeTable.Begruessungsdatei.Dateiname.Replace('\\', '/');
+        TimeTableFile timetablefile = timeTable.Parent as TimeTableFile;
+        string timetablefilepath = timetablefile.Path;
+        string timetableshortpath = Path.Combine(timetablefilepath, "..\\..\\..");
+
+        //Begruessungsdatei = $"file:///{Path.Combine(Zusi.DataPath[DataPathType.Official], timeTable.Begruessungsdatei.Dateiname).Replace("\\", "/")}";
+        Begruessungsdatei = $"file:///{Path.Combine(timetableshortpath, timeTable.Begruessungsdatei.Dateiname).Replace("\\", "/")}";
         DataManager.Instance.webview.Source = new Uri(Begruessungsdatei);
+        //DataManager.Instance.webview.Source = new Uri("https://www.zusidatenbank.de/");
       }
       else
       {
