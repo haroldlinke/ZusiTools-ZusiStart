@@ -1,20 +1,27 @@
 ﻿using log4net;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Windows;
 using ZusiKlassenLib;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ZusiStart
 {
-    /// <summary>
-    /// Interaktionslogik für "App.xaml"
-    /// </summary>
-    public partial class App : Application
-    {
-        private static readonly ILog _log = LogManager.GetLogger(typeof(App));
+  /// <summary>
+  /// Interaktionslogik für "App.xaml"
+  /// </summary>
+  public partial class App : Application
+  {
+    private static readonly ILog _log = LogManager.GetLogger(typeof(App));
 
-        public App()
-        {
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+    private IHost _host;
+
+    public App()
+    {
+      AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 #if WIN32
 #if false
             AppDomain.CurrentDomain.AssemblyResolve += Resolver;
@@ -25,34 +32,57 @@ namespace ZusiStart
             Cef.Initialize(settings, false, null);
 #endif
 #endif
-            // setup log4net
-            //GlobalContext.Properties["LogPath"] = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            //log4net.Config.XmlConfigurator.Configure();
-        }
+      // setup log4net
+      //GlobalContext.Properties["LogPath"] = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+      //log4net.Config.XmlConfigurator.Configure();
+    }
 
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            if (!Zusi.IsInstalled)
+    protected override void OnStartup(StartupEventArgs e)
+    {
+      if (!Zusi.IsInstalled)
+      {
+        throw new InvalidOperationException("Dieses Programm kann nicht ausgeführt werden, da die Vollversion des Zusi nicht installiert ist.");
+      }
+
+      base.OnStartup(e);
+
+      // Start Kestrel in a separate thread
+      Thread kestrelThread = new Thread(() =>
+      {
+        _host = Host.CreateDefaultBuilder()
+            .ConfigureWebHostDefaults(webBuilder =>
             {
-                throw new InvalidOperationException("Dieses Programm kann nicht ausgeführt werden, da die Vollversion des Zusi nicht installiert ist.");
-            }
+              webBuilder.UseKestrel()
+                            .UseStartup<Startup>();
+            })
+            .Build();
 
-            base.OnStartup(e);
-        }
+        _host.Run();
+      });
 
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            _log.Fatal(e.ExceptionObject.ToString());
+      kestrelThread.IsBackground = true;
+      kestrelThread.Start();
+    }
 
-            if (e.ExceptionObject is Exception ex)
-            {
-                Xceed.Wpf.Toolkit.MessageBox.Show(ex.Message, "Dieser Fehler lässt sich nicht gerade biegen", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            else
-            {
-                Xceed.Wpf.Toolkit.MessageBox.Show(e.ExceptionObject.ToString(), "Dieser Fehler lässt sich nicht gerade biegen", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
+    protected override void OnExit(ExitEventArgs e)
+    {
+      _host?.Dispose();
+      base.OnExit(e);
+    }
+
+    private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+      _log.Fatal(e.ExceptionObject.ToString());
+
+      if (e.ExceptionObject is Exception ex)
+      {
+        Xceed.Wpf.Toolkit.MessageBox.Show(ex.Message, "Dieser Fehler lässt sich nicht gerade biegen", MessageBoxButton.OK, MessageBoxImage.Error);
+      }
+      else
+      {
+        Xceed.Wpf.Toolkit.MessageBox.Show(e.ExceptionObject.ToString(), "Dieser Fehler lässt sich nicht gerade biegen", MessageBoxButton.OK, MessageBoxImage.Error);
+      }
+    }
 
 #if WIN32
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -89,6 +119,6 @@ namespace ZusiStart
             return null;
         }
 #endif
-    }
+  }
 }
 

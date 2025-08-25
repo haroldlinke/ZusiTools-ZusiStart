@@ -25,7 +25,6 @@ using System.Windows.Threading;
 using ZusiKlassenLib.Common;
 using ZusiKlassenLib.Landscape;
 using ZusiKlassenLib.Vehicle;
-using ZusiPicLib;
 
 namespace ZusiStart
 {

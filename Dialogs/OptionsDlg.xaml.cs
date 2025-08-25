@@ -34,16 +34,16 @@ namespace ZusiStart.Dialogs
     {
       var local_options = new Options
       {
-        Show_ZSK = CheckBox_ZSK.IsChecked ?? false,
-        Show_ZDB = CheckBox_ZDB.IsChecked ?? false,
+        Show_ZSK = true,// CheckBox_ZSK.IsChecked ?? false,
+        Show_ZDB = true, //CheckBox_ZDB.IsChecked ?? false,
         Show_Bfpl = CheckBox_Bfpl.IsChecked ?? false,
         ZSK_Url = TextBox_ZSK_URL.Text,
         ZDB_Url = TextBox_ZDB_URL.Text,
         Bfpl_Exe = TextBox_Bfpl_Exe.Text,
-        Start_FIS = CheckBox_Start_FIS.IsChecked ?? false,
+        Start_FIS = true,//CheckBox_Start_FIS.IsChecked ?? false,
         ZusiDisplay_Exe = TextBox_ZusiDisplay_Exe.Text,
         ZusiDisplay_Param = TextBox_ZusiDisplay_Param.Text,
-        Start_ZusiMeter = CheckBox_Start_ZusiMeter.IsChecked ?? false,
+        Start_ZusiMeter = true, //CheckBox_Start_ZusiMeter.IsChecked ?? false,
         ZusiMeter_Exe = TextBox_ZusiMeter_Exe.Text,
         ZusiMeter_Param = TextBox_ZusiMeter_Param.Text,
       };
@@ -59,15 +59,15 @@ namespace ZusiStart.Dialogs
     {
       var local_options = DataManager.Instance.options;
 
-      CheckBox_ZSK.IsChecked = local_options.Show_ZSK;
+      //CheckBox_ZSK.IsChecked = local_options.Show_ZSK;
       if (!string.IsNullOrEmpty(local_options.ZSK_Url))
         TextBox_ZSK_URL.Text = local_options.ZSK_Url;
       else
       {
-        TextBox_ZSK_URL.Text = "https://zusi-sk.eu/";
+        TextBox_ZSK_URL.Text = "https://www.zusi-sk.eu/";
       }
 
-      CheckBox_ZDB.IsChecked = local_options.Show_ZDB;
+      //CheckBox_ZDB.IsChecked = local_options.Show_ZDB;
       if (!string.IsNullOrEmpty(local_options.ZDB_Url))
         TextBox_ZDB_URL.Text = local_options.ZDB_Url;
       else
@@ -90,7 +90,7 @@ namespace ZusiStart.Dialogs
       //{
       //  TextBox_Zusi_Exe.Text = "";
       //}
-      CheckBox_Start_FIS.IsChecked = local_options.Start_FIS;
+      //CheckBox_Start_FIS.IsChecked = local_options.Start_FIS;
       if (!string.IsNullOrEmpty(local_options.ZusiDisplay_Exe))
         TextBox_ZusiDisplay_Exe.Text = local_options.ZusiDisplay_Exe;
       else
@@ -103,7 +103,7 @@ namespace ZusiStart.Dialogs
       {
         TextBox_ZusiDisplay_Param.Text = DataManager.Instance.ZusiDisplayStartParam;
       }
-      CheckBox_Start_ZusiMeter.IsChecked = local_options.Start_ZusiMeter;
+      //CheckBox_Start_ZusiMeter.IsChecked = local_options.Start_ZusiMeter;
       if (!string.IsNullOrEmpty(local_options.ZusiMeter_Exe))
         TextBox_ZusiMeter_Exe.Text = local_options.ZusiMeter_Exe;
       else

@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ZusiStart xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="replacementTrain.xsd" version="1.0">
+  <replacementtrains>
+    <train name="218, PZB90" file="RollingStock\Deutschland\Epoche3\Dieselloks\BRD\V160_Familie\218\218.rv.fzg"/>
+  </replacementtrains>
+</ZusiStart>

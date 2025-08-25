@@ -12,8 +12,10 @@
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
+
       </Grid.ColumnDefinitions>
       <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
@@ -40,28 +42,36 @@
         <TextBlock Text="Optionen" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" Foreground="FloralWhite"/>
       </Border>
 
-      <CheckBox x:Name="CheckBox_ZSK"  Grid.Row="1" Margin="0,0,12,0" Grid.RowSpan="1" VerticalAlignment="Bottom"/>
-      <TextBlock Grid.Row="1" Grid.Column="1" Text="Zusi-Streckenkarte anzeigen" Margin="0,12,0,0"/>
+      <!--<CheckBox x:Name="CheckBox_ZSK"  Grid.Row="1" Margin="0,0,12,0" Grid.RowSpan="1" VerticalAlignment="Bottom"/>-->
+      <TextBlock Grid.Row="1" Grid.Column="1" Text="Zusi-Streckenkarte" Margin="0,12,0,0"/>
       <TextBlock Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10">
             <Run>Die Zusi-Streckenkarte zeigt alle in Zusi vorhandenen Strecken an.</Run>
             <LineBreak/>
             <Run>Links in der Zusi Streckenkarte ermöglichen die direkte Auswahl von Fahrplänen und Zügen abhängig, von der ausgewählten Strecke oder Betriebsstelle. </Run>
+            <LineBreak/>
+            <Run>Hier kann die URL der ZusiStreckenkarte eingegeben werden</Run>
       </TextBlock>
       <TextBox x:Name="TextBox_ZSK_URL" Grid.Row="3" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="12" Background="White"/>
 
-      <CheckBox x:Name="CheckBox_ZDB" Grid.Row="4" Margin="0,0,12,0" Grid.RowSpan="1" VerticalAlignment="Bottom" />
-      <TextBlock Grid.Row="4" Grid.Column="1" Text="Zusi-Datenbank anzeigen" Margin="0,12,0,0"/>
+      <!--<CheckBox x:Name="CheckBox_ZDB" Grid.Row="4" Margin="0,0,12,0" Grid.RowSpan="1" VerticalAlignment="Bottom" />-->
+      <TextBlock Grid.Row="4" Grid.Column="1" Text="Zusi-Datenbank" Margin="0,12,0,0"/>
       <TextBlock Grid.Row="5" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10">
             <Run>Die Zusi-Datenbank ermöglicht die Auswahl von Zügen abhängig von vielfältigen Kriterien.</Run>
+            <LineBreak/>
+            <Run>Hier kann die URL der ZusiDatenbank eingegeben werden</Run>
       </TextBlock>
       <TextBox x:Name="TextBox_ZDB_URL" Grid.Row="6" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="12" Background="White"/>
 
-      <CheckBox x:Name="CheckBox_Bfpl" Grid.Row="7" Margin="0,0,12,0" Grid.RowSpan="1" VerticalAlignment="Bottom" />
-      <TextBlock Grid.Row="7" Grid.Column="1" Text="Bildfahrplan anzeigen" Margin="0,12,0,0"/>
-      <TextBlock Grid.Row="8" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10">
-      <Run>Der Bildfahrplan zeigt Zugfahrpläne grafisch an und ermöglich ein Monitoring der Fahrt</Run>
+      <TextBlock Grid.Row="7" Grid.Column="1" Text="Bildfahrplan" Margin="0,12,0,0"/>
+
+      <CheckBox x:Name="CheckBox_Bfpl" Grid.Row="8" Grid.Column="1" Margin="12,0,12,0" Grid.RowSpan="1" VerticalAlignment="Bottom" />
+      <TextBlock Grid.Row="8" Grid.Column="2" Text="Bildfahrplan Button in der Statusleiste anzeigen" Margin="30,0,0,0"/>
+      <TextBlock Grid.Row="9" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10">
+      <Run>Der Bildfahrplan zeigt Zugfahrpläne grafisch an und ermöglicht ein Monitoring der Fahrt</Run>
+      <LineBreak/>
+      <Run>Hier kann der Pfad zum Bildfahrplanprogramm eingegeben werden</Run>
       </TextBlock>
-      <TextBox x:Name="TextBox_Bfpl_Exe" Grid.Row="9" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="12" Background="White"/>
+      <TextBox x:Name="TextBox_Bfpl_Exe" Grid.Row="10" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="12" Background="White"/>
 
       <!--<CheckBox x:Name="CheckBox_Zusi_Exe" Grid.Row="10" Margin="0,0,12,0" Grid.RowSpan="1" VerticalAlignment="Bottom" />
       <TextBlock Grid.Row="10" Grid.Column="1" Text="Zusi Exe individuell angeben" Margin="0,12,0,0"/>
@@ -70,33 +80,33 @@
       </TextBlock>
       <TextBox x:Name="TextBox_Zusi_Exe" Grid.Row="14" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="12" Background="White"/>-->
 
-      <CheckBox x:Name="CheckBox_Start_FIS" Grid.Row="10" Margin="0,0,12,0" Grid.RowSpan="1" VerticalAlignment="Bottom" />
-      <TextBlock Grid.Row="10" Grid.Column="1" Text="FIS starten" Margin="0,12,0,0"/>
-      <TextBlock Grid.Row="11" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10">
-        <Run>Für Züge, die ein FIS haben, FIS starten (nur in Verbindung mit Fahrplan Optimierung)</Run>
+      <!--<CheckBox x:Name="CheckBox_Start_FIS" Grid.Row="10" Margin="0,0,12,0" Grid.RowSpan="1" VerticalAlignment="Bottom" />-->
+      <TextBlock Grid.Row="11" Grid.Column="1" Text="FIS (Fahrgast Informationssystem) " Margin="0,12,0,0"/>
+      <TextBlock Grid.Row="12" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10">
+        <Run>Für Züge, die ein FIS haben, kann in den Start-Optionen eingestellt werden, daß das FIS automatisch gestartet wird</Run>
         <LineBreak/>
-        <Run>Hier kann der Pfad zu ZusiDisplay eingegeben werden</Run>
+        <Run>Hier kann der Pfad zum ZusiDisplay-Programm und der Zusi-Display Parameter eingegeben werden</Run>
       </TextBlock>
-      <TextBox x:Name="TextBox_ZusiDisplay_Exe" Grid.Row="12" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="12" Background="White"/>
+      <TextBox x:Name="TextBox_ZusiDisplay_Exe" Grid.Row="13" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="12" Background="White"/>
       
-      <TextBlock Grid.Row="13" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10">
+      <TextBlock Grid.Row="14" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10">
   <Run>Zusi-Display Parameter</Run>
       </TextBlock>
-      <TextBox x:Name="TextBox_ZusiDisplay_Param" Grid.Row="14" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="12" Background="White"/>
+      <TextBox x:Name="TextBox_ZusiDisplay_Param" Grid.Row="15" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="12" Background="White"/>
 
-      <CheckBox x:Name="CheckBox_Start_ZusiMeter" Grid.Row="15" Margin="0,0,12,0" Grid.RowSpan="1" VerticalAlignment="Bottom" />
-      <TextBlock Grid.Row="15" Grid.Column="1" Text="ZusiMeter starten" Margin="0,12,0,0"/>
-      <TextBlock Grid.Row="16" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10">
-      <Run>Hier kann der Pfad zu ZusiMeter eingegeben werden</Run>
+      <!--<CheckBox x:Name="CheckBox_Start_ZusiMeter" Grid.Row="15" Margin="0,0,12,0" Grid.RowSpan="1" VerticalAlignment="Bottom" />-->
+      <TextBlock Grid.Row="16" Grid.Column="1" Text="ZusiMeter" Margin="0,12,0,0"/>
+      <TextBlock Grid.Row="17" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10">
+      <Run>Hier kann der Pfad zum ZusiMeter-Programm eingegeben werden</Run>
       </TextBlock>
-      <TextBox x:Name="TextBox_ZusiMeter_Exe" Grid.Row="17" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="12" Background="White"/>
+      <TextBox x:Name="TextBox_ZusiMeter_Exe" Grid.Row="18" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="12" Background="White"/>
 
-      <TextBlock Grid.Row="18" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10">
+      <TextBlock Grid.Row="19" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10">
 <Run>Zusi-Meter Parameter</Run>
       </TextBlock>
-      <TextBox x:Name="TextBox_ZusiMeter_Param" Grid.Row="19" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="12" Background="White"/>
+      <TextBox x:Name="TextBox_ZusiMeter_Param" Grid.Row="20" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="12" Background="White"/>
 
-      <StackPanel Orientation="Horizontal" Grid.Row="20" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0,12,0,0">
+      <StackPanel Orientation="Horizontal" Grid.Row="21" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0,12,0,0">
         <Button Click="SaveOptions_Click" Content="Ü_bernehmen" IsDefault="True" Style="{StaticResource ZusiStartGreenButtonStyle}" Margin="0,0,6,0"/>
         <Button Content="Abbrechen" IsCancel="True" Style="{StaticResource ZusiStartRedButtonStyle}"/>
       </StackPanel>

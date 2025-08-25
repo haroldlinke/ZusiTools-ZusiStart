@@ -3,22 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:ZusiStart"
              StartupUri="MainWindow.xaml">
-    <Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/ZusiMeterGaugesLib;component/Themes/Generic.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/ZusiMeterGaugesLib;component/Themes/Generic.Knob.xaml"/>
-                <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.xaml"/>
-                <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.MessageBox.xaml"/>
-                <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.SortButton.xaml"/>
-                <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.MultiButtonControl.xaml"/>
-                <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.DecoTrainsButton.xaml"/>
-                <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.TrainView.xaml"/>
-                <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.BeadsControl.xaml"/>
-                <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.TimeTableInfoControl.xaml"/>
-                <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.TimeTableOverviewControl.xaml"/>
-                <ResourceDictionary Source="/ZusiStart;component/Themes/SemaphoreToggleButtonStyle.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Application.Resources>
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/ZusiMeterGaugesLib;component/Themes/Generic.xaml"/>
+        <ResourceDictionary Source="pack://application:,,,/ZusiMeterGaugesLib;component/Themes/Generic.Knob.xaml"/>
+        <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.xaml"/>
+        <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.MessageBox.xaml"/>
+        <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.SortButton.xaml"/>
+        <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.MultiButtonControl.xaml"/>
+        <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.DecoTrainsButton.xaml"/>
+        <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.TrainView.xaml"/>
+        <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.BeadsControl.xaml"/>
+        <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.TimeTableInfoControl.xaml"/>
+        <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.TimeTableOverviewControl.xaml"/>
+        <ResourceDictionary Source="/ZusiStart;component/Themes/SemaphoreToggleButtonStyle.xaml"/>
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Application.Resources>
 </Application>

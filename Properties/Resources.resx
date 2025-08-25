@@ -145,4 +145,14 @@
   <data name="classes" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\classes.family;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="AboutZusiStart" xml:space="preserve">
+    <value>Über ZusiStart</value>
+  </data>
+  <data name="MenuDocumentation" xml:space="preserve">
+    <value>_Dokumentation</value>
+  </data>
+  <data name="Meu1" xml:space="preserve">
+    <value>Menu1</value>
+    <comment>Menu1 Comment</comment>
+  </data>
 </root>
