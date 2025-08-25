@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- version 14.10.2018 -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <!-- Element train -->
+  <xs:complexType name="ct_train">
+    <xs:annotation>
+      <xs:documentation>Element train</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="file" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <!-- Element replacementtrains -->
+  <xs:complexType name="ct_replacementtrains">
+    <xs:annotation>
+      <xs:documentation>Element replacementtrains</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="train" type="ct_train" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Rootelement-Typ -->
+  <xs:complexType name="ct_ZusiStart">
+    <xs:annotation>
+      <xs:documentation>Rootelement-Typ</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="replacementtrains" type="ct_replacementtrains" maxOccurs="1"/>
+    </xs:sequence>
+    <xs:attribute name="version" type="xs:float" default="1.0"/>
+  </xs:complexType>
+
+  <!-- root element -->
+  <xs:element name="ZusiStart" type="ct_ZusiStart"/>
+</xs:schema>

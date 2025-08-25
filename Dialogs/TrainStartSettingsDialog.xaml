@@ -45,9 +45,9 @@
             </TextBlock>-->
 
       <ToggleButton Grid.Row="1" Margin="0,0,12,0" Grid.RowSpan="2" IsChecked="{Binding StartViaThrottle, Mode=TwoWay}" VerticalAlignment="Bottom" Style="{StaticResource SemaphoreToggleButtonStyle}"/>
-      <TextBlock Grid.Row="1" Grid.Column="1" Text="Start des Zuges via Fahrpult-Schnittstelle" Margin="0,12,0,0"/>
+      <TextBlock Grid.Row="1" Grid.Column="1" Text="Start des Zuges via TCP/IP Fahrpult-Schnittstelle" Margin="0,12,0,0"/>
       <TextBlock Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10">
-                <Run>Zum Starten eines Zuges wird die integrierte Fahrpult-Schnittstelle des Zusi verwendet (Hp1).</Run>
+                <Run>Zum Starten eines Zuges wird die integrierte TCP/IP Fahrpult-Schnittstelle des Zusi verwendet (Hp1).</Run>
                 <LineBreak/>
                 <Run>Die Alternative ist der Start eines Zuges über die Kommandozeile (Hp0).</Run>
       </TextBlock>

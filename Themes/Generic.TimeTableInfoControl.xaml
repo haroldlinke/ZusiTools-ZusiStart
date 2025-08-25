@@ -1,6 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:ZusiStart.Controls"
+                    xmlns:sw="clr-namespace:Sovoma.WPF.Converter;assembly=Sovoma.WPF"
+                    xmlns:cv="clr-namespace:ZusiStart.Converter"
                     xmlns:zgcv="clr-namespace:ZusiMeterGaugesLib.Converter;assembly=ZusiMeterGaugesLib">
 
   <SolidColorBrush x:Key="TimeTableInfoControl.Title" Color="#FFFFDC00"/>
@@ -14,9 +16,13 @@
   <local:TrainLengthConverter x:Key="TrainLengthConverter"/>
   <local:TrainMassConverter x:Key="TrainMassConverter"/>
   <local:UseCounterConverter x:Key="UseCounterConverter"/>
+  <cv:ReferenceEqualityConverter x:Key="ReferenceEqualityConverter"/>
+  <sw:NotEmptyStringToVisibilityConverter x:Key="NotEmptyStringToVisibilityConverter"/>
+
 
   <zgcv:Bremsstellung2StringConverter x:Key="Bremsstellung2StringConverter"/>
 
+  <!-- **** TimeTableInfoControl **** -->
   <Style TargetType="{x:Type local:TimeTableInfoControl}">
     <Setter Property="Background" Value="{DynamicResource Bright.Transparent.Background}"/>
     <Setter Property="BorderThickness" Value="0"/>
@@ -37,12 +43,13 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
               </Grid.RowDefinitions>
-              <Border Background="{DynamicResource Blue.Transparent.Background}" Margin="-6,-6,-6,0" CornerRadius="6,6,0,0">
-                <DockPanel>
-                  <Label DockPanel.Dock="Right" FontWeight="Bold" Foreground="{TemplateBinding Foreground}"
+              <Border Grid.Row="0" Background="{DynamicResource Blue.Transparent.Background}" Margin="-6,-6,-6,0" CornerRadius="6,6,0,0">
+                <DockPanel >
+                  <!--<Label DockPanel.Dock="Right" FontWeight="Bold" Foreground="{TemplateBinding Foreground}"
                                            Visibility="{Binding UseCounter, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CountToVisibilityConverter}, ConverterParameter=0}">
                     <TextBlock Text="{Binding UseCounter, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource UseCounterConverter}}"/>
-                  </Label>
+                  </Label>-->
+
                   <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
                     <Label FontWeight="Bold" Foreground="{DynamicResource TimeTableInfoControl.Number}">
                       <StackPanel Orientation="Horizontal">
@@ -53,16 +60,16 @@
                     <Label FontWeight="Bold" Foreground="{DynamicResource TimeTableInfoControl.Title}">
                       <TextBlock Text="{Binding Title, RelativeSource={RelativeSource TemplatedParent}}"/>
                     </Label>
-                    <Label Margin="36,0,0,0" Foreground="{TemplateBinding Foreground}">
+                    <Label Margin="6,0,0,0" Foreground="{TemplateBinding Foreground}">
                       <TextBlock Text="{Binding Departure, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DepartureConverter}}"/>
                     </Label>
-                    <Label Margin="36,0,0,0" Foreground="{TemplateBinding Foreground}">
+                    <Label Margin="6,0,0,0" Foreground="{TemplateBinding Foreground}">
                       <TextBlock Text="{Binding Duration, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DurationConverter}}"/>
                     </Label>
-                    <Label Margin="36,0,0,0" Foreground="{TemplateBinding Foreground}">
+                    <Label Margin="6,0,0,0" Foreground="{TemplateBinding Foreground}">
                       <TextBlock Text="{Binding Length, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource LengthConverter}}"/>
                     </Label>
-                    <Label Margin="36,0,0,0" Foreground="{TemplateBinding Foreground}">
+                    <Label Margin="6,0,0,0" Foreground="{TemplateBinding Foreground}">
                       <TextBlock>
                         <TextBlock.Text>
                           <MultiBinding Converter="{StaticResource AverageSpeedConverter}">
@@ -77,33 +84,321 @@
                                            Visibility="{Binding UseCounter, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CountToVisibilityConverter}, ConverterParameter=0}">
                     <TextBlock Text="{Binding TimeTableName, RelativeSource={RelativeSource TemplatedParent}}" TextAlignment="Center"/>
                   </Label>
+                  <StackPanel DockPanel.Dock="Right" x:Name="SMALL_PicsPanel" Orientation="Horizontal" Width="auto" Background="White" HorizontalAlignment="Right" Margin="6,0,0,0"/>
+                </DockPanel>
+              </Border>
+
+              <Expander Header="Ausgewählter Zug - Stationen" IsExpanded="True" Margin="1" Grid.Row="1">
+                <Expander.Style>
+                  <Style TargetType="Expander">
+                    <Setter Property="Template">
+                      <Setter.Value>
+                        <ControlTemplate TargetType="Expander">
+                          <StackPanel Orientation="Horizontal">
+                            <!-- Header mit Toggle -->
+                            <StackPanel Orientation="Horizontal">
+                              <Border Background="{DynamicResource Blue.Transparent.Background}" Height="20" VerticalAlignment="Top">
+                                <ToggleButton Style="{StaticResource TrainViewExpanderButtonStyle}" Content="{TemplateBinding Header}" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                FontWeight="Bold" Background="Black" BorderThickness="0" Padding="0" VerticalAlignment="Top" Margin="5,5,0,5"/>
+                              </Border>
+                              <TextBlock Text="{TemplateBinding Header}" Foreground="Black" Padding="0" Margin="3,0,0,0"/>
+                            </StackPanel>
+                            <!-- Inhalt -->
+                            <ContentPresenter Visibility="{TemplateBinding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}" Margin="5"/>
+                          </StackPanel>
+                        </ControlTemplate>
+                      </Setter.Value>
+                    </Setter>
+                  </Style>
+                </Expander.Style>
+
+                <Grid Grid.Row="1" Margin="20,0,0,6">
+                  <StackPanel Orientation="Horizontal">
+                    
+                    <StackPanel>
+                      <Border Background="{DynamicResource Dark.Transparent.Background}" BorderBrush="Orange" BorderThickness="1" CornerRadius="{TemplateBinding CornerRadius}" 
+                                        VerticalAlignment="Top" Padding="5,3" HorizontalAlignment="Left" Panel.ZIndex="1"
+                                        Visibility="{Binding IsDecoTrain, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Text="Dekozug"/>
+                      </Border>
+                      <Border Background="{DynamicResource Dark.Transparent.Background}" BorderBrush="Orange" BorderThickness="1" CornerRadius="{TemplateBinding CornerRadius}" 
+                                        VerticalAlignment="Top" Padding="5,3" HorizontalAlignment="Left" Panel.ZIndex="1"
+                                        Visibility="{Binding IsRunningTrain, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Text="Start im fahrenden Zug"/>
+                      </Border>
+                      <Border Background="{DynamicResource Dark.Transparent.Background}" BorderBrush="Orange" BorderThickness="1" CornerRadius="{TemplateBinding CornerRadius}" 
+                        VerticalAlignment="Top" Padding="5,3" HorizontalAlignment="Left" Panel.ZIndex="1"
+                        Visibility="{Binding IsFISavailable, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Text="FIS-Ansagen"/>
+                      </Border>
+                      <Border Background="{DynamicResource Dark.Transparent.Background}" BorderBrush="Orange" BorderThickness="1" CornerRadius="{TemplateBinding CornerRadius}" 
+                              VerticalAlignment="Top" Padding="5,3" HorizontalAlignment="Left" Panel.ZIndex="1"
+                              Visibility="{Binding IsTrainReplaced, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Text="Zuggarnitur getauscht"/>
+                      </Border>
+                    </StackPanel>
+                    <local:BeadsControl Foreground="{DynamicResource TimeTableInfoControl.Beads}" DotBrush="Gray" HorizontalAlignment="Right"
+                                Source="{Binding Source, RelativeSource={RelativeSource TemplatedParent}}" Margin="20,0,0,0"/>
+                  </StackPanel>
+                </Grid>
+              </Expander>
+              <Expander Header="Ausgewählter Zug - Zugreihung" IsExpanded="True" Margin="1" Grid.Row="2">
+                <Expander.Style>
+                  <Style TargetType="Expander">
+                    <Setter Property="Template">
+                      <Setter.Value>
+                        <ControlTemplate TargetType="Expander">
+
+                          <WrapPanel Orientation="Horizontal">
+                            <!-- Header mit Toggle -->
+                            <StackPanel Orientation="Horizontal">
+                              <Border Background="{DynamicResource Blue.Transparent.Background}" Height="20" VerticalAlignment="Top">
+                                <ToggleButton Style="{StaticResource TrainViewExpanderButtonStyle}" Content="{TemplateBinding Header}" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                              FontWeight="Bold" Background="Black" BorderThickness="0" Padding="0" VerticalAlignment="Top" Margin="5,5,0,5"/>
+                              </Border>
+                              <TextBlock Text="{TemplateBinding Header}" Foreground="Black" Padding="0" Margin="3,0,0,0"/>
+                            </StackPanel>
+                            <!-- Inhalt -->
+                            <ContentPresenter Visibility="{TemplateBinding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}" Margin="5"/>
+                          </WrapPanel>
+                        </ControlTemplate>
+                      </Setter.Value>
+                    </Setter>
+                  </Style>
+                </Expander.Style>
+                <Grid Grid.Row="2">
+                  <ScrollViewer x:Name="PART_PicsScroller" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled" HorizontalAlignment="Center">
+                    <StackPanel x:Name="PART_PicsPanel" Orientation="Horizontal"/>
+                  </ScrollViewer>
+                  <StackPanel Orientation="Horizontal" Panel.ZIndex="7" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                    <TextBlock Text="{Binding TrainLength, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TrainLengthConverter}}" Foreground="Black"/>
+                    <TextBlock Text="{Binding TrainMass, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TrainMassConverter}}" Margin="24,0,0,0" Foreground="Black"/>
+                    <TextBlock Margin="24,0,0,0" Foreground="Black" Text="{Binding Bremsstellung, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource Bremsstellung2StringConverter}, Mode=OneWay}"/>
+                  </StackPanel>
+                </Grid>
+              </Expander>
+            </Grid>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- **** TimeTableInfoControl2 **** -->
+  <Style TargetType="{x:Type local:TimeTableInfoControl2}">
+    <Setter Property="Background" Value="{DynamicResource Bright.Transparent.Background}"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="CornerRadius" Value="6"/>
+    <Setter Property="Foreground" Value="White"/>
+    <Setter Property="Padding" Value="6"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type local:TimeTableInfoControl2}">
+          <Border BorderThickness="{TemplateBinding BorderThickness}" 
+                          CornerRadius="{TemplateBinding CornerRadius}" 
+                          Background="{TemplateBinding Background}" 
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          Padding="{TemplateBinding Padding}">
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+              </Grid.RowDefinitions>
+              <Border Grid.Row="0" Background="{DynamicResource Blue.Transparent.Background}" Margin="-6,-6,-6,0" CornerRadius="6,6,0,0">
+                <DockPanel >
+                  <!--<Label DockPanel.Dock="Right" FontWeight="Bold" Foreground="{TemplateBinding Foreground}"
+                                         Visibility="{Binding UseCounter, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CountToVisibilityConverter}, ConverterParameter=0}">
+                  <TextBlock Text="{Binding UseCounter, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource UseCounterConverter}}"/>
+                </Label>-->
+
+                  <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                    <!--<Label FontWeight="Bold" Foreground="{DynamicResource TimeTableInfoControl2.Number}">
+                      <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Kind, RelativeSource={RelativeSource TemplatedParent}}" Margin="0,0,6,0"/>
+                        <TextBlock Text="{Binding Number, RelativeSource={RelativeSource TemplatedParent}}"/>
+                      </StackPanel>
+                    </Label>-->
+                    <!--<Label FontWeight="Bold" Foreground="{DynamicResource TimeTableInfoControl2.Title}">
+                      <TextBlock Text="{Binding Title, RelativeSource={RelativeSource TemplatedParent}}"/>
+                    </Label>-->
+                    <!--<Label Margin="6,0,0,0" Foreground="{TemplateBinding Foreground}">
+                      <TextBlock Text="{Binding Departure, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DepartureConverter}}"/>
+                    </Label>-->
+                    <!--<Label Margin="6,0,0,0" Foreground="{TemplateBinding Foreground}">
+                      <TextBlock Text="{Binding Duration, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DurationConverter}}"/>
+                    </Label>-->
+                    <!--<Label Margin="6,0,0,0" Foreground="{TemplateBinding Foreground}">
+                      <TextBlock Text="{Binding Length, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource LengthConverter}}"/>
+                    </Label>-->
+                    <!--<Label Margin="6,0,0,0" Foreground="{TemplateBinding Foreground}">
+                      <TextBlock>
+                        <TextBlock.Text>
+                          <MultiBinding Converter="{StaticResource AverageSpeedConverter}">
+                            <Binding Path="Length" RelativeSource="{RelativeSource TemplatedParent}"/>
+                            <Binding Path="Duration" RelativeSource="{RelativeSource TemplatedParent}"/>
+                          </MultiBinding>
+                        </TextBlock.Text>
+                      </TextBlock>
+                    </Label>-->
+                  </StackPanel>
+                  <Label Foreground="{TemplateBinding Foreground}" HorizontalAlignment="Center"
+                                         Visibility="{Binding UseCounter, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CountToVisibilityConverter}, ConverterParameter=0}">
+                    <TextBlock Text="{Binding TimeTableName, RelativeSource={RelativeSource TemplatedParent}}" TextAlignment="Center"/>
+                  </Label>
+                  <StackPanel DockPanel.Dock="Right" x:Name="SMALL_PicsPanel" Orientation="Horizontal" Width="auto" Background="White" HorizontalAlignment="Right" Margin="6,0,0,0"/>
                 </DockPanel>
               </Border>
               <Grid Grid.Row="1" Margin="0,10,0,6">
-                <local:BeadsControl Foreground="{DynamicResource TimeTableInfoControl.Beads}" DotBrush="Gray" HorizontalAlignment="Center"
-                                                    Source="{Binding Source, RelativeSource={RelativeSource TemplatedParent}}"/>
+                <!--<local:BeadsControl Foreground="{DynamicResource TimeTableInfoControl2.Beads}" DotBrush="Gray" HorizontalAlignment="Center"
+                                                  Source="{Binding Source, RelativeSource={RelativeSource TemplatedParent}}"/>-->
                 <StackPanel>
-                <Border Background="{DynamicResource Dark.Transparent.Background}" BorderBrush="Orange" BorderThickness="1" CornerRadius="{TemplateBinding CornerRadius}" 
-                                        VerticalAlignment="Top" Padding="5,3" HorizontalAlignment="Left" Panel.ZIndex="1"
-                                        Visibility="{Binding IsDecoTrain, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}">
-                  <TextBlock Text="Dekozug"/>
-                </Border>
-                <Border Background="{DynamicResource Dark.Transparent.Background}" BorderBrush="Orange" BorderThickness="1" CornerRadius="{TemplateBinding CornerRadius}" 
-                                        VerticalAlignment="Top" Padding="5,3" HorizontalAlignment="Right" Panel.ZIndex="1"
-                                        Visibility="{Binding IsRunningTrain, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}">
-                  <TextBlock Text="Start im fahrenden Zug"/>
-                </Border>
-                <Border Background="{DynamicResource Dark.Transparent.Background}" BorderBrush="Orange" BorderThickness="1" CornerRadius="{TemplateBinding CornerRadius}" 
-                        VerticalAlignment="Top" Padding="5,3" HorizontalAlignment="Right" Panel.ZIndex="1"
-                        Visibility="{Binding IsFISavailable, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}">
-                  <TextBlock Text="FIS-Ansagen"/>
-                </Border>
+                  <Border Background="{DynamicResource Dark.Transparent.Background}" BorderBrush="Orange" BorderThickness="1" CornerRadius="{TemplateBinding CornerRadius}" 
+                                      VerticalAlignment="Top" Padding="5,3" HorizontalAlignment="Left" Panel.ZIndex="1"
+                                      Visibility="{Binding IsDecoTrain, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="Dekozug"/>
+                  </Border>
+                  <Border Background="{DynamicResource Dark.Transparent.Background}" BorderBrush="Orange" BorderThickness="1" CornerRadius="{TemplateBinding CornerRadius}" 
+                                      VerticalAlignment="Top" Padding="5,3" HorizontalAlignment="Right" Panel.ZIndex="1"
+                                      Visibility="{Binding IsRunningTrain, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="Start im fahrenden Zug"/>
+                  </Border>
+                  <Border Background="{DynamicResource Dark.Transparent.Background}" BorderBrush="Orange" BorderThickness="1" CornerRadius="{TemplateBinding CornerRadius}" 
+                      VerticalAlignment="Top" Padding="5,3" HorizontalAlignment="Right" Panel.ZIndex="1"
+                      Visibility="{Binding IsFISavailable, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="FIS-Ansagen"/>
+                  </Border>
+                  <Border Background="{DynamicResource Dark.Transparent.Background}" BorderBrush="Orange" BorderThickness="1" CornerRadius="{TemplateBinding CornerRadius}" 
+      VerticalAlignment="Top" Padding="5,3" HorizontalAlignment="Right" Panel.ZIndex="1"
+      Visibility="{Binding IsTrainReplaced, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="Zuggarnitur getauscht"/>
+                  </Border>
                 </StackPanel>
               </Grid>
               <Grid Grid.Row="2">
                 <ScrollViewer x:Name="PART_PicsScroller" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled" HorizontalAlignment="Center">
                   <StackPanel x:Name="PART_PicsPanel" Orientation="Horizontal"/>
                 </ScrollViewer>
+                <StackPanel Orientation="Horizontal" Panel.ZIndex="7" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                  <TextBlock Text="{Binding TrainLength, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TrainLengthConverter}}" Foreground="Black"/>
+                  <TextBlock Text="{Binding TrainMass, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TrainMassConverter}}" Margin="24,0,0,0" Foreground="Black"/>
+                  <TextBlock Margin="24,0,0,0" Foreground="Black" Text="{Binding Bremsstellung, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource Bremsstellung2StringConverter}, Mode=OneWay}"/>
+                </StackPanel>
+              </Grid>
+            </Grid>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- **** TimeTableInfoControl3 **** -->
+  <Style TargetType="{x:Type local:TimeTableInfoControl3}">
+    <Setter Property="Background" Value="{DynamicResource Bright.Transparent.Background}"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="CornerRadius" Value="6"/>
+    <Setter Property="Foreground" Value="White"/>
+    <Setter Property="Padding" Value="6"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type local:TimeTableInfoControl3}">
+          <Border BorderThickness="{TemplateBinding BorderThickness}" 
+                          CornerRadius="{TemplateBinding CornerRadius}" 
+                          Background="{TemplateBinding Background}" 
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          Padding="{TemplateBinding Padding}">
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+              </Grid.RowDefinitions>
+              <Border Grid.Row="0" Background="{DynamicResource Blue.Transparent.Background}" Margin="-6,-6,-6,0" CornerRadius="6,6,0,0">
+                <DockPanel >
+                  <!--<Label DockPanel.Dock="Right" FontWeight="Bold" Foreground="{TemplateBinding Foreground}"
+                                         Visibility="{Binding UseCounter, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CountToVisibilityConverter}, ConverterParameter=0}">
+                  <TextBlock Text="{Binding UseCounter, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource UseCounterConverter}}"/>
+                </Label>-->
+
+                  <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                    <Label FontWeight="Bold" Foreground="{DynamicResource TimeTableInfoControl.Number}">
+                      <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Kind, RelativeSource={RelativeSource TemplatedParent}}" Margin="0,0,6,0"/>
+                        <TextBlock Text="{Binding Number, RelativeSource={RelativeSource TemplatedParent}}"/>
+                      </StackPanel>
+                    </Label>
+                    <Label FontWeight="Bold" Foreground="{DynamicResource TimeTableInfoControl.Title}">
+                      <TextBlock Text="{Binding Title, RelativeSource={RelativeSource TemplatedParent}}"/>
+                    </Label>
+                    <Label Margin="6,0,0,0" Foreground="{TemplateBinding Foreground}">
+                      <TextBlock Text="{Binding Departure, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DepartureConverter}}"/>
+                    </Label>
+                    <Label Margin="6,0,0,0" Foreground="{TemplateBinding Foreground}">
+                      <TextBlock Text="{Binding Duration, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DurationConverter}}"/>
+                    </Label>
+                    <Label Margin="6,0,0,0" Foreground="{TemplateBinding Foreground}">
+                      <TextBlock Text="{Binding Length, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource LengthConverter}}"/>
+                    </Label>
+                    <Label Margin="6,0,0,0" Foreground="{TemplateBinding Foreground}">
+                      <TextBlock>
+                        <TextBlock.Text>
+                          <MultiBinding Converter="{StaticResource AverageSpeedConverter}">
+                            <Binding Path="Length" RelativeSource="{RelativeSource TemplatedParent}"/>
+                            <Binding Path="Duration" RelativeSource="{RelativeSource TemplatedParent}"/>
+                          </MultiBinding>
+                        </TextBlock.Text>
+                      </TextBlock>
+                    </Label>
+                  </StackPanel>
+                  <Label Foreground="{TemplateBinding Foreground}" HorizontalAlignment="Center"
+                                         Visibility="{Binding UseCounter, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CountToVisibilityConverter}, ConverterParameter=0}">
+                    <TextBlock Text="{Binding TimeTableName, RelativeSource={RelativeSource TemplatedParent}}" TextAlignment="Center"/>
+                  </Label>
+                  <StackPanel DockPanel.Dock="Right" x:Name="SMALL_PicsPanel" Orientation="Horizontal" Width="auto" Background="White" HorizontalAlignment="Right" Margin="6,0,0,0"/>
+
+                </DockPanel>
+              </Border>
+              <Grid Grid.Row="1" Margin="0,1,0,1">
+                <local:BeadsControl Foreground="{DynamicResource TimeTableInfoControl3.Beads}" DotBrush="Gray" HorizontalAlignment="Center"
+                                                  Source="{Binding Source, RelativeSource={RelativeSource TemplatedParent}}"/>
+                <StackPanel>
+                  <Border Background="{DynamicResource Dark.Transparent.Background}" BorderBrush="Orange" BorderThickness="1" CornerRadius="{TemplateBinding CornerRadius}" 
+                                      VerticalAlignment="Top" Padding="5,3" HorizontalAlignment="Left" Panel.ZIndex="1"
+                                      Visibility="{Binding IsDecoTrain, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="Dekozug"/>
+                  </Border>
+                  <Border Background="{DynamicResource Dark.Transparent.Background}" BorderBrush="Orange" BorderThickness="1" CornerRadius="{TemplateBinding CornerRadius}" 
+                                      VerticalAlignment="Top" Padding="5,3" HorizontalAlignment="Right" Panel.ZIndex="1"
+                                      Visibility="{Binding IsRunningTrain, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="Start im fahrenden Zug"/>
+                  </Border>
+                  <Border Background="{DynamicResource Dark.Transparent.Background}" BorderBrush="Orange" BorderThickness="1" CornerRadius="{TemplateBinding CornerRadius}" 
+                      VerticalAlignment="Top" Padding="5,3" HorizontalAlignment="Right" Panel.ZIndex="1"
+                      Visibility="{Binding IsFISavailable, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="FIS-Ansagen"/>
+                  </Border>
+                  <Border Background="{DynamicResource Dark.Transparent.Background}" BorderBrush="Orange" BorderThickness="1" CornerRadius="{TemplateBinding CornerRadius}" 
+      VerticalAlignment="Top" Padding="5,3" HorizontalAlignment="Right" Panel.ZIndex="1"
+      Visibility="{Binding IsTrainReplaced, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="Zuggarnitur getauscht"/>
+                  </Border>
+
+                  <!-- **** Comment **** -->
+                  <Border Background="{DynamicResource Dark.Transparent.Background}" BorderBrush="Orange" BorderThickness="1" CornerRadius="{TemplateBinding CornerRadius}" 
+                          VerticalAlignment="Top" Padding="5,3" HorizontalAlignment="Right" Panel.ZIndex="1" 
+                          Visibility="{Binding Comment, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource NotEmptyStringToVisibilityConverter}}">
+                    <TextBox Text="{Binding Comment, RelativeSource={RelativeSource TemplatedParent},Mode=TwoWay}" IsEnabled="{Binding CommentEdit}"/>
+                  </Border>
+                </StackPanel>
+              </Grid>
+              <Grid Grid.Row="2">
+
+                <ScrollViewer x:Name="PART_PicsScroller" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled" HorizontalAlignment="Center">
+                  <Border x:Name="PicBorder" Height="60">
+                    <StackPanel x:Name="PART_PicsPanel" Orientation="Horizontal"/>
+                  </Border>
+                </ScrollViewer>
+
                 <StackPanel Orientation="Horizontal" Panel.ZIndex="7" VerticalAlignment="Bottom" HorizontalAlignment="Center">
                   <TextBlock Text="{Binding TrainLength, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TrainLengthConverter}}" Foreground="Black"/>
                   <TextBlock Text="{Binding TrainMass, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TrainMassConverter}}" Margin="24,0,0,0" Foreground="Black"/>

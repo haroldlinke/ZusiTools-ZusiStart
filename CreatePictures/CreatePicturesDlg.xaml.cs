@@ -12,7 +12,6 @@ using System.Windows.Media.Media3D;
 using ZusiKlassenLib.Common;
 using ZusiKlassenLib.Landscape;
 using ZusiKlassenLib.Vehicle;
-using ZusiPicLib;
 using log4net;
 using ZusiStart.Miscellaneous;
 using ZusiStart.Data;

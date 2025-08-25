@@ -30,8 +30,8 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <Popup x:Name="popup"
-                                   HorizontalOffset="10"
+                            <!--<Popup x:Name="popup"
+                                   HorizontalOffset="200"
                                    DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}" 
                                    Placement="Bottom"
                                    PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
@@ -147,7 +147,7 @@
                                         </DataGrid.Columns>
                                     </DataGrid>
                                 </Border>
-                            </Popup>
+                            </Popup>-->
                             <TextBlock Text="{TemplateBinding Title}" Padding="0,5,5,5" FontWeight="Bold"/>
                             <TextBlock Grid.Row="1">
                                 <TextBlock.Text>
@@ -200,11 +200,11 @@
                             </ListBox>
                         </Grid>
                     </Border>
-                    <ControlTemplate.Triggers>
+                    <!--<ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="popup" Property="IsOpen" Value="True"/>
                         </Trigger>
-                    </ControlTemplate.Triggers>
+                    </ControlTemplate.Triggers>-->
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

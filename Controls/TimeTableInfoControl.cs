@@ -14,7 +14,6 @@ using ZusiKlassenLib.Buchfahrplan;
 using ZusiKlassenLib.Common;
 using ZusiKlassenLib.Fahrplan;
 using ZusiKlassenLib.Vehicle;
-using ZusiPicLib;
 using ZusiStart.Miscellaneous;
 using System.IO;
 //using System.Drawing;
@@ -29,6 +28,7 @@ using ZusiStart.Dialogs;
 using Microsoft.VisualBasic.Logging;
 using ZusiStart.Data;
 using static System.Net.Mime.MediaTypeNames;
+using ZusiKlassenLib;
 
 namespace ZusiStart.Controls
 {
@@ -37,14 +37,17 @@ namespace ZusiStart.Controls
   /// </summary>
   [TemplatePart(Name = "PART_PicsScroller", Type = typeof(ScrollViewer))]
   [TemplatePart(Name = "PART_PicsPanel", Type = typeof(StackPanel))]
-  
+  [TemplatePart(Name = "SMALL_PicsPanel", Type = typeof(StackPanel))]
+
   public class TimeTableInfoControl : Control
   {
     private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
     private ScrollViewer _picsScroller;
     private StackPanel _picsPanel;
-   
+    private StackPanel _smallpicsPanel;
+
+
     //private static readonly OverhangData _defaultOverhangData = new(0, 0);
     private BitmapImage _nopic;
     //private Dictionary<string, OverhangData> _overhangData = new Dictionary<string, OverhangData>();
@@ -136,6 +139,19 @@ namespace ZusiStart.Controls
     {
       get { return (bool)GetValue(IsFISavailableProperty); }
       private set { SetValue(_isFISavailableKey, value); }
+    }
+
+    //---------------------------------------------------------------------
+    private static readonly DependencyPropertyKey _isTrainReplacedKey = DependencyProperty.RegisterReadOnly(
+        "IsTrainReplaced",
+        typeof(bool),
+        typeof(TimeTableInfoControl),
+        new PropertyMetadata(false));
+    public static readonly DependencyProperty IsTrainReplacedProperty = _isTrainReplacedKey.DependencyProperty;
+    public bool IsTrainReplaced
+    {
+      get { return (bool)GetValue(IsTrainReplacedProperty); }
+      private set { SetValue(_isTrainReplacedKey, value); }
     }
 
     //---------------------------------------------------------------------
@@ -260,12 +276,22 @@ namespace ZusiStart.Controls
 
       _picsScroller = Template?.FindMandatoryTemplatePart<ScrollViewer>("PART_PicsScroller", this);
       _picsPanel = Template?.FindMandatoryTemplatePart<StackPanel>("PART_PicsPanel", this);
+      _smallpicsPanel = Template?.FindMandatoryTemplatePart<StackPanel>("SMALL_PicsPanel", this);
+
 
       if (Source != null)
       {
         AssembleTrain(Source);
       }
     }
+
+    //private static Buchfahrplan.LaTable[] LoadLaTable()
+    //{
+    //  string[] zusiDirs = Datei.GetZusiDataDirs();
+    //  string localPfad = @"_Setup\lib\timetable\buchfahrplan2\VzG-La-Streckennummern.csv";
+    //  gaConfigPfad2 = Datei.TryFindFirstExistingFile(zusiDirs, localPfad);
+    //  return Buchfahrplan.LaTable.GetLaFromCsvFile(gaConfigPfad2); //Soll ruhig eine Ausnahme schmeißen, wenn die VsGs dort nicht da liegen.
+    //}
 
     //---------------------------------------------------------------------
     private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -301,6 +327,15 @@ namespace ZusiStart.Controls
         IsDecoTrain = zug.IsDecoTrain;
         IsRunningTrain = zug.StartSpeed != 0;
         IsFISavailable = DataManager.Instance.check_for_FIS(zug);
+        if (DataManager.Instance.CurrentTrainItem != null)
+        {
+          IsTrainReplaced = DataManager.Instance.CurrentTrainItem.IsTrainReplaced;
+        }
+        else
+        {
+          IsTrainReplaced = false;
+        }
+        
         if (Properties.Settings.Default.BremsstellungAnzeigen)
         {
           Bremsstellung = zug.Bremsstellung;
@@ -335,6 +370,16 @@ namespace ZusiStart.Controls
         try
         {
           AssembleTrain(zug);
+          DataManager.Instance.main_window.SearchBuchfahrplan();
+
+          DataPathType dtp = DataPathType.Unknown;
+          string orgRelativeTimetableName = Zusi.GetRelativePathOf(zug.GetDocument().Filename, ref dtp);
+          orgRelativeTimetableName = orgRelativeTimetableName.Replace("\\", "%5C");
+          string url = "https://www.zusidatenbank.de/fahrplanzug/" + orgRelativeTimetableName;
+
+
+          //DataManager.Instance.webview_ZDB.Source = new Uri(url);
+          DataManager.Instance.set_websource("Zusi-DB",url);
         }
         catch (Exception ex)
         {
@@ -347,8 +392,8 @@ namespace ZusiStart.Controls
     private void AssembleTrain(Zug zug)
     {
       PictureManager pictureManager = new PictureManager();
-      
-      if (_picsPanel == null)
+
+      if (_picsPanel == null || _smallpicsPanel == null)
       {
         return;
       }
@@ -359,6 +404,7 @@ namespace ZusiStart.Controls
       dummywindow.Show();
 
       _picsPanel.Children.Clear();
+      _smallpicsPanel.Children.Clear();
 
       ZusiDocumentBase doc = zug.GetDocument();
       Log.DebugFormat("assemble train: {0}", doc.Filename);
@@ -368,11 +414,20 @@ namespace ZusiStart.Controls
 
       TrainLength = 0; // Math.Round(zr.Length, 0);
       TrainMass = Math.Round(zr.Mass * 0.001);
-      string cachepath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\ZusiStart\\cache";
+      //string cachepath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\ZusiStart\\cache";
+      string cachepath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), DataManager.localfoldername, "cache");
       //if (Properties.Settings.Default.Use_LS3_Renderer_DLL == 1)
       //{
       //  cachepath = cachepath + "1";
       //}
+      if (zug.Buchfahrplan != null)
+      {
+        DataManager.Instance.spMax = zug.Buchfahrplan.MaxSpeed * 3.6;
+      }
+      else
+      {
+        DataManager.Instance.spMax = 0;
+      }
       DataManager.Instance.cachepath = cachepath;
 
       if (!System.IO.Directory.Exists(cachepath))
@@ -382,13 +437,14 @@ namespace ZusiStart.Controls
           System.IO.Directory.CreateDirectory(cachepath);
           Log.Debug("Cache Directory created:" + cachepath);
         }
-        catch {
+        catch
+        {
           Log.Debug("ERROR: Cache Directory cannot be created:" + cachepath);
         }
       }
 
       LinkedListNode<FahrzeugInfo> p = zr.First;
-      int Fahrzeug_num = 0; 
+      int Fahrzeug_num = 0;
 
       bool background1 = false;
 
@@ -405,8 +461,9 @@ namespace ZusiStart.Controls
         if (fv != null)
         {
           Grid grd = new();
+          Grid smallgrd = new();
           FahrzeugGrunddaten fzggd = fv.Grunddaten;
-          
+
           bool gedreht = p.Value.Gedreht;
           //dummywindow.VehicleProgressBar.Value = Fahrzeug_num*100/zr.Count;
           //dummywindow.percentageText.Text = (Fahrzeug_num * 100 / zr.Count).ToString();
@@ -414,12 +471,14 @@ namespace ZusiStart.Controls
           //DataManager.Instance.dataLoaderWindow.pbLoaded.Value = Fahrzeug_num/zr.Count * 100;
           //DataManager.Instance.dataLoaderWindow.UpdateLayout();
           Fahrzeug_num++;
-          BitmapImage imagesource = pictureManager.getPicture(fzg, fv, gedreht, cachepath,dummywindow);
+          BitmapImage imagesource = pictureManager.getPicture(fzg, fv, gedreht, cachepath, dummywindow);
 
           if (imagesource != null)
           {
             System.Windows.Controls.Image image = new() { Source = imagesource };
             grd.Children.Add(image);
+            System.Windows.Controls.Image smallimage = new() { Source = imagesource, Height=20, Stretch= System.Windows.Media.Stretch.Uniform };
+            smallgrd.Children.Add(smallimage);
 
             //double length_factor = 16.55 / 100; //empirisch ermittelt bei erzeugetr Bildhöhe 100
             //double front_margin = 0.0;
@@ -428,7 +487,7 @@ namespace ZusiStart.Controls
             //double width_d = (int)Math.Round(imagesource.Width) * 3/2; //imagesource.PixelWidth;
             //int width = (int)Math.Round(width_d);
             //int vehiclewidth = (int)Math.Round(fzggd.Laenge * length_factor * height);
-            
+
             //double front_gap = height / 2;
             //double rear_gap = width - (front_gap + vehiclewidth);
             //if (rear_gap < 0)
@@ -451,8 +510,17 @@ namespace ZusiStart.Controls
 
             //grd.Margin = new Thickness(front_margin, 0, rear_margin, 12);
 
+            Thickness orig_thickness = pictureManager.Calculate_Margin(imagesource, fzggd.Laenge, p.Value.Gedreht);
             grd.Margin = pictureManager.Calculate_Margin(imagesource, fzggd.Laenge, p.Value.Gedreht);
-            grd.ShowGridLines = true;
+
+           
+            
+            double factor = 20.0 / imagesource.Height;
+            smallgrd.Margin = new Thickness(grd.Margin.Left * factor, grd.Margin.Top * factor, grd.Margin.Right * factor, grd.Margin.Bottom * factor);
+
+            //factor = 60.0 / imagesource.Height;
+            //grd.Margin = new Thickness(grd.Margin.Left * factor, grd.Margin.Top * factor, grd.Margin.Right * factor, grd.Margin.Bottom * factor);
+            //grd.ShowGridLines = true;
             //if (background1)
             //  grd.Background = myBrush1;
             //else
@@ -481,6 +549,7 @@ namespace ZusiStart.Controls
             grd.Children.Add(txt);
 
             _picsPanel.Children.Insert(0, grd);
+            _smallpicsPanel.Children.Insert(0, smallgrd);
           }
         }
         p = p.Next;

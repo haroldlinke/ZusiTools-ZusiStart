@@ -40,24 +40,31 @@ namespace ZusiStart.Miscellaneous
 
     public Thickness Calculate_Margin2(BitmapImage imagesource, double fahrzeuglänge, bool rotated)
     {
-      double imagesize_factor = DataManager.Instance.ScreenScaleFactor;
-      double front_margin = 0.0;
-      double rear_margin = 0.0;
-      //int image_height = (int)Math.Round(imagesource.Height * imagesize_factor);
-      double width_d = (int)Math.Round(imagesource.Width * imagesize_factor);
-      int image_width = (int)Math.Round(width_d);
-      int vehiclewidth = (int)Math.Round(fahrzeuglänge * pixel_pro_meter);
-
-      double front_gap = 50;
-      double rear_gap = image_width - (front_gap + vehiclewidth);
-      if (rear_gap < 0)
+      if (imagesource != null)
       {
-        rear_gap = 0;
+        double imagesize_factor = DataManager.Instance.ScreenScaleFactor;
+        double front_margin = 0.0;
+        double rear_margin = 0.0;
+        //int image_height = (int)Math.Round(imagesource.Height * imagesize_factor);
+        double width_d = (int)Math.Round(imagesource.Width * imagesize_factor);
+        int image_width = (int)Math.Round(width_d);
+        int vehiclewidth = (int)Math.Round(fahrzeuglänge * pixel_pro_meter);
+
+        double front_gap = 50;
+        double rear_gap = image_width - (front_gap + vehiclewidth);
+        if (rear_gap < 0)
+        {
+          rear_gap = 0;
+        }
+        double margin_factor = -1.0 / DataManager.Instance.ScreenScaleFactor;
+        front_margin = margin_factor * front_gap;
+        rear_margin = margin_factor * rear_gap;
+        return new Thickness(front_margin, 0, rear_margin, 12);
       }
-      double margin_factor = -1.0 / DataManager.Instance.ScreenScaleFactor;
-      front_margin = margin_factor * front_gap;
-      rear_margin = margin_factor * rear_gap;
-      return new Thickness(front_margin, 0, rear_margin, 12);
+      else
+      {
+        return new Thickness(0, 0, 0, 0);
+      }
     }
 
     public Thickness Calculate_Margin(BitmapImage imagesource, double fahrzeuglänge, bool rotated)
@@ -97,13 +104,14 @@ namespace ZusiStart.Miscellaneous
 
       return new Thickness(front_margin, 0, rear_margin, 12);
     }
+
     public void render_fahrzeug(string fahrzeug_dateiname, string output_dateiname, float Fahrzeuglaenge, int gedreht)
     {
       try
       {
         if (LS3RenderWrapper.ls3render_Init() == 1)
         {
-          Console.WriteLine("Initialization successful!");
+          _log.Debug("Initialization successful!");
 
           // Set resolution
           LS3RenderWrapper.ls3render_SetPixelProMeter(pixel_pro_meter);
@@ -118,7 +126,7 @@ namespace ZusiStart.Miscellaneous
           int result = LS3RenderWrapper.ls3render_AddFahrzeug(fahrzeug_dateiname, 50.0f/pixel_pro_meter, Fahrzeuglaenge, gedreht, 4.5f, 1, 0, 0, 0);
           if (result == 1)
           {
-            Console.WriteLine("Vehicle added successfully!");
+            _log.Debug("Vehicle added successfully!");
           }
 
           // Render the scene
@@ -126,7 +134,7 @@ namespace ZusiStart.Miscellaneous
           IntPtr buffer = Marshal.AllocHGlobal(bufferSize);
           if (LS3RenderWrapper.ls3render_Render(buffer) == 1)
           {
-            Console.WriteLine("Rendering successful!");
+            _log.Debug("Rendering successful!");
 
             // Get image dimensions
             int width = LS3RenderWrapper.ls3render_GetBildbreite();
@@ -158,7 +166,7 @@ namespace ZusiStart.Miscellaneous
         }
         else
         {
-          Console.WriteLine("Initialization failed!");
+          _log.Debug("Initialization failed!");
         }
       }
       catch (Exception ex)
@@ -169,74 +177,82 @@ namespace ZusiStart.Miscellaneous
 
     public BitmapImage getPicture2(Fahrzeug fzg, FahrzeugVariante fv, bool gedreht, string cachepath, Window? popup_message = null, bool create_no_image = false)
     {
-      FahrzeugGrunddaten fzggd = fv.Grunddaten;
-      //double width_d = height * width_factor;
-      //int width = (int)Math.Round(width_d);
-      //int vehiclewidth = (int)Math.Round(fzggd.Laenge * 16.55);
-      //System.Drawing.Size picsize = new(width, height);
-
-      string cachefilename2 = string.Format("{0}-{1}-{2}", fzg.Name, fv.IDHaupt, fv.IDNeben + (!gedreht ? "-r" : "-n")).ToLower();
-      string cachefilepathname2 = cachepath + "\\" + cachefilename2 + ".png";
-      _log.Info("LS3_Render.DLL - get Image for:" + cachefilename2);
-      if (!System.IO.File.Exists(cachefilepathname2))
+      try
       {
-        if (popup_message != null)
-          popup_message.Show();
-        string Arbeitsverzeichnis = ZusiKlassenLib.Zusi.DataPath[0];
-        string cachefilename = string.Format("{0}-{1}-{2}", fzg.Name, fv.IDHaupt, fv.IDNeben).ToLower();
-        string ls3_filename = fv.DateiAussenansicht.Dateiname;
-        string ls3_filenamepath = Arbeitsverzeichnis + "\\" + ls3_filename;
-        int gedreht_int = 0;
-        if (!gedreht)
-          gedreht_int = 1;
+        FahrzeugGrunddaten fzggd = fv.Grunddaten;
+        //double width_d = height * width_factor;
+        //int width = (int)Math.Round(width_d);
+        //int vehiclewidth = (int)Math.Round(fzggd.Laenge * 16.55);
+        //System.Drawing.Size picsize = new(width, height);
 
-        _log.Debug("Generate Image for:" + cachefilename);
-        //string filename;
-        try
+        string cachefilename2 = string.Format("{0}-{1}-{2}", fzg.Name, fv.IDHaupt, fv.IDNeben + (!gedreht ? "-r" : "-n")).ToLower();
+        string cachefilepathname2 = cachepath + "\\" + cachefilename2 + ".png";
+        _log.Info("LS3_Render.DLL - get Image for:" + cachefilename2);
+        if (!System.IO.File.Exists(cachefilepathname2))
         {
-          render_fahrzeug(ls3_filenamepath, cachefilepathname2, (float) fzggd.Laenge,gedreht_int);
-        }
-        catch (Exception ex)
-        {
-          _log.Debug("Error Generate Image for:" + cachefilename + " - " + ex.Message);
-          return null;
-        }
+          if (popup_message != null)
+            popup_message.Show();
+          string Arbeitsverzeichnis = ZusiKlassenLib.Zusi.DataPath[0];
+          string cachefilename = string.Format("{0}-{1}-{2}", fzg.Name, fv.IDHaupt, fv.IDNeben).ToLower();
+          string ls3_filename = fv.DateiAussenansicht.Dateiname;
+          string ls3_filenamepath = Arbeitsverzeichnis + "\\" + ls3_filename;
+          int gedreht_int = 0;
+          if (!gedreht)
+            gedreht_int = 1;
 
-        if (System.IO.File.Exists(cachefilepathname2))
-        {
-          using (Bitmap bitmap = new Bitmap(cachefilepathname2))
+          _log.Debug("Generate Image for:" + cachefilename);
+          //string filename;
+          try
           {
-            // Define the color to make transparent (light grey)
-            //System.Drawing.Color lightGrey = System.Drawing.Color.FromArgb(255, 166, 200, 255); // Adjust RGB values as needed
-            // Make the specified color transparent
-            //bitmap.MakeTransparent(lightGrey);
-           
-            //  Flip the bitmap vertically
-            bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
-            
-            // Save the flipped bitmap to a new file
-            bitmap.Save(cachefilepathname2, System.Drawing.Imaging.ImageFormat.Png);
+            render_fahrzeug(ls3_filenamepath, cachefilepathname2, (float)fzggd.Laenge, gedreht_int);
           }
+          catch (Exception ex)
+          {
+            _log.Debug("Error Generate Image for:" + cachefilename + " - " + ex.Message);
+            return null;
+          }
+
+          if (System.IO.File.Exists(cachefilepathname2))
+          {
+            using (Bitmap bitmap = new Bitmap(cachefilepathname2))
+            {
+              // Define the color to make transparent (light grey)
+              //System.Drawing.Color lightGrey = System.Drawing.Color.FromArgb(255, 166, 200, 255); // Adjust RGB values as needed
+              // Make the specified color transparent
+              //bitmap.MakeTransparent(lightGrey);
+
+              //  Flip the bitmap vertically
+              bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+
+              // Save the flipped bitmap to a new file
+              bitmap.Save(cachefilepathname2, System.Drawing.Imaging.ImageFormat.Png);
+            }
+          }
+          else
+          {
+            return null;
+          }
+        }
+
+        if (create_no_image)
+        {
+          return null;
         }
         else
         {
-          return null;
+          // Create a BitmapImage from a file
+          BitmapImage bitmap2 = new BitmapImage();
+          bitmap2.BeginInit();
+          bitmap2.UriSource = new Uri(cachefilepathname2, UriKind.RelativeOrAbsolute);
+          bitmap2.EndInit();
+          bitmap2.Freeze(); // Freeze for performance benefits
+          return bitmap2;
         }
       }
-
-      if (create_no_image)
+      catch (Exception ex)
       {
+        _log.Debug("Error Generate Image:" + ex.Message);
         return null;
-      }
-      else
-      {
-        // Create a BitmapImage from a file
-        BitmapImage bitmap2 = new BitmapImage();
-        bitmap2.BeginInit();
-        bitmap2.UriSource = new Uri(cachefilepathname2, UriKind.RelativeOrAbsolute);
-        bitmap2.EndInit();
-        bitmap2.Freeze(); // Freeze for performance benefits
-        return bitmap2;
       }
     }
 

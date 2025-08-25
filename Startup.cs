@@ -8,10 +8,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using Zusisuplib;
 using log4net;
 using Microsoft.VisualBasic.Logging;
 using Sovoma;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using ZusiKlassenLib;
+using ZusiKlassenLib.Fahrplan;
+using ZusiStart.Data;
 
 using IWshRuntimeLibrary; // Make sure to add the reference
 
@@ -46,7 +53,7 @@ namespace ZusiStart
       WshShell shell = new WshShell();
       IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutLocation);
 
-      shortcut.Description = "My WPF Application";
+      shortcut.Description = "ZusiStart";
       shortcut.TargetPath = targetPath; // Path to the executable
       shortcut.IconLocation = iconLocation; // Path to the icon file
       shortcut.Save();
@@ -61,6 +68,8 @@ class Startup
     private static readonly string _appGuid = "5DED5276-60FF-419F-B64D-864637E44C6C";
 
     private static readonly ILog _log = LogManager.GetLogger(typeof(App));
+
+    public static string[] commandlineargs;
 
     private static void create_Registry_entry_HKCU()
     {
@@ -202,9 +211,23 @@ class Startup
 
     }
 
+    public void ConfigureServices(IServiceCollection services)
+    {
+      services.AddControllers();
+    }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+      app.UseRouting();
+      app.UseEndpoints(endpoints =>
+      {
+        endpoints.MapControllers();
+      });
+    }
+
     //---------------------------------------------------------------------
     [STAThread]
-    static void Main()
+    static void Main(string[] args)
     {
       using SingleInstanceApplicationLock appLock = new(_appGuid);
       if (!appLock.TryAcquireExclusiveLock())
@@ -248,8 +271,11 @@ class Startup
         {
           Directory.SetCurrentDirectory(Path.GetDirectoryName(executablePath));
         }
+
         App app = new();
         app.InitializeComponent();
+        commandlineargs = commandLineArgs;
+        
         _ = app.Run();
       }
     }

@@ -1,0 +1,39 @@
+
+GUI:
+* Deko-Button weg, stattdessen in der Zugliste eine TreeNode namens Deko, wo alle Deko-Züge mit ihren Kategorien immer zu sehen sind. So wünsche ich mir es auch in Zusi. Vorteil: => Weniger Buttons unten und Deko-Züge werden weniger schnell übersehen.
+* Einstellungs-Button unten ist was anderes als der Einstellungs-Dialog im Tools-Menü. Aufräumen, damit man da nicht durcheinander kommt. Der Button unten kann mMn sogar weg. Alternativ mindestens: Querverweise einbauen.
+* Beenden-Button und Beenden-MenüItem im Tools-Menü
+* Standardgröße des Fenster kleiner, so dass man bei FullHD nicht versehentlich die Buttons abschneidet
+Zugvorschau:
+* Zug in voller Länge verkleinert in die linke obere Ecke packen, dort ist neben dem Fahrweg in der Regel noch genug Platz für soetwas.
+Mittlere Spalte (Readme-Spate):
+* Readmes werden gerne nicht gefunden, womöglich insb. dann, wenn sie im DV eigene Daten liegen. Auch Dateien komplett ohne Readme scheinen Probleme zu machen. => Wurde die vergangenen Tage schon geschrieben, könnte erledigt sein.
+* Wenn mehrere Fahrpläne an einem Tag sind, gibt es in der mittleren Spalte Buttons, die mit 1-2-3 beschriftet sind. => mit der gerundeten Starzeit beschriften.
+* Anklicken einer Tile in der linken Spalte sollte zu einer Reaktion führen, auch wenn bereits ein MouseOver eine Reaktion in Form eines aufklappenden Menüs hervor ruft. Naheliegend wäre z.B. in der Mittleren und rechten Spalte die Readme und die Züge des vorherigen Fahrplans einfach nicht mehr anzuzeigen. Optionale Idee: Das Aufklappmenü, dass beim MouseOver erzeugt wird, in der Mittleren Spalte anzuzeigen.
+Idee zur Erweiterung der mittleren Spalte (Readme-Spalte):
+* Erweiterung der mittleren Spalte um "mehrere Tabs", teilweise unter Zuhilfenahme meiner DLL (Ich habe da in der ZusiBfpl.dll eine Komponente namens ZusiFdl2 in Entwicklung, die man für einiges davon nutzen könnte):
+- Erster Tab: die Readme wie bisher
+- Zweiter Tab: ein mit der Fdl2-DLL voll eingezeichneter Fahrweg, Je Auswahl vom Zug oder von allen geladenen Modulen. Kann die Zusi-SK-Option ersetzen. (Wieder weniger Buttons unten.)
+- Dritter Tab: Der Bildfahrplan: Wäre dort als gestreamtes Window schöner, Fullscreen kann dann je über LinkLabels erfolgen.
+- Vierte Tabs: Zugdaten: Buchfahrplan (kann man auch direkt über meine DLL machen, da braucht man kein PInvoke), Ebula (vorher prüfen, ob der verwendete Führerstand überhaupt ein integriertes Ebula besitzt), Wagenliste und Bremszettel (künftig). Die letzten 3 lassen sich vermutlich über die NamedPipe-Schnittstelle von ZusiDisplay streamen, wobei ZusiStart dann die Rolle von ZusiSim einnehmen muss.
+- Vierte Tabs (Forts): Fahrzeug-Manual, falls vorhanden
+- Vierte Tabs (Forts): Anzeige der Zusi-La und der ÖRil. Man kann mit Hilfe der Lesezeichen diese auch auf das Wesentliche reduzieren: Der Fdl2 oder der Buchfahrplan können angeben, welche La-Nummern die befahrenen Strecken haben.
+Wichtige zwei Voraussetzungen zum offiziellen Startprogramm in meinen Augen:
+* Parallelisierungsmöglichkeiten prüfen um Startperformance zu verbessern, auch mit Hinblick auf ein immer stärker wachsenden Bestand: Beim Start wird vmlt. eine Tiefensuche nach allen *.fpn-Dateien durchgeführt, dann diese alle geladen, dann die *.trn und schließlich *.fzg-Dateien. Die Tiefensuche könnte in kleine Schritte aufgeteilt werden, dabei werden die *.fpn schon geladen und die linke Spalte schon Stück für Stück aufgebaut. Das Laden der *.fpn und *.fzg-Dateien wird hingen erst mal noch zurückgestellt. Wird ein Fahrplan angeklickt, wird in der mittleren Spalte schon mal die Readme angezeigt, in der rechten Spalte bleibt vorerst noch ein Lade-Symbol. Wenn alle *.fpn-Dateien gefunden sind, kann das Laden der *.trn und *.fzg-Dateien wie bisher erfolgen. Nachdem das erledigt ist, wird auch die rechte Spalte wieder ganz normal befüllt.
+* Notwendig, aber sehr speziell: Übersetzbarkeit einbauen. Müsste aber mit Reflection recht gut gehen.
+Danach könnte das Programm denke ich zu einer Art Default-Sart werden. Mit Carstens Hilfe könnte man auch die simintro.htm und die basis.htm ergänzen, und aus diesen Dateien heraus ZusiStart anbieten. Dazu bräuchte man aber Carstens Hilfe, ohne Carstens Hilfe wird das etwas eklig.
+Hinweis: Ich werde mit dem nächsten Update die ZusiBfpl.dll auf .Net8 updaten.
+Rechter Tab:
+* Auf Höhe des Sortieren-Pfeils könnte man auch ein "Personenzüge mit Güterzügen in einer Spalte anzeigen"-Pfeil einbauen.
+* Man könnte auf die Züge auch Rechtsklick zulassen und dort dann Dinge im Kontextmenü hinterlegen
+* Generell werde ich mit der Zug-Suchen-Funktion noch nicht so wirklich warm. Ich würde mir eher ein Schnellfilter auf dem 3. Tab wie in Zusi selbst wünschen. Man könnte auch von diesem Schnellfilter aus direkt nahtlos in die Suche springen können, ähnlich wie wenn man in Word oder Excel unter "Was möchten Sie tun" etwas eingibt und einem ganz unten dann die Onlinesuche angezeigt wird.
+* Anstatt Fav+ und Fav- würde ich mir in der rechten Spalte links von der Uhrzeit ein leeres oder ausgefülltes Herz wünschen. Das Herz sollte nur angezeigt werden, wenn ein MouseOver gemacht wird.
+* Alles in Allem sind mir aber sowohl die Suche als auch die Favoriten viel zu Platzintensiv und für mich vermutlich nicht nutzbar.
+Zu den vielen "Starte Programm XY-Optionen"
+* Generell würde ich wie gesagt trotzdem gerne keine Parallelstrukturen zum Starten von Zusatztools aufbauen. Sinn macht alles, was man vor dem Programmstart schon zur Verfügung haben muss. Unabhängig davon, dass du die ZDA-Dateien anpassen musst - was ja völlig OK ist - würden für mich der eigentliche Start von FIS und ZusiMeter nicht dazu gehören. Diese sollten von Zusi selbst gestartet werden. Wenn sich das FIS wieder beenden soll, wenn der Zug keine ZDA-Datei hat, wäre das automatische beenden im FIS/in ZusiDisplay besser aufgehoben. Man kann die Einstellungen von Zusi noch mal in ZusiStart aufführen, insbesondere den automatischen TCP-Start oder beliebte Zusatztools, diese sollten aber explizit die Zusi-Einstellungen beeinflussen, und ZusiStart da keine Parallelinfrastruktur aufbauen.
+
+Sonstige Ideen:
+* Schnapsidee: Zusi-2-Strecken auch zulassen. ;) Ist vermutlich aber recht aufwendig, ich könnte meine Uralt-Spiel-DLL reanimieren damit du da irgendwie sinnvoll anknüpfen kannst. Ich habe auch eine UI-Automatisierung, die Dinge erledigen könnte. Wäre aber vermutlich eher was, für wenn man ganz viel Lust hat.
+* Noch mal etwas spezielles: Als Quasi-Alternative zur ZusiDatenbank: Integration von ZusiRouteFinder mit 1:1-Syncronisation der Selection und der Bookmarks; sowie ein RAILConomy-Start-Button - wird mit Java vmtl. keine sinnvolle 1:1-Sync möglich sein.
+* Noch eine Idee: Vielleicht doch mal die Fahrschule ins Hauptprogramm holen. Da wäre ZusiStart vermutlich ein ganz geeigneter Einsprungpunkt, ich hatte schon mal ein Programm, dass das Demo-Tutorial mit dem Demo-Fahrplan mal angezeigt hatte, aber das ist auch schnell selbst programmiert.
+* Und noch was ganz spezielles: Während Zusi läd, könnte man schon mal ZusiDisplay anzeigen, womit man dann die Zugdaten schon mal eingeben könnte, obwohl Zusi noch am Laden ist.

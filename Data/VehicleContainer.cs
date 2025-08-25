@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using System.IO;
 using System.Windows.Controls;
 using ZusiKlassenLib.Buchfahrplan;
 using ZusiKlassenLib.Common;
@@ -120,7 +121,8 @@ namespace ZusiStart.Data
           _sources[i] = null;
           _margins[i] = new Thickness();
         }
-        string cachepath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\ZusiStart\\cache";
+        //string cachepath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\ZusiStart\\cache";
+        string cachepath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), DataManager.localfoldername, "cache");
         DataManager.Instance.cachepath = cachepath;
         if (!System.IO.Directory.Exists(cachepath))
         {

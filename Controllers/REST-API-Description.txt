@@ -1,0 +1,176 @@
+
+Add the following NUGET packages:
+Microsoft.AspNetCore.Hosting;
+Microsoft.Extensions.Hosting;
+
+
+### **1. Run Kestrel and WPF Together**
+Modify your `App.xaml.cs` or `MainWindow.xaml.cs` to start the **Kestrel server** in a separate thread:
+```csharp
+using System;
+using System.Threading;
+using System.Windows;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+
+public partial class App : Application
+{
+    private IHost _host;
+
+    protected override void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e);
+
+        // Start Kestrel in a separate thread
+        Thread kestrelThread = new Thread(() =>
+        {
+            _host = Host.CreateDefaultBuilder()
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseKestrel()
+                              .UseStartup<Startup>();
+                })
+                .Build();
+
+            _host.Run();
+        });
+
+        kestrelThread.IsBackground = true;
+        kestrelThread.Start();
+    }
+
+    protected override void OnExit(ExitEventArgs e)
+    {
+        _host?.Dispose();
+        base.OnExit(e);
+    }
+}
+```
+### **2. Ensure UI Responsiveness**
+Since Kestrel runs in a separate thread, your **WPF UI** remains responsive. Avoid running Kestrel on the **UI thread**, as it may block interactions.
+
+
+For more details, check out [this discussion](https://stackoverflow.com/questions/58127959/how-do-i-run-a-kestrel-asp-net-app-within-a-wpf-application-instance) on Stack Overflow. Let me know if you need further clarification! 🚀
+
+
+
+You have to create a new **CommandsController** class to handle your API requests. 
+
+### **1. Create a New Controller**
+Inside your project, add a new file called `CommandsController.cs` in the `Controllers` folder.
+
+### **2. Implement the Controller**
+
+THis is my code in ZusiStart. Show and Start are my interfaces, you can change them as needed:
+
+using Microsoft.AspNetCore.Mvc;
+using ZusiKlassenLib;
+using ZusiKlassenLib.Fahrplan;
+using ZusiStart.Data;
+using System.Windows;
+using System.Windows.Input;
+using ZusiKlassenLib.Cab;
+
+
+[ApiController]
+[Route("api/commands")]
+public class CommandsController : ControllerBase
+{
+  [HttpGet("show")]
+  public IActionResult ShowMessage([FromQuery] string train)
+  {
+    try
+    {
+      train = Zusi.DataPath[0] + "Timetables\\" + train;
+      ZugDatei zd = new ZugDatei(null, train);
+      if (zd.Root == null)
+      {
+        zd.Parse();
+      }
+
+      Application.Current.Dispatcher.Invoke(() =>
+      {
+        DataManager.Instance.CurrentTrain = zd.Root;
+      });
+
+      if (zd.Root == null)
+        return Ok($"Message: {train} not found");
+      else
+        return Ok($"Message: {train}");
+
+    }
+    catch (Exception ex)
+    {
+      return Ok($"Message: {ex.Message}");
+    }
+  }
+
+  [HttpGet("start")]
+  public IActionResult StartTrain([FromQuery] string train)
+  {
+    try
+    {
+      train = Zusi.DataPath[0] + "Timetables\\" + train;
+      ZugDatei zd = new ZugDatei(null, train);
+      if (zd.Root == null)
+      {
+        zd.Parse();
+      }
+
+      Application.Current.Dispatcher.Invoke(() =>
+      {
+        DataManager.Instance.CurrentTrain = zd.Root;
+      });
+
+      if (zd.Root == null)
+        return Ok($"Message: {train} not found");
+      else
+      {
+        //start current train
+        object _sender = null;
+        ExecutedRoutedEventArgs _e = null;
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+          DataManager.Instance.main_window.OnStartTrain(_sender, _e);
+        });
+        return Ok($"Message: {train}");
+      }
+
+    }
+    catch (Exception ex)
+    {
+      return Ok($"Message: {ex.Message}");
+    }
+
+
+  }
+}
+
+### **3. Register Controllers in `Startup.cs`**
+Ensure your `Startup.cs` file includes:
+
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddControllers();
+    }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        app.UseRouting();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
+    }
+}
+
+
+For a detailed guide, check out [this tutorial](https://learn.microsoft.com/en-us/aspnet/core/tutorials/first-web-api?view=aspnetcore-9.0).
+
+By the way: I used Microsoft Copilot to get this information.
