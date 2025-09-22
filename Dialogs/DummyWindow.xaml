@@ -14,6 +14,7 @@
   <Window.Resources>
     <SolidColorBrush x:Key="Blue.Transparent.Background" Color="#DA1B3F80"/>
     <SolidColorBrush x:Key="Bright.Transparent.Background" Color="#DDF0F8FF"/>
+    <SolidColorBrush x:Key="Blue.Transparent.Background2" Color="#DA1B3F40"/>
 
     <local:Step2BrushConverter x:Key="Step2BrushConverter"/>
     <slcv:VersionStringConverter x:Key="VersionStringConverter"/>

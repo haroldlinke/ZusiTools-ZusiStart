@@ -1,0 +1,96 @@
+﻿
+8.5.7 - 22.9.2025
+- new: deco trains can be listed in separate train lists.
+- new: train types in the train list are translated into english and french
+
+8.5.6 - 19.9.2025
+- update: Filter now works like filter in Zusi and allows filtering for BR too
+- fix: Train Length and Train Mass are shown again
+- fix: Pantographs handling corrected
+- fix: When Zusi-DB was opened once, all train images were rendered twice, the 2nd render is only executed when the Zusi-DB window is active.
+
+8.5.5 - 18.9.2025
+- Fix: IndusiZugart was correctly set when starting a train
+- Fix: BR is now taken from BRAngabe if available
+- Fix: IDHaupt and IDNeben are now used when determining the BR
+- New: Loktausch
+
+8.5.4 - 17.9.2025
+- update new renderengine to show trains driving to right
+- added "baureihe" to trainlist
+- update Streckenbuch to support LA-Strecken
+- added new renderengine to favorites and vehcile search
+- train direction is again from left to right
+- cache images of trains do not interfere with new renderengine
+
+8.5.3 - 16.9.2025
+- updated registry handling for Steam
+- added expand all button for trainlist
+
+8.5.2 - 14.9.2025
+- added logging to find issue with Steam registry entries
+- added new rendengine for selected train
+- added replace train commands
+
+8.5.1 - 12.9.2025
+- Fix: Contextmenu of Favorites works correctly now and Favorites are saved
+- Fix: ContextMenu in German/English/French works correctly now
+
+
+8.5.0 - 11.9.2025
+- Release Version
+- new Manual in German and English
+- update english and french texts
+- Fix: Diverse kleinere Fehlerbehebungen und Verbesserungen
+
+8.4.0 - 3.10.2025
+- New: Vehicle search function added
+- New: Improved timetable filtering options
+
+8.3.2 - 3.9.2025
+- New: Unterstützung für Englische und Französische Benutzeroberfläche
+- New: Quickstart-Guide in Englisch und Französisch
+- Fix: Diverse kleinere Fehlerbehebungen und Verbesserungen
+
+8.3.1 - 27.8.2025
+- first idea of UI update
+- updated structure of windows with dedicated functionality
+- Fahrplangruppen
+  - no overlay when doing mouse over (for me the overlay was oten in my way when I was looking for something)
+  - when selecting a "Fahrplangruppe" the associated timetables are shown in the "Fahrpläne" groupbox.
+  - it is possible to go throug the list using the up-/down-keys
+  - the dates of timetables can be selected too
+- Fahrpläne
+  - lists the filtered timetables selected via the Fahrplangruppe or via the Streckenkarte
+- Informationen
+  the information field shows all available information based on the selected timetable and/or train
+    - FPL-Docu
+      the html-page provided with the timetable
+    - Streckenkarte
+      Die ZUSI-Streckenkarte mit geändertem Verhalten:
+      - Anzeige im Vollbild
+      - wenn "Stern" angeklickt wird, werden nicht nur die Datails, die von der Zusi-SK zur Verfügung gestellt werden, angezeigt, sondern die zu der Strecke gehörenden Fahrpläne werden unter "Fahrpläne" ebenfalls angezeigt und können dort ausgewählt werden.
+    - Zusi-DB
+      Die Zusi-3 Datenbank
+      in der Zusi-DB ausgewählte Fahrzeuge werden automatisch in ZusiStart übernommen und können dort gestartet werden. Auch ein Start direkt aus der Zusi-DB ist möglich.
+    - Buchfahrplan
+      Zeigt den Buchfahrplan des ausgewählten Zuges an
+    - LA Handbuch
+      Zeigt das Handbuch der vorübergehenden Langsamfahrstellen an. Wenn ein Zug ausgewählt ist, kann über die angezeigten La-Streckennummern direkt zu der betreffenden Stelle gesprungen werden
+    - Ersatzfahrplan
+      Zeigt den zu dem ausgewählten Zug gehörenden Ersatzfahrplan an (abhängig von der maximal Geschwindigkeit, die im Fahrplan angegeben wurde). Wenn ein Zug ausgewählt ist, kann über die angezeigten La-Streckennummern direkt zu der betreffenden Stelle gesprungen werden
+    - Streckenbuch
+      Zeigt die Örtliche Richtlinien / Angaben für das Streckenbuch für Zusi 3 an
+    - ÖRil-SK
+      Zeigt die örtlichen Richtlinien für das SK-Signalsystema uf der Strecke Augsburg‐Donauwörth an
+    - ZusiStart Handbuc
+      zeigt das ZusiStart Handbuch an
+    - Favoriten
+      zeigt die Liste der Favoriten an, erlaubt das hinzufügen, löschen und starten von Favoriten. Zusätzlich können zu jedem Favortiteneintrag Kommentare hinzugefügt werden.
+
+- Zugfilter
+  erlaubt das schnelle Filtern der aktuellen Zugliste nach Gattung (Peronenzug, Güterzug, Dekozug), nach Zugnummer (auch Teilnummern) und Betriebsstellen, die von dem Zug angefahren werden.
+  erlaubt die Suche in alle Fahrplänen nach Zugnummer (auch Teilnummern) und Betriebsstellen, die von dem Zug angefahren werden
+  wenn ein Filter aktiv ist, wird durch eine rote Umrandung angezeigt.
+
+

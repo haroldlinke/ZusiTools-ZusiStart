@@ -81,7 +81,8 @@
             <Run>Jochen Kühner</Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">WPFExtendedToolkit</Run> <Hyperlink FontSize="9">https://github.com/dotnetprojects/WpfExtendedToolkit</Hyperlink><LineBreak/>
             <Run>Johannes </Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">LS3-Renderer</Run> <Hyperlink FontSize="9">https://github.com/zusitools/zusitools/tree/master</Hyperlink><LineBreak/>
             <Run>Frank Wenzel </Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">Zusi Streckenkarte</Run> <Hyperlink FontSize="9">https://zusi-sk.eu</Hyperlink><LineBreak/>
-            <Run>Jonathan Pilborough </Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">ZusiDatenbank</Run> <Hyperlink FontSize="9">https://www.zusidatenbank.de/</Hyperlink>
+            <Run>Jonathan Pilborough </Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">ZusiDatenbank</Run> <Hyperlink FontSize="9">https://www.zusidatenbank.de/</Hyperlink><LineBreak/>
+            <Run>F.Schn. </Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">Buchfahrplan-DLL</Run>
       </TextBlock>
       <Button Command="{x:Static local:AboutDlg.CommandClose}" Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="4" 
                     Style="{DynamicResource ZusiStartButtonStyle}" IsDefault="True" Margin="0,12,0,6"/>

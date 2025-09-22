@@ -6,14 +6,15 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows7.0</TargetFramework>
+    <TargetFrameworks>net8.0-windows</TargetFrameworks>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <Description>ZusiStart</Description>
-    <Copyright>Holger Maaß, Harold Linke</Copyright>
-    <Authors>Holger Maaß, Harold Linke</Authors>
-    <Version>6.2.16</Version>
+    <Copyright>Harold Linke</Copyright>
+    <Authors>Harold Linke</Authors>
+    <Version>8.5.7</Version>
     <Title>ZusiStart</Title>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Platforms>AnyCPU;x64</Platforms>
@@ -25,17 +26,20 @@
     <!--<PackageReference Include="CefSharp.Common.NETCore" Version="131.2.70" />
     <PackageReference Include="CefSharp.Wpf.NETCore" Version="131.2.70" />
     <PackageReference Include="chromiumembeddedframework.runtime" Version="131.2.7" />-->
-    <PackageReference Include="IpcCommLib" Version="6.2.0" />
-    <PackageReference Include="log4net" Version="2.0.17" />
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2903.40" />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.122" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.8" />
-    <PackageReference Include="ZusiDisplayLib" Version="6.2.1" />
-    <PackageReference Include="ZusiFahrpultLib" Version="6.2.5.9" />
-    <PackageReference Include="ZusiKlassenLib" Version="6.5.19" />
-    <PackageReference Include="ZusiMeterGaugesLib" Version="6.5.5.20" />
-    <PackageReference Include="ZusiPicLib" Version="6.5.2" />
-    <PackageReference Include="Zusisuplib" Version="1.0.6" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="GMap.NET.WinPresentation" Version="2.1.7" />
+    <PackageReference Include="IpcCommLib" Version="8.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.3.0" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3485.44" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.9" />
+    <PackageReference Include="ZusiDisplayLib" Version="8.0.2" />
+    <PackageReference Include="ZusiFahrpultLib" Version="8.0.1" />
+    <PackageReference Include="ZusiKlassenLib" Version="8.0.9" />
+    <PackageReference Include="ZusiMeterGaugesLib" Version="8.0.2" />
+    <PackageReference Include="ZusiPicLib" Version="8.0.1" />
+    <PackageReference Include="Zusisuplib" Version="8.0.1" />
   </ItemGroup>
   <ItemGroup>
       
@@ -123,8 +127,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\default4.PNG">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="ZusiBfpl">
+      <HintPath>dll\ZusiBfpl.dll</HintPath>
+    </Reference>
+    <Reference Include="ZusiBuchfahrplan2">
+      <HintPath>dll\ZusiBuchfahrplan2.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\bkgnd_4.jpg" />
@@ -135,6 +147,27 @@
   <ItemGroup>
     <None Update="help\ZusiStart_Docu_Deutsch.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="help\ZusiStart_Docu_English.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="help\ZusiStart_Docu_Français.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="history_of_change.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ReplacementLoco.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ReplacementLoco.xsd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ReplacementTrain.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ReplacementTrain.xsd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\default0.JPG">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -151,9 +184,36 @@
     <None Update="Resources\NotFound.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\ZSK_locationGroupId.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\zusistart.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="libls3render.def">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="libls3render.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="NativeStandards.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Miscellaneous\HttpMiniServer.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Assets\Language_table.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <!--
   <ItemGroup>

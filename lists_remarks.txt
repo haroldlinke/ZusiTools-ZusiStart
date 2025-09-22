@@ -1,0 +1,9 @@
+ListTimeTableGrp - ItemsSource="{Binding GroupedTimeTables}" SelectionChanged="SelectedTimeTableChanged"
+                   Item: TimeTableOverviewControl SelectedTimeTableChanged="TimeTableOverviewControl_SelectedTimeTableChanged"
+
+ListTimeTables -  ItemsSource="{Binding Relations}" SelectedItem="{Binding SelectedTimeTableRelation}" SelectionChanged="SelectedTimeTableRelationChanged2">
+
+
+tvPassengerTrains - ItemsSource="{Binding Source={StaticResource PassengerTrains}}" DataContext="{Binding TrainsViewModel}" SelectedItemChanged="TreeView_SelectedItemChanged"
+
+TimeTableInfoControl - Source="{Binding CurrentTrain, Mode=OneWay}"

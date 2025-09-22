@@ -11,7 +11,7 @@
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Padding" Value="6"/>
         <Setter Property="FontSize" Value="14"/>
-        <Setter Property="MinWidth" Value="120"/>
+        <Setter Property="MinWidth" Value="10"/>
         <Setter Property="IsThreeState" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>

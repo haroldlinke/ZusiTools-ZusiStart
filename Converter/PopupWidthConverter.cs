@@ -19,7 +19,7 @@ namespace ZusiStart.Converter
             return values.Length == 2 &&
                 values[0] is double w && !double.IsNaN(w) &&
                 values[1] is double o && !double.IsNaN(o)
-                ? Math.Max(w - o - o, 0.0) : 0.0;
+                ? Math.Max(w - o, 0.0) : 0.0;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -27,4 +27,5 @@ namespace ZusiStart.Converter
             throw new NotImplementedException();
         }
     }
+  
 }

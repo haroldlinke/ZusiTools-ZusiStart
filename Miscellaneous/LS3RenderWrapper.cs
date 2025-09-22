@@ -47,6 +47,14 @@ namespace ZusiStart.Miscellaneous
     public static extern void ls3render_SetMultisampling(int Samples);
 
     /**
+ * Setzt die Parameter für die axonometrische Projektion: https://de.wikipedia.org/wiki/Axonometrie#Kavalierprojektion,_Kabinettprojektion
+ * @param Winkel Winkel in Radians für die verzerrte Achse. Empfohlen: Pi/4 = 45 Grad.
+ * @param Skalierung Skalierungsfaktor für die verzerrte Achse. 0 = orthographische Projektion (Standard), 0.5 = Kabinettprojektion (empfohlen), 1 = Kavalierprojektion.
+ */
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void ls3render_SetAxonometrieParameter(float Winkel, float Skalierung);
+
+    /**
  * Fuegt ein neues Fahrzeug hinzu.
  *
  * Macht vorherige Rueckgabewerte von @ref ls3render_GetBildbreite, @ref ls3render_GetBildhoehe und @ref ls3render_GetAusgabepufferGroesse ungueltig.

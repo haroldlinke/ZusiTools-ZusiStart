@@ -1,0 +1,13 @@
+EXPORTS
+    ls3render_AddBeladung @1
+    ls3render_AddFahrzeug @2
+    ls3render_Cleanup @3
+    ls3render_GetAusgabepufferGroesse @4
+    ls3render_GetBildbreite @5
+    ls3render_GetBildhoehe @6
+    ls3render_Init @7
+    ls3render_Render @8
+    ls3render_Reset @9
+    ls3render_SetAxonometrieParameter @10
+    ls3render_SetMultisampling @11
+    ls3render_SetPixelProMeter @12

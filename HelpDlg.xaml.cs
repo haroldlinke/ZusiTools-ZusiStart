@@ -1,5 +1,7 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,8 +12,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.IO;
-using log4net;
+using ZusiStart.Data;
 
 namespace ZusiStart
 {
@@ -32,7 +33,7 @@ namespace ZusiStart
       catch (Exception ex)
       {
         _log.Fatal("Start WebView" + ex.ToString());
-        int num = (int)System.Windows.MessageBox.Show(ex.ToString(), "Fehler beim Öffnen der Dokumentation", MessageBoxButton.OK);
+        int num = (int)System.Windows.MessageBox.Show(ex.ToString(), LocalizationManager.Translate("Fehler beim Öffnen der Dokumentation"), MessageBoxButton.OK);
       }
     }
 
@@ -48,7 +49,7 @@ namespace ZusiStart
       catch (Exception ex)
       {
         _log.Fatal("Open Doku" + ex.ToString());
-        int num = (int)System.Windows.MessageBox.Show(ex.ToString(), "Fehler beim Öffnen der Dokumentation", MessageBoxButton.OK);
+        int num = (int)System.Windows.MessageBox.Show(ex.ToString(), LocalizationManager.Translate("Fehler beim Öffnen der Dokumentation"), MessageBoxButton.OK);
       }
     }
   }

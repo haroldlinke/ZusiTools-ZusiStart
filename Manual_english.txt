@@ -1,0 +1,207 @@
+usiStart
+Version 8.5.0
+Copyright © 2025 Harold Linke
+Copyright notice: Distribution of this documentation, including excerpts or in other formats or languages, is only permitted with the express consent of the author.
+Text and photos: Harold Linke (unless otherwise stated)
+
+Harold Linke
+Gneisenaustraße 13
+54294 Trier
+Germany
+zusi-tools.de
+
+ 
+1.    Overview
+The current version of Zusi provides more than 20,000 trains (15,521 passenger trains and 5,611 freight trains – as of August 2025) in more than 92 timetables, spread across 19 different routes. You can choose from 92 traction vehicles (locomotives and railcars, diesel or electric drive). 
+•    Zusi-Start helps you keep track of all these many, many options. 
+•    All trains are grouped by timetable group/route and timetable. Important information is displayed for each train (travel time, freight or passenger train, average speed, weight, etc.).
+•    The vehicle sequence and stations are displayed visually.
+•    The timetable for the selected train is automatically optimised to reduce the waiting time until the train departs.
+•    The train and vehicle search and train filtering allow you to select trains according to specific criteria.
+•    You can search for timetables and trains even more precisely using the Zusi database.
+•    All important information about timetables and trains is provided centrally.
+2.    Calling up ZusiStart
+ZusiStart.exe can be started directly.
+After the first launch, ZusiStart is integrated into the ZUSI simulator and can be accessed via a menu item.
+•    Simulation -> ZusiStart -> Opens ZusiStart
+3.    Installation
+1.    Download ZusiStart from ´zusi-tools.de. There are 2 versions:
+2.    Open the za7 file ZusiStart_inst.za7 in the Zusi file manager with the menu New versions->Add-ons Manual installation and let it install.
+ZusiMeter is then installed in the Zusi Tools folder and the menu item ‘ZusiStart’ is created in the Zusi Menu Simulator.
+If the menu item ZusiStart is not available in ZUSI, please run the batch file ZUSIStart_Installation.bat once.
+The file is located in the directory: ZUSI programme directory (e.g.
+C:\\programmes\ZUSI3\_Tools\ZusiStart\
+In Windows Explorer, navigate to this directory and double-click the batch file to run it.
+3.    Alternatively, unzip the zip file ZusiStart_inst.zip into any directory and run ZusiStart.exe once. The menu item ‘ZusiStart’ will then be created in the Zusi Menu Simulator.
+4.    Using ZusiStart
+4.1.    Timetable selection
+ZusiStart is started directly by calling ZusiStart.exe or via the Zusi Menu – Simulation->ZusiStart.
+The following screen appears at start-up.
+
+ZusiStart loads all timetables and trains available for Zusi3 on the PC in the official Zusi directories as well as in the private Zusi directories in the background.
+The available timetable groups/routes are displayed immediately.
+You can track the loading status in the status bar at the bottom left.
+When the loading is complete, the total number of passenger and freight trains loaded is displayed.
+When you click on a route/timetable group, all timetables belonging to this timetable group are displayed at the top centre.
+
+The first timetable is active and the timetable description is displayed in the FPL documentation window.
+The trains belonging to the active timetable are listed in the ‘Trains’ window in the left-hand column. 
+The list can be filtered using the train filter. (see Train filter)
+After clicking on a train, the route and the train are displayed as vehicle images in the lower window.
+The vehicle images are generated on the fly and stored in a cache directory. The first time this is done, it may take a while to generate the images.
+
+If you click on another train, the display in the lower window will change accordingly.
+The selected train is started in Zusi3 by clicking on the ‘Run selected train’ button (bottom right).
+ZusiStart disappears from the screen, the Zusi3 programme starts and directly loads the selected timetable and starts the selected train. The train journey then runs normally in Zusi3. 
+After exiting Zusi3, the ZusiStart window is displayed again and you can select and start another train.
+4.2.    Main menu (top left)
+The main menu contains the following commands:
+o    Tools
+    Program settings
+    Start options
+    Regenerate all vehicle images
+    Exit
+o    Info
+    About ZusiStart
+
+4.2.1.    Program settings
+
+
+4.2.2.	Start options
+Start options
+
+
+4.2.2.1.    Start via TCP/IP interface
+There are two ways to start a train file with Zusi:
+1.    The train file is passed as a call parameter when starting Zusi (corresponds to double-clicking on a .trn file) – Problems with the mouse and keys have been reported when starting a train in this way.
+2.    Via the TCP/IP interface of Zusi. Here, Zusi is started first and then a connection is established via TCP/IP. To do this, the Zusi TCP server must be running. ZusiStart checks this and displays an error message if the server is not switched on. ZusiStart can then also activate the server. This method is the most reliable.
+
+4.2.2.2.    Timetable optimisation
+With complex and large timetables, it can take a very long time for the desired train to start, especially if it departs late in the timetable. Timetable optimisation generates a temporary timetable that only contains trains that are active during the running time of the selected train. This can greatly reduce the number of trains, especially those that run earlier than the selected train, and drastically reduce the waiting time until the selected train starts.
+4.2.2.3.    Start picture timetable
+A graphic timetable displays the travel times of all trains in a timetable graphically and provides a quick overview of a timetable. The graphic timetable programme can create a graphic timetable from a Zusi timetable. Once the programme is installed, it can be started when Zusi is launched by enabling this option, and it will then display the graphic timetable for the selected train. 
+4.2.2.4.    Start passenger information system
+ZUSI-Display allows the simulation of a passenger information system. If a train has a passenger information system, this option can be used to set ZusiDisplay to start automatically when Zusi is started.
+4.2.2.5.    Start ZusiMeter
+ZusiMeter allows you to conveniently create and display driver's cab displays and measuring instruments. With this option, ZusiMeter can be started together with Zusi.
+
+5.    The programme areas
+5.1.    Route-train search-vehicle search
+5.1.1.    Routes
+
+ZusiStart loads all timetables and trains available for Zusi3 on the PC in the official Zusi directories as well as in the private Zusi directories and lists them in the ‘Routes’ window.
+When you select a route by clicking on it, all timetables belonging to this route are listed in the middle of the timetable window. The selection can be moved using the arrow keys.
+In addition, by clicking on a date, the selection of timetables can be restricted to that date.
+
+
+
+5.1.2.    Train search
+The train search allows you to search Zusi-wide for trains with a specific train number or trains that pass through a specific station/operating point.
+All timetables found are searched.
+The train number or station can also be a partial string, but must be at least 3 characters long.
+Spaces are ignored.
+The timetables found are displayed in the timetable window. When selecting a timetable, only the trains in the timetable that match the locomotive number or operating location searched for are displayed in the train list.
+ 
+5.1.3.    Vehicle search
+
+The vehicle search allows you to search all timetables for a vehicle/locomotive type.
+Before the search can be started, the locomotive list must be created by clicking on the ‘Generate locomotive list’ button. Creating the locomotive list may take a few minutes.
+The locomotive list lists all vehicle types available in Zusi and displays an example image.
+The locomotive list can be filtered using the setting buttons according to:
+•    Traction
+•    Vehicle type
+•    Era
+
+A vehicle type can include several series designations, but they are all of the same type: e.g. E10-12, 112, 113 are different designations for the same locomotive type BR112.
+The timetables found are displayed in the timetable window. When selecting a timetable, only the trains in the timetable that are operated by the locomotive type searched for are displayed in the train list.
+
+
+
+
+5.2.    Timetables
+
+All timetables found are listed in the timetable window.
+The window header indicates the criteria used to select the timetables:
+•    Name of the route to which the timetables belong
+•    Train search criteria used to find the timetables
+•    The vehicle type used to select the timetables.
+When a timetable is selected, the corresponding trains are listed in the train window.
+Additional information is also displayed in the information window. See below for details.
+
+Train filter
+
+The train filter allows you to reduce the train list according to various criteria:
+•    Train type:
+a.    Passenger train (switch on the left)
+b.    Freight train (switch in the middle)
+c.    Decorative train (switch on the right)
+•    Train number/station (input field on the left)
+Entries in the train filter take effect immediately and change the train list directly.
+Train numbers and stations can also be partial strings.
+The train filter can also be combined with the train search.
+If, for example, you search for all trains with the station ‘Hagen Hbf’ in the train search, the train list will show all trains that stop at the station ‘Hagen Hbf’.
+If you now enter ‘Kassel’ as the station in the train filter, the train list will be restricted to trains that stop at the stations ‘Hagen Hbf’ and ‘Kassel’.
+5.4.    Trains
+
+The train list shows all trains that match the selected timetable and the search criteria or filters set.
+The list is divided into two groups: freight trains and passenger trains. These groups can be shown or hidden using the filter buttons.
+Within the passenger train or freight train group, the trains are sorted by route section. The departure time, train number and journey duration are shown for each train. The list can be sorted by journey time by clicking on the black dot.
+Clicking on a train selects it and displays detailed information as well as all stations passed through and the train sequence in the ‘Selected train’ window. In addition, train-specific information is displayed in the information window, e.g. the timetable, speed restrictions and the replacement timetable.
+Right-clicking on a train brings up a context menu that allows you to add the train to your favourites or delete it from your favourites.
+5.5.    Selected train
+
+The ‘Selected train’ window displays detailed information as well as all stations passed through and the train sequence of the selected train.
+The arrow buttons at the top left can be used to hide the information to make more room for the information window.
+Clicking on the ‘Start selected train’ button or ‘Alt-F5’ starts the selected train in Zusi and ZusiStart disappears from the screen until Zusi is closed.
+5.6.    Information
+5.6.1.    FPL Docu
+The FPL documentation window displays the HTML documentation for the selected timetable.
+
+5.6.2.    Route map
+
+The ‘Route map’ window displays the current Zusi route map. The route map makes it very easy to display the timetables for individual routes.
+To do this, click on the ‘star’ corresponding to the desired route.
+e.g. Grenzlandbahnen between Aachen and Übach-Palenberg.
+The route map then displays some details about the route. At the same time, the timetable list shows the timetables belonging to the Grenzlandbahnen. By selecting a timetable, you can then select a train from the train list. 
+
+5.6.3.    Zusi-DB
+
+The Zusi database contains all data from the official Zuis add-ons (timetables, routes, trains, vehicles and driver's cabs) and allows you to filter, analyse and display all items and explore their connections.
+5.6.4.    Book timetable
+
+The book timetable window shows a preview of the book timetable for the selected train.
+5.6.5.    La manual
+
+The La manual (slow speed section manual) shows the train driver all the special features of his route. The manual is organised according to La sections. The La sections travelled by a train are listed above the manual. Clicking on the route number takes you to the entry in the manual, if one exists.
+5.6.6.    Replacement timetable
+
+The replacement timetable booklets serve as a fallback for EBuLa in the prototype and as book timetables for the ‘replacement timetable + Fplo’ procedure. Within Zusi, they can also be used to good effect if the route deviates randomly from the displayed book timetable or EBuLa, as neither currently supports the display of alternative routes.
+5.6.7.    Route book
+The route book contains important local guidelines. This collection of local guidelines serves to document signalling and historical features in the Zusi 3 route network.
+
+5.6.8.    ZusiStart manual
+This manual can be accessed here.
+5.6.9.    Favourites
+ Favourites
+
+The favourites list allows you to save journeys that you like to take so that you can find them more easily.
+Favourites are loaded first when loading Zusi timetables and are therefore immediately available.
+It is also possible to add a comment to each train.
+Button:
+‘Add train’: The train currently selected to start is added to the favourites list.
+‘Delete train’: The train selected in the favourites list is deleted from the favourites list.
+‘Run selected train’: The train selected in the favourites list is started in Zusi.
+‘Edit comment’: A comment can be added to each train. After pressing this button, you can either add a new comment to the currently selected favourite or edit the existing comment. Pressing this button again saves the comment. If the comment is empty, it is deleted. 
+
+5.7.    Status and button bar
+5.7.1.    Track conditions
+In this menu, the track conditions can be set when starting the train journey.
+
+
+5.7.2.    Start options
+See 5.2.2 Start options
+5.7.3.    Run selected train
+The selected train is started in Zusi according to the procedure selected in the start options.
+ZusiStart disappears from the screen while Zusi is running and reappears as soon as Zusi has fini
+
+Translated with DeepL.com (free version)

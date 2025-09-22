@@ -1,0 +1,118 @@
+﻿<Window x:Class="ZusiStart.Dialogs.ManageReplTrainsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ZusiStart.Dialogs"
+        xmlns:sck="clr-namespace:Sovoma.ControlsKit;assembly=Sovoma.ControlsKit"
+        xmlns:sckb="clr-namespace:Sovoma.ControlsKit.Behaviors;assembly=Sovoma.ControlsKit"
+        xmlns:ctrls="clr-namespace:ZusiStart.Controls" 
+        xmlns:v="clr-namespace:ZusiStart.ValidationRules"
+        xmlns:vm="clr-namespace:ZusiStart.Data"
+        mc:Ignorable="d"
+        sckb:DialogBehavior.IsDialog="True"
+        Title="Austauschzüge verwalten" Height="550" Width="1200" UseLayoutRounding="True" SnapsToDevicePixels="True" WindowStartupLocation="CenterOwner" Background="White">
+
+  <Window.DataContext>
+    <Binding Source="{x:Static vm:DataManager.Instance}"/>
+  </Window.DataContext>
+
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="83*"/>
+      <ColumnDefinition Width="313*"/>
+    </Grid.ColumnDefinitions>
+    <DockPanel>
+      <Button DockPanel.Dock="Bottom" Margin="6" HorizontalAlignment="Right" Command="{x:Static local:ManageReplTrainsDialog.ReplaceTrainCommand}" Style="{StaticResource CommandButtonStyle}"/>
+      <ListBox x:Name="lbxTrains" ItemsSource="{Binding ReplacementTrains}" BorderThickness="0" SelectedItem="{Binding SelectedReplacementTrain, Mode=TwoWay}">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding Name}"/>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </DockPanel>
+    <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Left"/>
+    <DockPanel Grid.Column="1" Margin="5 0 0 0">
+      <DockPanel DockPanel.Dock="Bottom" Margin="6">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+        <Button DockPanel.Dock="Left" Command="{x:Static local:ManageReplTrainsDialog.NewCommand}" Style="{StaticResource CommandButtonStyle}"/>
+          <Button Command="{x:Static local:ManageReplTrainsDialog.DelCommand}" Margin="6 0 0 0" Style="{StaticResource CommandButtonStyle}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+          <Button Command="{x:Static local:ManageReplTrainsDialog.AcceptCommand}" Style="{StaticResource CommandButtonStyle}"/>
+          <Button Command="{x:Static local:ManageReplTrainsDialog.DiscardCommand}" Margin="6 0 0 0" Style="{StaticResource CommandButtonStyle}"/>
+          <Button Command="{x:Static local:ManageReplTrainsDialog.OkCommand}" Margin="24 0 0 0" Style="{StaticResource CommandButtonStyle}"/>
+          
+        </StackPanel>
+      </DockPanel>
+      <Grid DataContext="{Binding SelectedTrainR}" Margin="0 0 6 0">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.Style>
+          <Style TargetType="{x:Type Grid}">
+            <Style.Triggers>
+              <Trigger Property="DataContext" Value="{x:Null}">
+                <Setter Property="IsEnabled" Value="False"/>
+              </Trigger>
+            </Style.Triggers>
+          </Style>
+        </Grid.Style>
+        <Label Content="Zug" Grid.ColumnSpan="2" FontWeight="Bold"/>
+        <Label Grid.Row="1" Content="Name"/>
+        <TextBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">
+          <TextBox.Text>
+            <Binding Path="Name" UpdateSourceTrigger="PropertyChanged">
+              <Binding.ValidationRules>
+                <v:ValidNameRuleT/>
+              </Binding.ValidationRules>
+            </Binding>
+          </TextBox.Text>
+        </TextBox>
+        <Label Content="Zugdatei" Grid.Row="2"/>
+        <sck:FileSelector Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Filter="Zugdateien|*.trn|Alle Dateien|*.*" SelectedFullPath="{Binding VehicleTFile, Mode=TwoWay}"
+                                  InitialDirectory="{Binding TimeTablesDir, Source={x:Static vm:DataManager.Instance}}"/>
+        <!--<Label Content="Fahrzeugliste" Grid.Row="3"/>
+        <ListBox x:Name="lbxFahrzeuge" ItemsSource="{Binding VehicleList}" BorderThickness="0" Grid.Row="4">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Fahrzeug.Name}"/>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>-->
+        <!-- ==================================== Ausgewählter Zug Info ==================================== -->
+        <ctrls:TimeTableInfoControl2 Grid.Row="4" Grid.Column="0" Source="{Binding SelectedZug, Mode=OneWay}" Margin="0,6,0,0" Visibility="Visible" Grid.ColumnSpan="4"/>
+        <!--<ComboBox Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" IsReadOnly="True" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Variants}" SelectedValue="{Binding SelectedVariant}" HorizontalAlignment="Left" Width="80">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding VariantID}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Label Content="Baureihe" Grid.Row="4" />
+                <TextBlock Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Text="{Binding SelectedVariant.Class}"/>
+                <Label Content="Antrieb" Grid.Row="5"/>
+                <TextBlock Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" Text="{Binding SelectedVariant.Drivetrain}"/>
+                <Label Content="Beschreibung" Grid.Row="6" />
+                <TextBlock Grid.Row="6" Grid.Column="1" VerticalAlignment="Center" Text="{Binding SelectedVariant.Description}"/>
+                <Label Content="Einsatzzeit" Grid.Row="7" />
+                <TextBlock Grid.Row="7" Grid.Column="1" VerticalAlignment="Center" Text="{Binding SelectedVariant.ServiceTime}"/>
+                <Label Content="Indusi" Grid.Row="8"/>
+                <TextBlock Grid.Row="8" Grid.Column="1" VerticalAlignment="Center" Text="{Binding SelectedVariant.IndusiInfo}"/>-->
+      </Grid>
+    </DockPanel>
+  </Grid>
+</Window>

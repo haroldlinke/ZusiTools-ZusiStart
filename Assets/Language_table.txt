@@ -1,0 +1,149 @@
+Streckenkarte,Route Map,Carte des lignes
+Fahrplanauswahl,Select Timetable,Sélection des horaires
+FPL-Docu,Timetable documentation,Documentation FPL
+Zusi-DB,Zusi Database,Base de données Zusi
+LA Handbuch,Temporary Route Restrictions,Manuel LA
+Ersatzfahrplan,Replacement Timetable,Horaire de remplacement
+Streckenbuch,Route Book,Livre de route
+Buchfahrplan,Working Timetable,Horaire de livre
+ÖRil-SK,Route-Book - SK,Livre de route - SK
+Favoriten,Favorites,Favoris
+ZusiStart-Handbuch,ZusiStart Manual,Manuel ZusiStart
+Fahrplangruppen,Timetable Groups,Groupes d'horaires
+Fahrpläne,Timetables,Horaires
+La-Strecken,Restriction Routes,Itinéraires LA
+Information,Information,Information
+Zugfilter,Train filter,Filtre de train
+Suche/Filtern Typ:,Search/Filter type:,Type de recherche/filtre :
+Zugnummer/Station,Train number/Station,Numéro de train/Gare
+Fahrzeug,Vehicle,Véhicule
+Suche/Filtern nach:,Search/Filter for:,Rechercher/Filtrer par :
+Personenzüge,Passenger trains,Trains de voyageurs
+Güterzüge,Freight trains,Trains de marchandises
+Dekozüge,Decorative trains,Trains déco
+Alle Züge,All trains,Tous les trains
+Deko-Güterzüge,Decorative freight trains,Trains déco de marchandises
+Deko-Personenzüge,Decorative passenger trains,Trains déco de voyageurs
+Züge,Trains,Trains
+Gleisbedingungen,Track conditions,Conditions de voie
+Deutsch,German,Allemand
+Englisch,English,Anglais
+Französisch,French,Français
+Automatisch,Automatic,Automatique
+Bitte ein paar Sekunden Geduld,,Please wait a few seconds,,Veuillez patienter quelques secondes,
+Bitte etwas Geduld,,Please be patient,,Veuillez patienter,
+die Fahrpläne und Züge werden gelesen ...,Timetables and trains are being loaded ...,Les horaires et les trains sont en cours de lecture ...
+die Daten werden geladen ...,Data is being loaded ...,Les données sont en cours de chargement ...
+die Fahrzeugdaten werden verarbeitet und, wenn notwendig,\n neue Fahrzeugbilder erstellt (dies kann etwas dauern) ...,Vehicle data is being imported and, if necessary,\n new vehicle images are being created (this may take a while) ...,Les données des véhicules sont en cours de traitement et, si nécessaire,\n de nouvelles images de véhicules sont créées (cela peut prendre un certain temps) ...
+Interner Serverfehler (500),Internal Server Error (500),Erreur interne du serveur (500)
+Zug hinzufügen,Add to Favorites,Ajouter aux favoris
+Zug löschen,Remove from Favorites,Supprimer des favoris
+Kommentar bearbeiten,Edit comment,Modifier le commentaire
+ZusiStart beenden,Exit ZusiStart,Quitter ZusiStart
+Ausgewählten Zug fahren,Drive selected train,Conduire le train sélectionné
+Züge filtern,Filter trains,Filtrer les trains
+Fahrpläne suchen,Search timetables,Rechercher des horaires
+Zurücksetzen,Reset,Réinitialiser
+Start-Optionen,Start options,Options de démarrage
+Gleisbedingungen,Track conditions,Conditions de voie
+_Rückgängig Zugtausch,Undo train replacement,Annuler le remplacement du train
+_Zug tauschen,Replace train,Remplacer le train
+_Austauschzüge auswählen/verwalten,Select/manage replacement trains,Sélectionner/gérer les trains de remplacement
+Fehler bei der Initialisierung der WebView2-Umgebung: ,Error initializing WebView2 environment: ,Erreur lors de l'initialisation de l'environnement WebView2 :
+WebView2 konnte nicht initialisiert werden.,WebView2 could not be initialized.,WebView2 n'a pas pu être initialisé.
+Bitte mindestens 3 Zeichen für die FPL-Suche eingeben.,Please enter at least 3 characters for the timetable search.,Veuillez saisir au moins 3 caractères pour la recherche d'horaires.
+Hinweis,Note,Remarque
+Kein Fahrplan gefunden.,No timetable found.,Aucun horaire trouvé.
+Kommentar speichern,Save comment,Enregistrer le commentaire
+Der ZUSI TCP Netzwerkserver ist NICHT eingeschaltet. Soll der ZUSI TCP Netwerkserver eingeschaltet werden?\n\nJa: TCP Server wird eingeschaltet \nNein: ZUSI wird mit Kommandozeile gestartet \nAbbrechen: Start wird abgebrochen,The ZUSI TCP network server is NOT enabled. Should the ZUSI TCP network server be enabled?\n\nYes: TCP server will be enabled\nNo: ZUSI will be started via command line\nCancel: Start will be canceled,Le serveur réseau TCP ZUSI n'est PAS activé. Faut-il l'activer ?\n\nOui : Le serveur TCP sera activé\nNon : ZUSI sera démarré via la ligne de commande\nAnnuler : Le démarrage sera annulé
+Fehler beim Starten von Zug mit TCP Fahrpultschnittstelle,Error starting train with TCP interface,Erreur lors du démarrage du train avec l'interface TCP
+Zugauswahl,Train selection,Sélection du train
+Austauschzüge verwalten,Manage replacement trains,Gérer les trains de remplacement
+Zugdatei,Train file,Fichier de train
+Zusi-Streckenkarte,Zusi route map,Carte des lignes Zusi
+Neuer Zug,New train,Nouveau train
+Beim Wenden kompletten Zug drehen,Turn entire train when reversing,Faire pivoter tout le train lors du rebroussement
+Ausgewählter Zug - Stationen,Selected train - stations,Train sélectionné - gares
+Ausgewählter Zug - Zugreihung,Selected train - consist,Train sélectionné - composition
+Abbrechen,Cancel,Annuler
+Einstellungen,Settings,Paramètres
+Start des Zuges via TCP/IP Fahrpult-Schnittstelle,Start train via TCP/IP interface,Démarrer le train via l'interface pupitre TCP/IP
+"Zum Starten eines Zuges wird die integrierte TCP/IP Fahrpult-Schnittstelle des Zusi verwendet (Hp1). Die Alternative ist der Start eines Zuges über die Kommandozeile (Hp0).","To start a train, the integrated TCP/IP interface of Zusi is used (Hp1). Alternatively, the train can be started via command line (Hp0).","Pour démarrer un train, l'interface pupitre TCP/IP intégrée de Zusi est utilisée (Hp1). L'alternative est de démarrer le train via la ligne de commande (Hp0)."
+Fahrplan Optimierung,Timetable optimization,Optimisation de l'horaire
+"Es wird ein temporärer Fahrplan mit den Zügen erstellt, die während der Fahrzeit des ausgewählten Zuges fahren. Alle anderen Züge werden aus dem Fahrplan gelöscht.","A temporary timetable is created with the selected trains (Hp1). All trains running during the selected train's journey are included, all others are removed from the timetable.","Un horaire temporaire est créé avec les trains sélectionnés (Hp1). Tous les trains circulant pendant le trajet du train sélectionné sont inclus, les autres sont supprimés de l'horaire."
+Bildfahrplan starten,Start timetable graph,Démarrer le graphique horaire
+"(Hp1) Das Programm Bildfahrplan wird mit dem Bildfahrplan des ausgewählten Zuges gestartet, wenn der Zu gestartet wird. Das Zusi Bildfahrplan Programm kann von hier heruntergeladen werden. https://zusi-tools.de/downloads.html","(Hp1) The timetable graph program is started with the selected train's timetable when the train is started. The Zusi graphical timetable program can be downloaded here: https://zusi-tools.de/downloads.html","(Hp1) Le programme graphique horaire démarre avec l'horaire du train sélectionné lors du démarrage du train. Le programme graphique horaire Zusi peut être téléchargé ici: https://zusi-tools.de/downloads.html"
+Fahrgast Informationssystem starten,Start passenger information system,Démarrer le système d'information voyageurs
+"(Hp1) Zusi Display als Fahrgast Informationssystem wird mit dem Zug gestartet, wenn der Zug ein FIS hat.","(Hp1) Zusi Display as passenger information system is started with the train if the train has a PIS.","(Hp1) Zusi Display comme système d'information voyageurs démarre avec le train si celui-ci dispose d'un SIV."
+ZusiMeter starten (Beta Test),Start ZusiMeter (beta test),Démarrer ZusiMeter (test bêta)
+"(Hp1) ZusiMeter wird mit dem Zug gestartet (wenn ZusiMeter installiert ist. Das ZusiMeter Programm kann von hier heruntergeladen werden: https://zusi-tools.de/downloads.html","(Hp1) ZusiMeter is started with the train (if ZusiMeter is installed). The ZusiMeter program can be downloaded here: https://zusi-tools.de/downloads.html","(Hp1) ZusiMeter démarre avec le train (si ZusiMeter est installé). Le programme ZusiMeter peut être téléchargé ici: https://zusi-tools.de/downloads.html"
+Übernehmen,Apply,Appliquer
+Speichern,Save,Enregistrer
+Abfahrt: {0} Uhr,Departure: {0},Abfahrt: {0} Uhr
+Fahrzeit: {0}:{1:D2}|Fahrzeit: {0} Minuten,Duration: {0}:{1:D2}|Duration: {0} Minutes,Fahrzeit: {0}:{1:D2}|Fahrzeit: {0} Minuten
+Dekozug,Decorative train,Train déco
+Start im fahrenden Zug,running train,running train
+FIS-Ansagen,FIS-Announcements,FIS-Announcements
+Zuggarnitur getauscht,train replaced, train replaced
+Optionen,Options,Options
+Die Zusi-Streckenkarte zeigt alle in Zusi vorhandenen Strecken an. Links in der Zusi Streckenkarte ermöglichen die direkte Auswahl von Fahrplänen und Zügen abhängig, von der ausgewählten Strecke oder Betriebsstelle. Hier kann die URL der ZusiStreckenkarte eingegeben werden
+Übernehmen,Accept,Acceptè
+Beenden,Quit,Quitté
+Programmeinstellungen,Program settings,Paramètres du programme
+Erzeuge alle Fahrzeugbilder neu,Regenerate all vehicle images,Regénérer toutes les images des véhicules
+"Die Zusi-Streckenkarte zeigt alle in Zusi vorhandenen Strecken an. Links in der Zusi Streckenkarte ermöglichen die direkte Auswahl von Fahrplänen und Zügen abhängig, von der ausgewählten Strecke oder Betriebsstelle. Hier kann die URL der ZusiStreckenkarte eingegeben werden","The Zusi route map shows all routes available in Zusi. On the left side of the Zusi route map, you can directly select timetables and trains depending on the selected route or location. Here you can enter the URL of the Zusi route map","La carte des lignes Zusi affiche toutes les lignes disponibles dans Zusi. Sur le côté gauche de la carte des lignes Zusi, vous pouvez sélectionner directement les horaires et les trains en fonction de la ligne ou de l'emplacement sélectionné. Ici, vous pouvez entrer l'URL de la carte des lignes Zusi"
+FIS (Fahrgast Informationssystem),PIS (Passenger Information System),SIV (Système d'information voyageurs)
+"Die Zusi-Datenbank ermöglicht die Auswahl von Zügen abhängig von vielfältigen Kriterien. Hier kann die URL der ZusiDatenbank eingegeben werden:","The Zusi database allows the selection of trains based on various criteria. Here you can enter the URL of the Zusi database:", "La base de données Zusi permet la sélection de trains en fonction de divers critères. Ici, vous pouvez entrer l'URL de la base de données Zusi :"
+"Für Züge, die ein FIS haben, kann in den Start-Optionen eingestellt werden, daß das FIS automatisch gestartet wird. Hier kann der Pfad zum ZusiDisplay-Programm und der Zusi-Display Parameter eingegeben werden:","For trains that have a PIS, it can be set in the start options that the PIS is started automatically. Here you can enter the path to the ZusiDisplay program and the ZusiDisplay parameters:", "Pour les trains équipés d'un SIV, il est possible de configurer dans les options de démarrage le démarrage automatique du SIV. Ici, vous pouvez entrer le chemin vers le programme ZusiDisplay et les paramètres ZusiDisplay :"
+"Hier kann der Pfad zum ZusiMeter-Programm eingegeben werden:","Here you can enter the path to the ZusiMeter program:", "Ici, vous pouvez entrer le chemin vers le programme ZusiMeter :"
+"ZusiMeter ist ein Programm, das verschiedene Fahrzeugdaten während der Fahrt anzeigt. ZusiMeter kann von hier heruntergeladen werden: https://zusi-tools.de/downloads.html","ZusiMeter is a program that displays various vehicle data during the drive. ZusiMeter can be downloaded here: https://zusi-tools.de/downloads.html","ZusiMeter est un programme qui affiche diverses données du véhicule pendant la conduite. ZusiMeter peut être téléchargé ici : https://zusi-tools.de/downloads.html"
+Sprache,Language,Langue
+Bildfahrplan,Graphical timetable,Graphique horaire
+Bildfahrplan Button in der Statusleiste anzeigen,Show graphical timetable button in status bar,Afficher le bouton du graphique horaire dans la barre d'état
+Hier kann der Pfad zum Bildfahrplanprogramm eingegeben werden:,Here you can enter the path to the graphical timetable program:,Ici, vous pouvez entrer le chemin vers le programme graphique horaire :
+Zusi-Display Parameter,Zusi-Display parameters,Paramètres Zusi-Display
+ZusiMeter Parameter,ZusiMeter parameters,Paramètres ZusiMeter
+Hier kann der Pfad zum ZusiMeter-Programm eingegeben werden:,Here you can enter the path to the ZusiMeter program:,Ici, vous pouvez entrer le chemin vers le programme ZusiMeter :
+Sprache (Änderung nach Neustart),Language (change after restart),Langue (changement après redémarrage)
+ZusiStart_QuickDocu_de.html,ZusiStart_QuickDocu_en.html,ZusiStart_QuickDocu_fr.html
+Zugnummer oder Stationsname,Train number or station name,Numéro de train ou nom de la gare
+Fahrplan Dokumentation,Timetable documentation,Documentation des horaires
+Die Zusi Streckenkarte - Streckenauswahl durch <Stern>,The Zusi route map - route selection by <star>,La carte des lignes Zusi - sélection de la ligne par <étoile>
+Zusi Datenbank für komplexe Zugsuchen,Zusi database for complex train searches,Base de données Zusi pour des recherches de trains complexes
+Buchfahrplan des ausgewählten Zuges,Working timetable of the selected train,Livre de route du train sélectionné
+Handbuch der Langsamfahrstellen,Manual of temporary route restrictions,Manuel des restrictions temporaires de la ligne
+Ersatzfahrplanhefte dienen beim Vorbild als Rückfallebene für EBuLa,Replacement timetable booklets serve as a fallback for EBuLa in the prototype,Les livrets d'horaires de remplacement servent de solution de repli pour EBuLa dans le prototype
+Örtliche Richtlinien / Angaben für das Streckenbuch für Zusi 3,Local regulations / information for the route book for Zusi 3,Réglementations locales / informations pour le livre de route pour Zusi 3
+Das Zusi-Start Handbuch,The ZusiStart manual,Le manuel ZusiStart
+Liste der Favoriten zum direkten Start in Zusi,List of favorites for direct start in Zusi,Liste des favoris pour un démarrage direct dans Zusi
+Strecken,Routes,Lignes
+Liste aller im offiziellen und im privaten Verzeichnis gefundener Strecken,List of all routes found in the official and private directory,Liste de toutes les lignes trouvées dans le répertoire officiel et privé
+Zugsuche,Train search,Recherche de train
+Suche nach Zugnummer oder Stationsnamen in allen Strecken,Search by train number or station name in all routes,Recherche par numéro de train ou nom de gare dans toutes les lignes
+Einen Zug anhand der Zugnummer oder Betriebsstelle suchen,Search for a train by train number or location,Rechercher un train par numéro de train ou emplacement
+Im Suchfeld kann amgegeben werden: die Zugnummer mit oder ohne Gattung (z.B. ERB1234 oder 1234) oder der Name einer Betriebsstelle (z.B. HAGEN oder RATHAUS).,In the search field you can specify: the train number with or without type (e.g. ERB1234 or 1234) or the name of a location (e.g. HAGEN or RATHAUS).,Dans le champ de recherche, vous pouvez spécifier : le numéro de train avec ou sans type (par exemple ERB1234 ou 1234) ou le nom d'un emplacement (par exemple HAGEN ou RATHAUS).
+"Es werden allen Betriebsstellen ausgesucht, die den Namen enthalten. Leerzeichen können weggelassen werden und werden ignoriert. Es wird nicht zwischen Groß- und Kleinschreibung unterschieden.","All locations containing the name are selected. Spaces can be omitted and are ignored. Case is not distinguished.","Toutes les emplacements contenant le nom sont sélectionnés. Les espaces peuvent être omis et sont ignorés. La casse n'est pas distinguée."
+Fahrzeugsuche,Vehicle search,Recherche de véhicule
+Suche nach Fahrzeugtyp in allen Strecken,Search by vehicle type in all routes,Recherche par type de véhicule dans toutes les lignes
+Dieser Fehler lässt sich nicht gerade biegen,This error cannot be straightened out,Cette erreur ne peut pas être redressée
+Die Timetable kann nicht gespeichert werden,The timetable cannot be saved,L'horaire ne peut pas être enregistré
+Die Datei\n{0}\nist beschädigt und kann nicht verwendet werden.\n\nInfo: {1},The file\n{0}\nis corrupted and cannot be used.\n\nInfo: {1},Le fichier\n{0}\nest corrompu et ne peut pas être utilisé.\n\nInfo : {1}
+Fehler in Zugdefinition - Zugnummer: {0},Error in train definition - train number: {0},Erreur dans la définition du train - numéro de train : {0}
+\nBitte in den Optionen korrigieren.,\nPlease correct in the options.,\nVeuillez corriger dans les options.
+Fehler beim Öffnen der URL: {0},Error opening URL: {0},Erreur lors de l'ouverture de l'URL : {0}
+Fehler beim Öffnen der Dokumentation,Error opening documentation,Erreur lors de l'ouverture de la documentation
+WebView2 konnte nicht initialisiert werden.,WebView2 could not be initialized.,WebView2 n'a pas pu être initialisé.
+Fehler,Error,Erreur
+Bitte mindestens 3 Zeichen für die FPL-Suche eingeben.,Please enter at least 3 characters for the timetable search.,Veuillez saisir au moins 3 caractères pour la recherche d'horaires.
+Hinweis,Note,Remarque
+Kein Fahrplan gefunden.,No timetable found.,Aucun horaire trouvé.
+Der ZUSI TCP Netzwerkserver ist NICHT eingeschaltet. Soll der ZUSI TCP Netwerkserver eingeschaltet werden?\n\nJa: TCP Server wird eingeschaltet \nNein: ZUSI wird mit Kommandozeile gestartet \nAbbrechen: Start wird abgebrochen,The ZUSI TCP network server is NOT enabled. Should the ZUSI TCP network server be enabled?\n\nYes: TCP server will be enabled\nNo: ZUSI will be started via command line\nCancel: Start will be canceled,Le serveur réseau TCP ZUSI n'est PAS activé. Faut-il l'activer ?\n\nOui : Le serveur TCP sera activé\nNon : ZUSI sera démarré via la ligne de commande\nAnnuler : Le démarrage sera annulé
+Fehler beim Starten von Zug mit TCP Fahrpultschnittstelle,Error starting train with TCP interface,Erreur lors du démarrage du train avec l'interface TCP
+Zugdatei,Train file,Fichier de train
+ZusiStart wird bereits ausgeführt.,ZusiStart is already running.,ZusiStart est déjà en cours d'exécution.
+Mehrere Instanzen von ZusiStart können nicht gleichzeitig ausgeführt werden.,Multiple instances of ZusiStart cannot be run at the same time.,Plusieurs instances de ZusiStart ne peuvent pas être exécutées en même temps.
+ZusiStart_Docu_Deutsch.pdf,ZusiStart_Docu_English.pdf,ZusiStart_Docu_Français.pdf
+Filtern nach Zugnummer oder Stationsnamen,Filter by train number or station name,Filtrer par numéro de train ou nom de gare
+Zu Favoriten hinzufügen,Add to favorites,Ajouter aux favoris
+Aus Favoriten entfernen,Remove from favorites,Retirer des favoris
+" {0} Personen-|_, {0} Güter[zug:züge]|_in {0} Fahr[plan:plänen]"," {0} passenger-|_, {0} freight[train:trains]|_in {0} timetabl[e:es]", " {0} voyageur-|_, {0} marchandises[train:trains]|_dans {0} horair[e:es]"

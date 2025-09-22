@@ -12,21 +12,13 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="OptimiseSchedule" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1</Value>
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="Use_LS3_Renderer_DLL" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="ForbidAlternativePicLibSources" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="FoldersToExclude" Type="System.Collections.Specialized.StringCollection" Scope="Application">
-      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
-&lt;ArrayOfString xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
-  &lt;string&gt;NeueModule&lt;/string&gt;
-  &lt;string&gt;Test&lt;/string&gt;
-  &lt;string&gt;Deutschland\Test&lt;/string&gt;
-&lt;/ArrayOfString&gt;</Value>
     </Setting>
     <Setting Name="WindowTop" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
@@ -42,6 +34,17 @@
     </Setting>
     <Setting Name="test" Type="System.String" Scope="User">
       <Value Profile="(Default)">""</Value>
+    </Setting>
+    <Setting Name="FoldersToExclude" Type="System.Collections.Specialized.StringCollection" Scope="Application">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+  &lt;string&gt;NeueModule&lt;/string&gt;
+  &lt;string&gt;Test&lt;/string&gt;
+  &lt;string&gt;Deutschland\Test&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
+    <Setting Name="Language" Type="System.String" Scope="User">
+      <Value Profile="(Default)">"auto"</Value>
     </Setting>
   </Settings>
 </SettingsFile>

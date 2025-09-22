@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ZusiStart.Data;
+using System.Globalization;
 
 namespace ZusiStart.Dialogs
 {
@@ -26,26 +27,53 @@ namespace ZusiStart.Dialogs
     public OptionsDlg()
     {
       InitializeComponent();
+      // Sprache beim Öffnen setzen
+      string lang = Properties.Settings.Default.Language;
+      if (!string.IsNullOrEmpty(lang) && lang != "auto")
+      {
+          DataManager.CurrentLanguage = lang;
+      }
+      else
+      {
+        // Automatische Erkennung, z. B. anhand CultureInfo
+        DataManager.CurrentLanguage = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+        DataManager.CurrentLanguage = DataManager.CurrentLanguage switch
+        {
+          "de" => "de",
+          "en" => "en",
+          "fr" => "fr",
+          _ => "en",
+        };
+      }
       GetOptions();
-
     }
 
     private void SaveOptions_Click(object sender, RoutedEventArgs e)
     {
+      // Sprache speichern
+      if (ComboBox_Language.SelectedItem is ComboBoxItem item)
+      {
+        Properties.Settings.Default.Language = (string)item.Tag;
+      }
+      Properties.Settings.Default.Save();
+
       var local_options = new Options
       {
-        Show_ZSK = CheckBox_ZSK.IsChecked ?? false,
-        Show_ZDB = CheckBox_ZDB.IsChecked ?? false,
+        Show_ZSK = true,// CheckBox_ZSK.IsChecked ?? false,
+        Show_ZDB = true, //CheckBox_ZDB.IsChecked ?? false,
         Show_Bfpl = CheckBox_Bfpl.IsChecked ?? false,
         ZSK_Url = TextBox_ZSK_URL.Text,
         ZDB_Url = TextBox_ZDB_URL.Text,
         Bfpl_Exe = TextBox_Bfpl_Exe.Text,
-        Start_FIS = CheckBox_Start_FIS.IsChecked ?? false,
+        Start_FIS = true,//CheckBox_Start_FIS.IsChecked ?? false,
         ZusiDisplay_Exe = TextBox_ZusiDisplay_Exe.Text,
         ZusiDisplay_Param = TextBox_ZusiDisplay_Param.Text,
-        Start_ZusiMeter = CheckBox_Start_ZusiMeter.IsChecked ?? false,
+        Start_ZusiMeter = true, //CheckBox_Start_ZusiMeter.IsChecked ?? false,
         ZusiMeter_Exe = TextBox_ZusiMeter_Exe.Text,
         ZusiMeter_Param = TextBox_ZusiMeter_Param.Text,
+        New_RenderEngine = CheckBox_New_RenderEngine.IsChecked ?? false,
+        Blickwinkel_value = TextBox_Blickwinkel.Text,
+        DecoTrain_Separate = CheckBox_DecoTrain_Separate.IsChecked ?? false,
       };
       DataManager.Instance.options = local_options;
       DataManager.Instance.main_window.ZSKButtonVisibility = local_options.Show_ZSK? Visibility.Visible: Visibility.Collapsed;
@@ -55,24 +83,32 @@ namespace ZusiStart.Dialogs
 
     }
 
+    private void UpdateLanguageComboBoxTexts()
+    {
+      ComboBoxItem_Auto.Content = LocalizationManager.Translate("Automatisch");
+      ComboBoxItem_De.Content = LocalizationManager.Translate("Deutsch");
+      ComboBoxItem_En.Content = LocalizationManager.Translate("Englisch");
+      ComboBoxItem_Fr.Content = LocalizationManager.Translate("Französisch");
+    }
+
     private void GetOptions()
     {
       var local_options = DataManager.Instance.options;
 
-      CheckBox_ZSK.IsChecked = local_options.Show_ZSK;
+      //CheckBox_ZSK.IsChecked = local_options.Show_ZSK;
       if (!string.IsNullOrEmpty(local_options.ZSK_Url))
         TextBox_ZSK_URL.Text = local_options.ZSK_Url;
       else
       {
-        TextBox_ZSK_URL.Text = "https://zusi-sk.eu/";
+        TextBox_ZSK_URL.Text = "https://www.zusi-sk.eu/";
       }
 
-      CheckBox_ZDB.IsChecked = local_options.Show_ZDB;
+      //CheckBox_ZDB.IsChecked = local_options.Show_ZDB;
       if (!string.IsNullOrEmpty(local_options.ZDB_Url))
         TextBox_ZDB_URL.Text = local_options.ZDB_Url;
       else
       {
-        TextBox_ZDB_URL.Text = "https://www.zusidatenbank.de/?zusistart";
+        TextBox_ZDB_URL.Text = "http://zusidatenbank.pilborough.de/?zusistart";
       }
 
       CheckBox_Bfpl.IsChecked = local_options.Show_Bfpl;
@@ -90,7 +126,7 @@ namespace ZusiStart.Dialogs
       //{
       //  TextBox_Zusi_Exe.Text = "";
       //}
-      CheckBox_Start_FIS.IsChecked = local_options.Start_FIS;
+      //CheckBox_Start_FIS.IsChecked = local_options.Start_FIS;
       if (!string.IsNullOrEmpty(local_options.ZusiDisplay_Exe))
         TextBox_ZusiDisplay_Exe.Text = local_options.ZusiDisplay_Exe;
       else
@@ -103,7 +139,7 @@ namespace ZusiStart.Dialogs
       {
         TextBox_ZusiDisplay_Param.Text = DataManager.Instance.ZusiDisplayStartParam;
       }
-      CheckBox_Start_ZusiMeter.IsChecked = local_options.Start_ZusiMeter;
+      //CheckBox_Start_ZusiMeter.IsChecked = local_options.Start_ZusiMeter;
       if (!string.IsNullOrEmpty(local_options.ZusiMeter_Exe))
         TextBox_ZusiMeter_Exe.Text = local_options.ZusiMeter_Exe;
       else
@@ -116,6 +152,23 @@ namespace ZusiStart.Dialogs
       {
         TextBox_ZusiMeter_Param.Text = DataManager.Instance.ZusiMeterStartParam;
       }
+
+      CheckBox_New_RenderEngine.IsChecked = local_options.New_RenderEngine;
+      TextBox_Blickwinkel.Text = local_options.Blickwinkel_value;
+      // Sprache im Dialog auf aktuelle Auswahl setzen
+
+      CheckBox_DecoTrain_Separate.IsChecked = local_options.DecoTrain_Separate;
+
+      string currentLang = DataManager.CurrentLanguage ?? "auto";
+      foreach (ComboBoxItem item in ComboBox_Language.Items)
+      {
+        if ((string)item.Tag == currentLang)
+        {
+          ComboBox_Language.SelectedItem = item;
+          break;
+        }
+      }
+      UpdateLanguageComboBoxTexts();
     }
   }
 }

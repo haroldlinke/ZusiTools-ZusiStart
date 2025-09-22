@@ -1,0 +1,601 @@
+﻿using log4net;
+using Sovoma.WPF;// Utilities;
+using Sovoma;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Media;
+using ZusiKlassenLib.Buchfahrplan;
+using ZusiKlassenLib.Common;
+using ZusiKlassenLib.Fahrplan;
+using ZusiKlassenLib.Vehicle;
+using ZusiStart.Miscellaneous;
+using System.IO;
+//using System.Drawing;
+using System.Drawing.Imaging;
+using System.Windows.Media.Imaging;
+using System.Xml.Linq;
+using Microsoft.VisualBasic.ApplicationServices;
+using System.Diagnostics;
+using System.Numerics;
+using System.Windows.Media.Media3D;
+using ZusiStart.Dialogs;
+using Microsoft.VisualBasic.Logging;
+using ZusiStart.Data;
+using static System.Net.Mime.MediaTypeNames;
+using ZusiKlassenLib;
+
+namespace ZusiStart.Controls
+{
+  //=========================================================================
+  /// <summary>
+  /// </summary>
+  [TemplatePart(Name = "PART_PicsScroller", Type = typeof(ScrollViewer))]
+  [TemplatePart(Name = "PART_PicsPanel", Type = typeof(StackPanel))]
+  [TemplatePart(Name = "SMALL_PicsPanel", Type = typeof(StackPanel))]
+
+  public class TimeTableInfoControl2 : Control
+  {
+    private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+    private ScrollViewer _picsScroller;
+    private StackPanel _picsPanel;
+    //private StackPanel _smallpicsPanel;
+
+
+    //private static readonly OverhangData _defaultOverhangData = new(0, 0);
+    private BitmapImage _nopic;
+    //private Dictionary<string, OverhangData> _overhangData = new Dictionary<string, OverhangData>();
+
+    //---------------------------------------------------------------------
+    private static readonly DependencyPropertyKey _bremsstellungKey = DependencyProperty.RegisterReadOnly(
+        "Bremsstellung",
+        typeof(Bremsstellung),
+        typeof(TimeTableInfoControl2),
+        new PropertyMetadata(Bremsstellung.Unknown));
+    public static readonly DependencyProperty BremsstellungProperty = _bremsstellungKey.DependencyProperty;
+    public Bremsstellung Bremsstellung
+    {
+      get { return (Bremsstellung)GetValue(BremsstellungProperty); }
+      private set { SetValue(_bremsstellungKey, value); }
+    }
+
+    //---------------------------------------------------------------------
+    public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
+        "CornerRadius",
+        typeof(CornerRadius),
+        typeof(TimeTableInfoControl2),
+        new PropertyMetadata(new CornerRadius(0)));
+    [Category("Darstellung")]
+    public CornerRadius CornerRadius
+    {
+      get { return (CornerRadius)GetValue(CornerRadiusProperty); }
+      set { SetValue(CornerRadiusProperty, value); }
+    }
+
+    //---------------------------------------------------------------------
+    public static readonly DependencyProperty DepartureProperty = DependencyProperty.Register(
+        "Departure",
+        typeof(DateTime?),
+        typeof(TimeTableInfoControl2),
+        new PropertyMetadata(null));
+    public DateTime? Departure
+    {
+      get { return (DateTime?)GetValue(DepartureProperty); }
+      set { SetValue(DepartureProperty, value); }
+    }
+
+    //---------------------------------------------------------------------
+    public static readonly DependencyProperty DurationProperty = DependencyProperty.Register(
+        "Duration",
+        typeof(TimeSpan?),
+        typeof(TimeTableInfoControl2),
+        new PropertyMetadata(null));
+    public TimeSpan? Duration
+    {
+      get { return (TimeSpan?)GetValue(DurationProperty); }
+      set { SetValue(DurationProperty, value); }
+    }
+
+    //---------------------------------------------------------------------
+    private static readonly DependencyPropertyKey _isDecoTrainKey = DependencyProperty.RegisterReadOnly(
+        "IsDecoTrain",
+        typeof(bool),
+        typeof(TimeTableInfoControl2),
+        new PropertyMetadata(false));
+    public static readonly DependencyProperty IsDecoTrainProperty = _isDecoTrainKey.DependencyProperty;
+    public bool IsDecoTrain
+    {
+      get { return (bool)GetValue(IsDecoTrainProperty); }
+      private set { SetValue(_isDecoTrainKey, value); }
+    }
+
+    //---------------------------------------------------------------------
+    private static readonly DependencyPropertyKey _isRunningTrainKey = DependencyProperty.RegisterReadOnly(
+        "IsRunningTrain",
+        typeof(bool),
+        typeof(TimeTableInfoControl2),
+        new PropertyMetadata(false));
+    public static readonly DependencyProperty IsRunningTrainProperty = _isRunningTrainKey.DependencyProperty;
+    public bool IsRunningTrain
+    {
+      get { return (bool)GetValue(IsRunningTrainProperty); }
+      private set { SetValue(_isRunningTrainKey, value); }
+    }
+
+    //---------------------------------------------------------------------
+    private static readonly DependencyPropertyKey _isFISavailableKey = DependencyProperty.RegisterReadOnly(
+        "IsFISavailable",
+        typeof(bool),
+        typeof(TimeTableInfoControl2),
+        new PropertyMetadata(false));
+    public static readonly DependencyProperty IsFISavailableProperty = _isFISavailableKey.DependencyProperty;
+    public bool IsFISavailable
+    {
+      get { return (bool)GetValue(IsFISavailableProperty); }
+      private set { SetValue(_isFISavailableKey, value); }
+    }
+
+    //---------------------------------------------------------------------
+    private static readonly DependencyPropertyKey _isTrainReplacedKey = DependencyProperty.RegisterReadOnly(
+        "IsTrainReplaced",
+        typeof(bool),
+        typeof(TimeTableInfoControl2),
+        new PropertyMetadata(false));
+    public static readonly DependencyProperty IsTrainReplacedProperty = _isTrainReplacedKey.DependencyProperty;
+    public bool IsTrainReplaced
+    {
+      get { return (bool)GetValue(IsTrainReplacedProperty); }
+      private set { SetValue(_isTrainReplacedKey, value); }
+    }
+
+    //---------------------------------------------------------------------
+    public static readonly DependencyProperty KindProperty = DependencyProperty.Register(
+        "Kind",
+        typeof(string),
+        typeof(TimeTableInfoControl2),
+        new PropertyMetadata(null));
+    public string Kind
+    {
+      get { return (string)GetValue(KindProperty); }
+      set { SetValue(KindProperty, value); }
+    }
+
+    //---------------------------------------------------------------------
+    public static readonly DependencyProperty LengthProperty = DependencyProperty.Register(
+        "Length",
+        typeof(double),
+        typeof(TimeTableInfoControl2),
+        new PropertyMetadata(0.0));
+    public double Length
+    {
+      get { return (double)GetValue(LengthProperty); }
+      set { SetValue(LengthProperty, value); }
+    }
+
+    //---------------------------------------------------------------------
+    public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(
+        "Number",
+        typeof(string),
+        typeof(TimeTableInfoControl2),
+        new PropertyMetadata(null));
+    public string Number
+    {
+      get { return (string)GetValue(NumberProperty); }
+      set { SetValue(NumberProperty, value); }
+    }
+
+    //---------------------------------------------------------------------
+    public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(
+        "Source",
+        typeof(Zug),
+        typeof(TimeTableInfoControl2),
+        new PropertyMetadata(null, OnSourceChanged));
+    [Category("Allgemein")]
+    public Zug Source
+    {
+      get { return (Zug)GetValue(SourceProperty); }
+      set { SetValue(SourceProperty, value); }
+    }
+
+    //---------------------------------------------------------------------
+    public static readonly DependencyProperty TimeTableNameProperty = DependencyProperty.Register(
+        "TimeTableName",
+        typeof(string),
+        typeof(TimeTableInfoControl2),
+        new PropertyMetadata(null));
+    public string TimeTableName
+    {
+      get { return (string)GetValue(TimeTableNameProperty); }
+      set { SetValue(TimeTableNameProperty, value); }
+    }
+
+    //---------------------------------------------------------------------
+    public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(
+        "Title",
+        typeof(string),
+        typeof(TimeTableInfoControl2),
+        new PropertyMetadata(null));
+    public string Title
+    {
+      get { return (string)GetValue(TitleProperty); }
+      set { SetValue(TitleProperty, value); }
+    }
+
+    //---------------------------------------------------------------------
+    public static readonly DependencyProperty TrainLengthProperty = DependencyProperty.Register(
+        "TrainLength",
+        typeof(double),
+        typeof(TimeTableInfoControl2),
+        new PropertyMetadata(0.0));
+    public double TrainLength
+    {
+      get { return (double)GetValue(TrainLengthProperty); }
+      set { SetValue(TrainLengthProperty, value); }
+    }
+
+    //---------------------------------------------------------------------
+    public static readonly DependencyProperty TrainMassProperty = DependencyProperty.Register(
+        "TrainMass",
+        typeof(double),
+        typeof(TimeTableInfoControl2),
+        new PropertyMetadata(0.0));
+    public double TrainMass
+    {
+      get { return (double)GetValue(TrainMassProperty); }
+      set { SetValue(TrainMassProperty, value); }
+    }
+
+    //---------------------------------------------------------------------
+    public static readonly DependencyProperty UseCounterProperty = DependencyProperty.Register(
+        "UseCounter",
+        typeof(int),
+        typeof(TimeTableInfoControl2),
+        new PropertyMetadata(0));
+    public int UseCounter
+    {
+      get { return (int)GetValue(UseCounterProperty); }
+      set { SetValue(UseCounterProperty, value); }
+    }
+
+    //---------------------------------------------------------------------
+    static TimeTableInfoControl2()
+    {
+      DefaultStyleKeyProperty.OverrideMetadata(typeof(TimeTableInfoControl2), new FrameworkPropertyMetadata(typeof(TimeTableInfoControl2)));
+    }
+
+    //---------------------------------------------------------------------
+    public override void OnApplyTemplate()
+    {
+      base.OnApplyTemplate();
+
+      _picsScroller = Template?.FindMandatoryTemplatePart<ScrollViewer>("PART_PicsScroller", this);
+      _picsPanel = Template?.FindMandatoryTemplatePart<StackPanel>("PART_PicsPanel", this);
+      //_smallpicsPanel = Template?.FindMandatoryTemplatePart<StackPanel>("SMALL_PicsPanel", this);
+
+
+      if (Source != null)
+      {
+        AssembleTrain(Source);
+      }
+    }
+
+    //---------------------------------------------------------------------
+    private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+      TimeTableInfoControl2 t = d as TimeTableInfoControl2;
+      t?.OnSourceChanged(e.NewValue as Zug);
+    }
+
+    //---------------------------------------------------------------------
+    private void OnSourceChanged(Zug zug)
+    {
+      Length = 0;
+      Departure = null;
+      Duration = null;
+
+      if (zug == null)
+      {
+        Title = null;
+        Kind = null;
+        Number = null;
+        IsRunningTrain = false;
+        IsFISavailable = false;
+        if (Properties.Settings.Default.BremsstellungAnzeigen)
+        {
+          Bremsstellung = Bremsstellung.G;
+        }
+      }
+      else
+      {
+        Title = zug.Zuglauf;
+        Kind = zug.Gattung;
+        Number = zug.Nummer;
+        IsDecoTrain = zug.IsDecoTrain;
+        IsRunningTrain = zug.StartSpeed != 0;
+        IsFISavailable = DataManager.Instance.check_for_FIS(zug);
+        if (DataManager.Instance.CurrentTrainItem != null)
+        {
+          IsTrainReplaced = DataManager.Instance.CurrentTrainItem.IsTrainReplaced;
+        }
+        else
+        {
+          IsTrainReplaced = false;
+        }
+        
+        if (Properties.Settings.Default.BremsstellungAnzeigen)
+        {
+          Bremsstellung = zug.Bremsstellung;
+        }
+
+        Buchfahrplan bf = zug.Buchfahrplan;
+        if (bf != null)
+        {
+          FplZeile zz = bf.FplZeilen.FirstOrDefault();
+          double startLaufweg = zz != null ? zz.Laufweg : 0;
+          zz = bf.FplZeilen.LastOrDefault();
+          Length = zz != null ? (zz.Laufweg - startLaufweg) * 0.001 : 0;
+
+          Departure = bf.GetStartTime();
+          if (Departure != null)
+          {
+            DateTime? end = bf.GetEndTime();
+            if (end != null)
+            {
+              TimeSpan ts = end.Value - Departure.Value;
+              Duration = ts.Ticks < 0 ? ts.Negate() : ts;
+            }
+          }
+        }
+        else
+        {
+          Departure = zug.StartTime;
+          Duration = zug.JourneyTime;
+          Length = double.NaN;
+        }
+
+        try
+        {
+          AssembleTrain(zug);
+          DataManager.Instance.main_window.SearchBuchfahrplan();
+
+          DataPathType dtp = DataPathType.Unknown;
+          string orgRelativeTimetableName = Zusi.GetRelativePathOf(zug.GetDocument().Filename, ref dtp);
+          orgRelativeTimetableName = orgRelativeTimetableName.Replace("\\", "%5C");
+          //string url = "http://zusidatenbank.pilborough.de/fahrplanzug/" + orgRelativeTimetableName;
+
+
+          //DataManager.Instance.webview_ZDB.Source = new Uri(url);
+        }
+        catch (Exception ex)
+        {
+          Log.Error(ex.ToString());
+        }
+      }
+    }
+
+    //---------------------------------------------------------------------
+    private void AssembleTrain(Zug zug)
+    {
+      if (true)
+      { 
+        AssembleTrain3(zug);
+        return;
+      }
+
+      //PictureManager pictureManager = new PictureManager();
+
+      //if (_picsPanel == null || _smallpicsPanel == null)
+      //{
+      //  return;
+      //}
+
+      //DummyWindow dummywindow = new DummyWindow();
+
+      ////dummywindow.Title = "Test";
+      //dummywindow.Show();
+
+      //_picsPanel.Children.Clear();
+      //_smallpicsPanel.Children.Clear();
+
+      //ZusiDocumentBase doc = zug.GetDocument();
+      //Log.DebugFormat("assemble train: {0}", doc.Filename);
+
+      //ZugReihung zr = new(zug);
+      //zr.BuildTrain();
+
+      //TrainLength = 0; // Math.Round(zr.Length, 0);
+      //TrainMass = Math.Round(zr.Mass * 0.001);
+      ////string cachepath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\ZusiStart\\cache";
+      //string cachepath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), DataManager.localfoldername, "cache");
+      ////if (Properties.Settings.Default.Use_LS3_Renderer_DLL == 1)
+      ////{
+      ////  cachepath = cachepath + "1";
+      ////}
+      //DataManager.Instance.cachepath = cachepath;
+
+      //if (!System.IO.Directory.Exists(cachepath))
+      //{
+      //  try
+      //  {
+      //    System.IO.Directory.CreateDirectory(cachepath);
+      //    Log.Debug("Cache Directory created:" + cachepath);
+      //  }
+      //  catch
+      //  {
+      //    Log.Debug("ERROR: Cache Directory cannot be created:" + cachepath);
+      //  }
+      //}
+
+      //LinkedListNode<FahrzeugInfo> p = zr.First;
+      //int Fahrzeug_num = 0;
+
+      //bool background1 = false;
+
+      //SolidColorBrush myBrush1 = new SolidColorBrush(Colors.Blue);
+      //myBrush1.Opacity = 0.5; // Set to 50% opacity
+      //SolidColorBrush myBrush2 = new SolidColorBrush(Colors.Red);
+      //myBrush2.Opacity = 0.5; // Set to 50% opacity
+      ////dummywindow.VehicleProgressBar.Value = 0;
+
+      //while (p != null)
+      //{
+      //  Fahrzeug fzg = p.Value.Fahrzeug;
+      //  FahrzeugVariante fv = fzg?.GetVariante(p.Value.IDHaupt, p.Value.IDNeben, p.Value.VariantenIndex) ?? null;
+      //  if (fv != null)
+      //  {
+      //    Grid grd = new();
+      //    Grid smallgrd = new();
+      //    FahrzeugGrunddaten fzggd = fv.Grunddaten;
+
+      //    bool gedreht = p.Value.Gedreht;
+      //    //dummywindow.VehicleProgressBar.Value = Fahrzeug_num*100/zr.Count;
+      //    //dummywindow.percentageText.Text = (Fahrzeug_num * 100 / zr.Count).ToString();
+      //    //dummywindow.UpdateLayout();
+      //    //DataManager.Instance.dataLoaderWindow.pbLoaded.Value = Fahrzeug_num/zr.Count * 100;
+      //    //DataManager.Instance.dataLoaderWindow.UpdateLayout();
+      //    Fahrzeug_num++;
+      //    BitmapImage imagesource = pictureManager.getPicture(fzg, fv, gedreht, cachepath, dummywindow);
+
+      //    if (imagesource != null)
+      //    {
+      //      System.Windows.Controls.Image image = new() { Source = imagesource };
+      //      grd.Children.Add(image);
+      //      System.Windows.Controls.Image smallimage = new() { Source = imagesource, Height=20, Stretch= System.Windows.Media.Stretch.Uniform };
+      //      smallgrd.Children.Add(smallimage);
+
+      //      //double length_factor = 16.55 / 100; //empirisch ermittelt bei erzeugetr Bildhöhe 100
+      //      //double front_margin = 0.0;
+      //      //double rear_margin = 0.0;
+      //      //int height = (int)Math.Round(imagesource.Height)*3/2; //imagesource.PixelHeight;
+      //      //double width_d = (int)Math.Round(imagesource.Width) * 3/2; //imagesource.PixelWidth;
+      //      //int width = (int)Math.Round(width_d);
+      //      //int vehiclewidth = (int)Math.Round(fzggd.Laenge * length_factor * height);
+
+      //      //double front_gap = height / 2;
+      //      //double rear_gap = width - (front_gap + vehiclewidth);
+      //      //if (rear_gap < 0)
+      //      //{
+      //      //  rear_gap = 0;
+      //      //}
+
+      //      //double margin_factor = -0.65;
+
+      //      //if (p.Value.Gedreht)
+      //      //{
+      //      //  front_margin = margin_factor * front_gap;
+      //      //  rear_margin = margin_factor * rear_gap;
+      //      //}
+      //      //else // fahrzeug ist gedreht, vertausche front und rear margin
+      //      //{
+      //      //  rear_margin = margin_factor * front_gap;
+      //      //  front_margin = margin_factor * rear_gap;
+      //      //}
+
+      //      //grd.Margin = new Thickness(front_margin, 0, rear_margin, 12);
+
+      //      grd.Margin = pictureManager.Calculate_Margin(imagesource, fzggd.Laenge, p.Value.Gedreht);
+            
+      //      double factor = 20.0 / imagesource.Height;
+      //      smallgrd.Margin = new Thickness(grd.Margin.Left * factor, grd.Margin.Top * factor, grd.Margin.Right * factor, grd.Margin.Bottom * factor);
+
+      //      //grd.ShowGridLines = true;
+      //      //if (background1)
+      //      //  grd.Background = myBrush1;
+      //      //else
+      //      //  grd.Background = myBrush2;
+      //      background1 = !background1;
+      //      string br = fv.BR.StartsWithNumber() ? $"BR {fv.BR}" : fv.BR;
+      //      if (p.Value.Gedreht)
+      //        br = br + "-r";
+      //      double front_margin = grd.Margin.Left;
+      //      double rear_margin = grd.Margin.Right;
+      //      // fzg.Name
+      //      // *test* br = string.Format("{0}-{1}-{2} ({3}-{4})", fzg.Name, fv.IDHaupt, fv.IDNeben, (int)Math.Round(front_margin,0), (int)Math.Round(rear_margin,0)).ToLower();
+      //      TextBlock txt = new()
+      //      {
+      //        Text = br,
+      //        Foreground = Brushes.Black,
+      //        //Background = Brushes.Gray,
+      //        FontStyle = FontStyles.Italic,
+      //        // *test* FontSize = 8,
+      //        HorizontalAlignment = HorizontalAlignment.Center,
+      //        VerticalAlignment = VerticalAlignment.Bottom,
+      //        Margin = new Thickness(-front_margin, 0, -rear_margin, -12)
+      //      };
+
+      //      Panel.SetZIndex(txt, 7);
+      //      grd.Children.Add(txt);
+
+      //      _picsPanel.Children.Insert(0, grd);
+      //      _smallpicsPanel.Children.Insert(0, smallgrd);
+      //    }
+      //  }
+      //  p = p.Next;
+      //}
+      //TrainLength = Math.Round(zr.Length, 0);
+      //dummywindow.Close();
+
+      //_picsScroller.ScrollToRightEnd();
+    }
+
+    //---------------------------------------------------------------------
+    private void AssembleTrain3(Zug zug)
+    {
+      if (_picsPanel == null) // || _smallpicsPanel == null)
+      {
+        return;
+      }
+
+      DummyWindow dummywindow = new DummyWindow();
+
+      //dummywindow.Title = "Test";
+      dummywindow.Show();
+
+      _picsPanel.Children.Clear();
+      //_smallpicsPanel.Children.Clear();
+
+      PictureManager2 pictureManager = new PictureManager2();
+
+
+      Grid grd1 = new();
+      //Grid smallgrd1 = new();
+      string filename = "";
+      bool zugrichtung_von_links_nach_rechts = true;
+
+      BitmapImage imagesource = pictureManager.AssembleTrain(zug, dummywindow, zugrichtung_von_links_nach_rechts);
+
+      if (imagesource != null)
+      {
+        System.Windows.Controls.Image image = new() { Source = imagesource };
+        grd1.Children.Add(image);
+        grd1.Margin = new Thickness(20, 0, 20, 0);
+
+        System.Windows.Controls.Image smallimage = new() { Source = imagesource, Height = 20, Stretch = System.Windows.Media.Stretch.Uniform };
+        //smallgrd1.Children.Add(smallimage);
+        //smallgrd1.Margin = new Thickness(20, 0, 20, 0);
+
+        _picsPanel.Children.Insert(0, grd1);
+        //_smallpicsPanel.Children.Insert(0, smallgrd1);
+
+        //TrainLength = Math.Round(zr.Length, 0);
+
+        if (zugrichtung_von_links_nach_rechts)
+        {
+          _picsScroller.ScrollToRightEnd();
+        }
+        else
+        {
+          _picsScroller.ScrollToLeftEnd();
+        }
+        //_smallpicsScroller.ScrollToRightEnd();
+      }
+      dummywindow.Close();
+    }
+  }
+}

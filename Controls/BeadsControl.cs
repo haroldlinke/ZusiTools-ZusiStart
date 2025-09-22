@@ -119,13 +119,13 @@ namespace ZusiStart.Controls
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly ObservableCollection<BeadsLabel> _labels = new()
         {
-            new BeadsLabel ("Alexanderplatz", true),
-            new BeadsLabel ("Jannowitzbrücke"),
-            new BeadsLabel ("Ostbahnhof"),
-            new BeadsLabel ("Warschauer Straße"),
-            new BeadsLabel ("Ostkreuz", true),
-            new BeadsLabel ("Nöldnerplatz"),
-            new BeadsLabel ("Lichtenberg", true)
+            //new BeadsLabel ("Alexanderplatz", true),
+            //new BeadsLabel ("Jannowitzbrücke"),
+            //new BeadsLabel ("Ostbahnhof"),
+            //new BeadsLabel ("Warschauer Straße"),
+            //new BeadsLabel ("Ostkreuz", true),
+            //new BeadsLabel ("Nöldnerplatz"),
+            //new BeadsLabel ("Lichtenberg", true)
         };
 
         private bool _alternateView;

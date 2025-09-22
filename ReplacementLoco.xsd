@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- version 14.10.2018 -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <!-- Element loco -->
+  <xs:complexType name="ct_loco">
+    <xs:annotation>
+      <xs:documentation>Element loco</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="file" type="xs:string" use="required"/>
+    <xs:attribute name="variant" type="xs:string" use="required"/>
+    <xs:attribute name="doubleheading" type="xs:boolean" use="optional"/>
+  </xs:complexType>
+
+  <!-- Element replacementlocos -->
+  <xs:complexType name="ct_replacementlocos">
+    <xs:annotation>
+      <xs:documentation>Element replacementlocos</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="loco" type="ct_loco" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Rootelement-Typ -->
+  <xs:complexType name="ct_zusirotstift">
+    <xs:annotation>
+      <xs:documentation>Rootelement-Typ</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="replacementlocos" type="ct_replacementlocos" maxOccurs="1"/>
+    </xs:sequence>
+    <xs:attribute name="version" type="xs:float" default="1.0"/>
+  </xs:complexType>
+
+  <!-- root element -->
+  <xs:element name="ZusiRotstift" type="ct_zusirotstift"/>
+</xs:schema>
