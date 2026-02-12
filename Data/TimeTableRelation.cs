@@ -7,6 +7,7 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Xml.Linq;
 using ZusiKlassenLib;
 using ZusiKlassenLib.Common;
 using ZusiKlassenLib.Fahrplan;
@@ -77,10 +78,25 @@ namespace ZusiStart.Data
       }
 
       ZusiDocumentBase doc = timeTable.GetDocument();
-      if (false) //!doc.Filename.StartsWith(Zusi.DataPath[DataPathType.Official]))
-        TimeTableName = Path.GetFileNameWithoutExtension(doc.Filename) +"(private)";
+      //if (!doc.Filename.StartsWith(Zusi.DataPath[DataPathType.Official]))
+      //  TimeTableName = Path.GetFileNameWithoutExtension(doc.Filename) +"(private)";
+      //else
+      //  TimeTableName = Path.GetFileNameWithoutExtension(doc.Filename);
+
+      if (!doc.Filename.StartsWith(Zusi.DataPath[DataPathType.Official]))
+      {
+        if (doc.Filename.StartsWith(Zusi.DataPath[DataPathType.DataDir]))
+          TimeTableName = System.IO.Path.GetFileNameWithoutExtension(doc.Filename) + " (private)";
+        else
+        {
+          if (doc.Filename.StartsWith(Zusi.DataPath[DataPathType.OfficialProf]))
+            TimeTableName = System.IO.Path.GetFileNameWithoutExtension(doc.Filename) + " (professional)";
+          else
+            TimeTableName = System.IO.Path.GetFileNameWithoutExtension(doc.Filename) + " (professional-private)";
+        }
+      }
       else
-        TimeTableName = Path.GetFileNameWithoutExtension(doc.Filename);
+        TimeTableName = System.IO.Path.GetFileNameWithoutExtension(doc.Filename);
     }
 
     //---------------------------------------------------------------------

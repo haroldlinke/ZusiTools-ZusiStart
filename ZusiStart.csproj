@@ -14,7 +14,7 @@
     <Description>ZusiStart</Description>
     <Copyright>Harold Linke</Copyright>
     <Authors>Harold Linke</Authors>
-    <Version>8.5.7</Version>
+    <Version>8.6.14</Version>
     <Title>ZusiStart</Title>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Platforms>AnyCPU;x64</Platforms>
@@ -29,14 +29,15 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="GMap.NET.WinPresentation" Version="2.1.7" />
     <PackageReference Include="IpcCommLib" Version="8.0.1" />
+    <PackageReference Include="Makaretu.Dns.Multicast" Version="0.27.0" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.3.0" />
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3485.44" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3650.58" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.9" />
+    <PackageReference Include="System.Drawing.Common" Version="10.0.1" />
     <PackageReference Include="ZusiDisplayLib" Version="8.0.2" />
     <PackageReference Include="ZusiFahrpultLib" Version="8.0.1" />
-    <PackageReference Include="ZusiKlassenLib" Version="8.0.9" />
+    <PackageReference Include="ZusiKlassenLib" Version="8.0.16" />
     <PackageReference Include="ZusiMeterGaugesLib" Version="8.0.2" />
     <PackageReference Include="ZusiPicLib" Version="8.0.1" />
     <PackageReference Include="Zusisuplib" Version="8.0.1" />
@@ -145,6 +146,17 @@
     <Resource Include="Images\bkgnd_1.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Fahrschule\Timetables\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fahrschule\webpage\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="GaugePool.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="help\ZusiStart_Docu_Deutsch.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -169,18 +181,6 @@
     <None Update="ReplacementTrain.xsd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\default0.JPG">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\default1.JPG">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\default2.JPG">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\default3.JPG">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Resources\NotFound.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -199,6 +199,63 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="NativeStandards.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZusiMeter\GaugePool.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZusiMeter\icons\LE02b.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZusiMeter\icons\Level0.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZusiMeter\icons\Level1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZusiMeter\icons\Level2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZusiMeter\icons\Level3.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZusiMeter\icons\LevelSTM.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZusiMeter\icons\Levelundefined.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZusiMeter\images\bkgnd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZusiMeter\images\graphic.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZusiMeter\images\listviewitem.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZusiMeter\images\textbased.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZusiMeter\images\window_bkgnd.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZusiMeter\images\window_bkgnd_blue.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZusiMeter\Resources\zusimeter.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZusiMeter\ZusiMeterLayouts\Zusimeter_Standard_Layout.zmlf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZusiMeter\ZusiMeterLayouts\Example01.zmlf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZusiMeter\ZusiMeterLayouts\Example02.zmlf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZusiMeter\ZusiMeterLayouts\Example03.zmlf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -159,6 +159,21 @@ namespace ZusiStart.Properties
 
     [global::System.Configuration.UserScopedSettingAttribute()]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("1")]
+    public int StartimStillstand
+    {
+      get
+      {
+        return ((int)(this["StartimStillstand"]));
+      }
+      set
+      {
+        this["StartimStillstand"] = value;
+      }
+    }
+
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Configuration.DefaultSettingValueAttribute("False")]
     public bool ForbidAlternativePicLibSources
     {
@@ -347,6 +362,65 @@ namespace ZusiStart.Properties
       set
       {
         this["Language"] = value;
+      }
+    }
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("0")]
+    public GridLength WidthColumnLeft
+    {
+      get
+      {
+        return ((GridLength)(this["WidthColumnLeft"]));
+      }
+      set
+      {
+        this["WidthColumnLeft"] = value;
+      }
+    }
+
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("0")]
+    public GridLength WidthColumnRight
+    {
+      get
+      {
+        return ((GridLength)(this["WidthColumnRight"]));
+      }
+      set
+      {
+        this["WidthColumnRight"] = value;
+      }
+    }
+
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("0")]
+    public GridLength HeightRowTop
+    {
+      get
+      {
+        return ((GridLength)(this["HeightRowTop"]));
+      }
+      set
+      {
+        this["HeightRowTop"] = value;
+      }
+    }
+
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("0")]
+    public GridLength HeightRowBottom
+    {
+      get
+      {
+        return ((GridLength)(this["HeightRowBottom"]));
+      }
+      set
+      {
+        this["HeightRowBottom"] = value;
       }
     }
 

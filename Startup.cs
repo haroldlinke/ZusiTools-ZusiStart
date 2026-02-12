@@ -1,4 +1,11 @@
-﻿using Microsoft.Win32;
+﻿using IWshRuntimeLibrary; // Make sure to add the reference
+using log4net;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualBasic.Logging;
+using Microsoft.Win32;
+using Sovoma;
 using Sovoma.WPF;
 using System;
 using System.Collections.Generic;
@@ -9,18 +16,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Zusisuplib;
-using log4net;
-using Microsoft.VisualBasic.Logging;
-using Sovoma;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using ZusiKlassenLib;
 using ZusiKlassenLib.Fahrplan;
 using ZusiStart.Data;
-
-using IWshRuntimeLibrary; // Make sure to add the reference
+using Zusisuplib;
+using System;
+using System.Threading;
+using Makaretu;
 
 
 namespace ZusiStart
@@ -239,15 +241,20 @@ class Startup
       string[] commandLineArgs = Environment.GetCommandLineArgs();
       bool testflag = false;
 
-      GlobalContext.Properties["LogPath"] = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-      log4net.Config.XmlConfigurator.Configure();
-      _log.Debug(" ");
-      _log.Debug("**************************************************************************");
-      _log.Debug("*");
-      _log.Debug("* ZusiStart started - Version:" + AsmInfo.Version.ToString());
-      _log.Debug("*");
-      _log.Debug("**************************************************************************");
-
+      //GlobalContext.Properties["LogPath"] = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+      //log4net.Config.XmlConfigurator.Configure();
+      //_log.Debug(" ");
+      //_log.Debug("**************************************************************************");
+      //_log.Debug("*");
+      //_log.Debug("* ZusiStart started - Version:" + AsmInfo.Version.ToString());
+      //_log.Debug("*");
+      //_log.Debug("*test*************************************************************************");
+      //_log.Debug("Debug lebel enabled");
+      //_log.Warn("Warning level enabled");
+      //_log.Info("Info level enabled");
+      //_log.Error("Error level enabled");
+      //_log.Fatal("Fatal level enabled");
+     
       string? executablePath = Process.GetCurrentProcess().MainModule?.FileName;
 
       if ((commandLineArgs.Length == 2 && commandLineArgs[1] == "*Installation*") || testflag)
@@ -269,13 +276,54 @@ class Startup
         {
           DataManager.CheckLanguage = true;
         }
+        else
+        {
+          if ((commandLineArgs.Length == 2 && commandLineArgs[1] == "*Test*") || testflag)
+          {
+            FeatureManager.initFeatures(new List<FeatureManager.Features> { FeatureManager.Features.Tracking, FeatureManager.Features.StartLocation, FeatureManager.Features.RouteGraph });
+          }
+          else // standard features
+          {
+            FeatureManager.initFeatures(new List<FeatureManager.Features> { FeatureManager.Features.Tracking, FeatureManager.Features.RouteGraph });
+          }
+
+        }
 
         if (executablePath != null)
         {
           Directory.SetCurrentDirectory(Path.GetDirectoryName(executablePath));
         }
 
-        App app = new();
+
+        // Create the mDNS service
+        using (var mdns = new Makaretu.Dns.ServiceDiscovery())
+        {
+          // Define the service to advertise
+          var service = new Makaretu.Dns.ServiceProfile(
+              "MyTestService",   // Service instance name
+              "_myservice._tcp", // Service type
+              5000               // Port number
+          );
+
+          // Optional: Add TXT records (key-value metadata)
+          service.AddProperty("version", "1.0");
+          service.AddProperty("description", "Test Zeroconf service in C#");
+
+          // Advertise the service
+          mdns.Advertise(service);
+
+          //Console.WriteLine("Service published. Press Ctrl+C to stop.");
+          //Console.WriteLine($"Name: {service.InstanceName}");
+          //Console.WriteLine($"Type: {service.QualifiedServiceName}");
+          //Console.WriteLine($"Port: {service.Port}");
+
+                   
+       
+     
+    }
+
+
+    App app = new();
         app.InitializeComponent();
         commandlineargs = commandLineArgs;
         

@@ -1,0 +1,248 @@
+<UserControl x:Class="ZusiMeter.ZusiMeterControl"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ZusiMeter"
+        xmlns:pg="clr-namespace:ZusiMeter.Pages"
+        xmlns:data="clr-namespace:ZusiMeter.Data"
+        xmlns:cv="clr-namespace:ZusiMeter.Converter"
+        xmlns:c="clr-namespace:ZusiMeterGaugesLib.Controls;assembly=ZusiMeterGaugesLib"
+        xmlns:sl="clr-namespace:Sovoma;assembly=Sovoma"
+        xmlns:v="clr-namespace:ZusiMeter.ValidationRules"
+        Background="{DynamicResource NewBackgroundBrush}">
+  <!--DataContext="{Binding Source={x:Static data:DataManager.Instance}}">-->
+
+  <!--DataContext="{Binding RelativeSource={RelativeSource Self}}"-->
+  <FrameworkElement.Resources>
+    <ResourceDictionary/>
+  </FrameworkElement.Resources>
+  <Grid>
+
+    <DockPanel x:Name="mainPanel">
+      <!--<Menu VerticalAlignment="Top" Grid.ColumnSpan="2" DockPanel.Dock="Top" Padding="0,3"
+                  Visibility="{Binding ShowMainMenu, ElementName=ZusiMeterControl, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Collapsed}}"
+                  >-->
+      <!--<Menu VerticalAlignment="Top" Grid.ColumnSpan="2" DockPanel.Dock="Top" Padding="0,0"
+            Visibility="{Binding ShowMainMenu, ElementName=ZusiMeterControl,Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Collapsed}}"
+      >
+        <Control.Background>
+          <LinearGradientBrush>
+            <GradientStop Offset="0" Color="#FF76A8FF"/>
+            <GradientStop Offset="1" Color="#FF6A9BF3"/>
+          </LinearGradientBrush>
+        </Control.Background>
+        <MenuItem Header="_Datei">
+          <MenuItem Command="{x:Static local:ZusiMeterControl.CommandNewGraphicLayout}"/>
+          <MenuItem Command="{x:Static local:ZusiMeterControl.CommandNewTextLayout}"/>
+          <Separator/>
+          <MenuItem Command="{x:Static local:ZusiMeterControl.CommandLoadLayout}"/>
+          <MenuItem Command="{x:Static local:ZusiMeterControl.CommandLoadLayoutEdit}"/>
+          <MenuItem Command="{x:Static pg:EditorPage.CommandSaveLayout}"
+                            CommandTarget="{Binding ElementName=editorPage}"/>
+          <MenuItem Command="{x:Static pg:EditorPage.CommandSaveAsLayout}"
+                            CommandTarget="{Binding ElementName=editorPage}"/>
+          <Separator/>
+          <MenuItem Command="{x:Static local:ZusiMeterControl.CommandOpenLayout}"/>
+          <MenuItem Command="{x:Static local:ZusiMeterControl.CommandLoadOtherLayout}"/>
+          <Separator/>
+          <MenuItem Command="{x:Static local:ZusiMeterControl.CommandBack}"/>
+          <Separator/>
+          <MenuItem Command="{x:Static local:ZusiMeterControl.CommandQuit}"/>
+        </MenuItem>
+        <MenuItem Header="_Bearbeiten" Visibility="{Binding Visibility, ElementName=editorPage}">
+          --><!--<MenuItem Command="{x:Static pg:EditorPage.CommandUndo}" CommandTarget="{Binding ElementName=editorPage}"/>
+                <Separator/>--><!--
+          <MenuItem Command="{x:Static pg:EditorPage.CommandRemoveGauge}"
+                            CommandTarget="{Binding ElementName=editorPage}"/>
+          --><!--<MenuItem Command="{x:Static local:ZusiMeterControl.CommandEditFullScreen}"/>-->
+          <!--<Separator/>
+                <MenuItem Header="_Eigenschaften" IsEnabled="false"/>--><!--
+        </MenuItem>
+        <MenuItem Header="_Einstellungen" Visibility="{Binding SelectLayout, ElementName=ZusiMeterControl,Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Collapsed}}">
+          <MenuItem Command="{x:Static local:ZusiMeterControl.CommandOptions}" CommandTarget="{Binding ElementName=ZusiMeterControl}"/>
+        </MenuItem>
+        <MenuItem Header="_Info">
+          <MenuItem Command="{x:Static local:ZusiMeterControl.CommandAbout}" CommandTarget="{Binding ElementName=ZusiMeterControl}"/>
+          <MenuItem Command="{x:Static local:ZusiMeterControl.CommandHelp}" CommandTarget="{Binding ElementName=ZusiMeterControl}"/>
+          <MenuItem Command="{x:Static local:ZusiMeterControl.CommandExtDocu}" CommandTarget="{Binding ElementName=ZusiMeterControl}"/>
+        </MenuItem>
+      </Menu>-->
+
+      <!--<StatusBar MouseRightButtonDown="StatusBar_MouseRightButtonDown" DockPanel.Dock="Bottom"
+                 Visibility="{Binding ShowStatusBar, ElementName=ZusiMeter.ZusiMeterControl,Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Collapsed}}">-->
+        <StatusBar MouseRightButtonDown="StatusBar_MouseRightButtonDown" DockPanel.Dock="Bottom" Visibility="Visible">
+          <StatusBarItem>
+          <StackPanel Orientation="Horizontal"
+                      Visibility="Visible">
+            <!--<ToggleButton Width="12" Height="12" BorderThickness="0" ToolTip="Fenster immer sichtbar"
+                          Style="{DynamicResource TopmostToggleButtonStyle}"
+                          IsChecked="{Binding Topmost, ElementName=ZusiMeterControl, Mode=TwoWay}"/>-->
+            <Button Width="12" Height="12" Margin="12,0,0,0" BorderThickness="0" ToolTip="Zeitraffer"
+                    Style="{DynamicResource TimelapseButtonStyle}"
+                    Command="{x:Static local:ZusiMeterControl.CommandTimelapse}"/>
+            <Button Width="12" Height="12" Margin="6,0,0,0" BorderThickness="0" ToolTip="Pause"
+                    Style="{DynamicResource PauseButtonStyle}" Command="{x:Static local:ZusiMeterControl.CommandPause}"/>
+            <Button Width="12" Height="12" Margin="6,0,0,0" BorderThickness="0" ToolTip="Zeitsprung"
+                    Style="{DynamicResource TimejumpButtonStyle}" Command="{x:Static local:ZusiMeterControl.CommandTimejump}"/>
+            <!--<Button Width="12" Height="12" Margin="12,0,0,0" BorderThickness="0" ToolTip="Zurück zur Layout-Auswahl"
+                    Style="{DynamicResource BackButtonStyle}" Command="{x:Static local:ZusiMeterControl.CommandBack}"/>-->
+            <!--<Button Width="12" Height="12" Margin="12,0,0,0" BorderThickness="0" ToolTip="Zu ZUSI AutoStart hinzufügen"
+                    Style="{DynamicResource SendToAutoStartButtonStyle}" Command="{x:Static local:ZusiMeterControl.CommandSendToAutoStart}"/>-->
+            <!--<Button Width="12" Height="12" Margin="6,0,0,0" BorderThickness="0" ToolTip="Ohne Rand anzeigen"
+                    Style="{DynamicResource FullScreenButtonStyle}" Command="{x:Static local:ZusiMeterControl.CommandFullScreen}"/>-->
+          </StackPanel>
+        </StatusBarItem>
+        <StatusBarItem HorizontalAlignment="Right">
+          <StackPanel Orientation="Horizontal">
+            <!--<TextBlock Text="Die Zusi-Verbindung ist nicht konfiguriert!" Foreground="#FFDA0000"
+                       Visibility="{Binding MissingConfiguration, Converter={StaticResource BoolToVisibilityConverter}, ElementName=ZusiMeterControl}"/>-->
+            <TextBlock Text=" " Margin="0,0,6,0" VerticalAlignment="Center"/>
+
+            <Ellipse Width="12" Height="12" Stroke="Black" Margin="0,0,3,0" x:Name="IPStatus"
+                           
+                     ToolTip="Verbindung">
+              <Ellipse.ContextMenu>
+                <ContextMenu>
+                  <MenuItem Header="Verbindung einstellen" Command="{x:Static local:ZusiMeterControl.CommandOptions}"/>
+                </ContextMenu>
+              </Ellipse.ContextMenu>
+            </Ellipse>
+          </StackPanel>
+        </StatusBarItem>
+      </StatusBar>
+      <Border>
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <Grid x:Name="layoutGrid"
+                Visibility="{Binding SelectLayout, ElementName=ZusiMeterControl, Converter={StaticResource ReverseBoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Collapsed}}"
+                Background="{Binding ElementName=ZusiMeterControl, Path=LayoutBackground.Background, Mode=OneWay}"
+                Grid.Row="1" Grid.Column="0">
+
+            <FrameworkElement.LayoutTransform>
+              <ScaleTransform CenterX="0" CenterY="0" ScaleX="{Binding Zoom, ElementName=ZusiMeterControl, Mode=OneWay}"
+                              ScaleY="{Binding Zoom, ElementName=ZusiMeterControl, Mode=OneWay}"/>
+            </FrameworkElement.LayoutTransform>
+
+          </Grid>
+          <!--<StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Top"
+                      Visibility="{Binding ShowNoMoveCloseIcons, ElementName=ZusiMeterControl, Converter={StaticResource ReverseBoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Collapsed}}">
+            <Rectangle MouseDown="Rectangle_MouseDown"  Width="12" Height="12" Margin="6,0,0,0" ToolTip="Verschieben"
+                  Visibility="{Binding ShowStatusBar, ElementName=ZusiMeterControl, Converter={StaticResource ReverseBoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Collapsed}}"
+                  Fill="DimGray"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Top"/>
+            <Button Width="12" Height="12" Margin="6,0,0,0" BorderThickness="0" ToolTip="Quit (Alt-F4)"
+                  Visibility="{Binding ShowStatusBar, ElementName=ZusiMeterControl, Converter={StaticResource ReverseBoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Collapsed}}"
+                  
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Top"
+                  Style="{DynamicResource QuitButtonStyle}" Command="{x:Static local:ZusiMeterControl.CommandQuit}"/>
+          --><!--<Border MinWidth="200" MinHeight="100"
+                  Visibility="{Binding SelectLayout, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Collapsed}}">
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+              </Grid.RowDefinitions>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition/>
+              </Grid.ColumnDefinitions>
+              <TextBlock Foreground="Gold" FontStyle="Italic" FontWeight="Bold" FontSize="20" Margin="12,6,0,0"
+                         Grid.ColumnSpan="3" Text="{Binding Source={x:Static sl:AsmInfo.Product}}">
+                <UIElement.Effect>
+                  <DropShadowEffect ShadowDepth="1"/>
+                </UIElement.Effect>
+              </TextBlock>
+              <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Margin="11,0,0,0" Foreground="WhiteSmoke">
+                <Run Text="Version"/>
+                <Run Text="{Binding ConverterParameter=%V, Converter={StaticResource VersionStringConverter}, Source={x:Static sl:AsmInfo.Version}, Mode=OneWay}"/>
+                <Run Text=" • "/>
+                <Run Text="{Binding Source={x:Static sl:AsmInfo.Copyright}, Mode=OneWay}"/>
+              </TextBlock>
+              <StackPanel Margin="0,6,6,0" HorizontalAlignment="Right" VerticalAlignment="Top" ZIndex="1"
+                          Orientation="Horizontal" Grid.Column="2" Grid.RowSpan="2" Visibility="Collapsed">
+                <Button Margin="0,0,6,0" Command="{x:Static local:ZusiMeterControl.CommandMinimizeApp}"
+                        Style="{DynamicResource MinimizeButtonStyle}"/>
+                <Button Command="{x:Static local:ZusiMeterControl.CommandExitApp}" Style="{DynamicResource ExitAppButtonStyle}"/>
+              </StackPanel>
+              <Border BorderThickness="1" BorderBrush="#FFABADB3" Grid.Row="2" Padding="3" Grid.Column="2"
+                      Margin="0,26,6,34"
+                      Background="{Binding ElementName=ZusiMeterControl, Path=LayoutBackground.Background, Mode=OneWay}">
+                <Viewbox StretchDirection="Both" Width="200" Height="205">
+                  <c:LayoutPreview x:Name="preview"/>
+                </Viewbox>
+              </Border>
+              <Border Padding="6,0,6,3" Grid.Row="2" Grid.ColumnSpan="2" Visibility="Collapsed" >
+                <Grid Height="270">
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="Auto"/>
+                  </Grid.RowDefinitions>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                  </Grid.ColumnDefinitions>
+                  <Label Content="Layout öffnen" Grid.ColumnSpan="2" Foreground="WhiteSmoke"/>
+                  <ListView SelectionChanged="LvLayoutFiles_SelectionChanged" x:Name="lvLayoutFiles" Grid.Row="1"
+                            MaxWidth="440" SelectionMode="Single" IsSynchronizedWithCurrentItem="True"
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled" Grid.ColumnSpan="2" Background="#26FFFFFF"
+                            ItemsSource="{Binding LayoutFiles, ElementName=ZusiMeterControl}">
+                    <ItemsControl.ItemContainerStyle>
+                      <Style TargetType="{x:Type ListViewItem}">
+                      </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemsPanel>
+                      <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal"/>
+                      </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <StackPanel Margin="3,0,0,0" Width="64" ToolTip="{Binding Converter={StaticResource ExtractFilenameConverter}}">
+                          <StackPanel.ContextMenu>
+                            <ContextMenu>
+                             <MenuItem Header="Layout laden" Command="{x:Static local:ZusiMeterControl.CommandLoadLayout}"/>
+                             <MenuItem Header="Layout zu ZUSI-Autostart hinzufügen" Command="{x:Static local:ZusiMeterControl.CommandSendToAutoStart}"/>
+                            </ContextMenu>
+                          </StackPanel.ContextMenu>
+                          <Image Source="Images/listviewitem.png" Margin="0,0,0,3"
+                            HorizontalAlignment="Center" Stretch="None"/>
+                          <TextBlock HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"
+                                Text="{Binding Converter={StaticResource ExtractFilenameConverter}}"/>
+                      </StackPanel>
+                    </DataTemplate>
+                   </ItemsControl.ItemTemplate>
+                  </ListView>
+                  <Button Command="{x:Static local:ZusiMeterControl.CommandLoadLayout}" Grid.Row="3" Margin="0,3,0,4"
+                          Grid.Column="1" HorizontalAlignment="Right" IsDefault="true"
+                          Style="{DynamicResource DialogButtonStyle}"/>
+                  <Button Command="{x:Static local:ZusiMeterControl.CommandLoadOtherLayout}" IsDefault="true"
+                          HorizontalAlignment="Left" Grid.Row="2" VerticalAlignment="Top" Margin="0,3,0,4"
+                          Style="{DynamicResource DialogButtonStyle}"/>
+                </Grid>
+              </Border>
+            </Grid>
+          </Border>--><!--
+            </StackPanel>-->
+        </Grid>
+      </Border>
+      <Grid>
+        <!--<pg:StartPage x:Name="startPage" Visibility="{Binding SelectLayout, ElementName=ZusiMeterControl, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Collapsed}}"/>-->
+        <pg:StartPage x:Name="startPage" Visibility="Collapsed"/>
+        <pg:EditorPage x:Name="editorPage" Visibility="Collapsed"/>
+      </Grid>
+    </DockPanel>
+  </Grid>
+</UserControl>

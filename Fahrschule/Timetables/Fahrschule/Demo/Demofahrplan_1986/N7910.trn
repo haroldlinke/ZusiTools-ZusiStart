@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Zug" Version="A.1" MinVersion="A.1">
+<AutorEintrag AutorID="34" AutorName="Holger Lürkens"/>
+</Info>
+<Zug Gattung="N" Nummer="7910" Zuglauf="Paderborn - Osnabrück Hbf" Prio="2500" Bremsstellung="1" MBrh="1.02" spZugNiedriger="33.3333" LODzug="1" ReisendenDichte="0.4" FahrplanGruppe="3. Altenbeken - Himmighausen" Rekursionstiefe="5" FahrstrName="Aufgleispunkt -&gt; Altenbeken A" Zugtyp="1" Buchfahrplandll="_InstSetup\lib\timetable\Buchfahrplan_DB_1979.dll">
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986.fpn" NurInfo="1"/>
+<FahrplanEintrag Ank="1986-09-03 12:02:30" Abf="1986-09-03 12:02:30" Betrst="Altenbeken" FplEintrag="1">
+<FahrplanSignalEintrag FahrplanSignal="A"/>
+</FahrplanEintrag>
+<FahrplanEintrag Ank="1986-09-03 12:05:00" Abf="1986-09-03 12:06:00" Betrst="Altenbeken">
+<FahrplanSignalEintrag FahrplanSignal="N1"/>
+<FahrplanSignalEintrag FahrplanSignal="N2"/>
+<FahrplanSignalEintrag FahrplanSignal="L38"/>
+</FahrplanEintrag>
+<FahrplanEintrag Abf="1986-09-03 12:09:00" Betrst="Langeland">
+<FahrplanSignalEintrag FahrplanSignal="N5"/>
+<FahrplanSignalEintrag FahrplanSignal="N7"/>
+</FahrplanEintrag>
+<FahrplanEintrag Ank="1986-09-03 12:11:00" Abf="1986-09-03 12:11:00" Betrst="Bk Erpentrup">
+<FahrplanSignalEintrag FahrplanSignal="B"/>
+</FahrplanEintrag>
+<FahrzeugVarianten Bezeichnung="default" ZufallsWert="1">
+<FahrzeugInfo IDHaupt="2" IDNeben="1" Bremsstellung="1" SASchaltung="2" Zugart="O">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Elektroloks\BRD\Einheitsloks\E10.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="1" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\n_Wagen_Silberlinge\Bnb719.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="1" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\n_Wagen_Silberlinge\ABnb703.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="1" IDNeben="1" Gedreht="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\n_Wagen_Silberlinge\BDnf738.rv.fzg"/>
+</FahrzeugInfo>
+</FahrzeugVarianten>
+</Zug>
+</Zusi>

@@ -131,7 +131,7 @@ namespace ZusiStart.Miscellaneous
 
           // Add a vehicle
 
-          int result = LS3RenderWrapper.ls3render_AddFahrzeug(fahrzeug_dateiname, 50.0f / pixel_pro_meter, Fahrzeuglaenge, gedreht, 4.5f, 1, 0, 0, 0);
+          int result = LS3RenderWrapper.ls3render_AddFahrzeug(fahrzeug_dateiname, 50.0f / pixel_pro_meter, Fahrzeuglaenge, gedreht, 4.5f, 1, 0, 0, 0,0,0,0,0);
           if (result == 1)
           {
             _log.Debug("Vehicle added successfully!");
@@ -197,7 +197,7 @@ namespace ZusiStart.Miscellaneous
           float blickwinkel_f = (float)blickwinkel;
           LS3RenderWrapper.ls3render_SetAxonometrieParameter(blickwinkel_f, Skalierung);
         }
-        
+
 
         // Enable multisampling
         LS3RenderWrapper.ls3render_SetMultisampling(4);
@@ -246,7 +246,7 @@ namespace ZusiStart.Miscellaneous
 
     float offset_x = 0.0f;
 
-    public void add_Vehicle(Fahrzeug fzg, FahrzeugVariante fv, bool gedreht, int saSchaltung, string cachepath, Window? popup_message = null, bool create_no_image = false, bool von_rechts_nach_links = true)
+    public void add_Vehicle(Fahrzeug fzg, FahrzeugVariante fv, bool gedreht, int saSchaltung, int spitzenlicht, int schlusslicht, string cachepath, Window? popup_message = null, bool create_no_image = false, bool von_rechts_nach_links = true)
     {
       try
       {
@@ -270,7 +270,7 @@ namespace ZusiStart.Miscellaneous
         //string filename;
         try
         {
-          add_fahrzeug(ls3_filenamepath, cachefilepathname2, offset_x, (float)fzggd.Laenge, gedreht_int, saSchaltung, von_rechts_nach_links: von_rechts_nach_links);
+          add_fahrzeug(ls3_filenamepath, cachefilepathname2, offset_x, (float)fzggd.Laenge, gedreht_int, saSchaltung, spitzenlicht, schlusslicht, von_rechts_nach_links: von_rechts_nach_links);
         }
         catch (Exception ex)
         {
@@ -317,7 +317,7 @@ namespace ZusiStart.Miscellaneous
     }
 
 
-    public void add_fahrzeug(string fahrzeug_dateiname, string output_dateiname, float offset_x, float Fahrzeuglaenge, int gedreht, int saSchaltung, bool von_rechts_nach_links = true)
+    public void add_fahrzeug(string fahrzeug_dateiname, string output_dateiname, float offset_x, float Fahrzeuglaenge, int gedreht, int saSchaltung, int spitzenlicht, int schlusslicht, bool von_rechts_nach_links = true)
     {
       try
       {
@@ -328,10 +328,13 @@ namespace ZusiStart.Miscellaneous
         int Pantograph1_1 = 0;
         int Pantograph1_2 = 0;
         int Pantograph1_3 = 0;
+        int SpitzenlichtVorneAn = 0;
+        int SpitzenlichtHintenAn = 0;
+        int SchlusslichtVorneAn = 0;
+        int SchlusslichtHintenAn = 0;
 
         if (saSchaltung != 0)
         {
-
           if (gedreht == 1)
           {
             Pantograph1_0 = ((saSchaltung & (1 << 0)) != 0) ? 1 : 0;
@@ -348,21 +351,49 @@ namespace ZusiStart.Miscellaneous
           }
         }
 
-          //if (gedreht == 0)
-          //{
-          //  if (von_rechts_nach_links)
-          //    stromabnehmer2 = 1;
-          //  else
-          //    stromabnehmer1 = 1;
-          //}
-          //else
-          //{
-          //  if (von_rechts_nach_links)
-          //    stromabnehmer1 = 1;
-          //  else
-          //    stromabnehmer2 = 1;
-          //}
-          int result = LS3RenderWrapper.ls3render_AddFahrzeug(fahrzeug_dateiname, offset_x, Fahrzeuglaenge, gedreht, 4.5f, Pantograph1_0, Pantograph1_1, Pantograph1_2, Pantograph1_3);
+
+
+        //if (gedreht == 0)
+        //{
+        //  if (von_rechts_nach_links)
+        //    stromabnehmer2 = 1;
+        //  else
+        //    stromabnehmer1 = 1;
+        //}
+        //else
+        //{
+        //  if (von_rechts_nach_links)
+        //    stromabnehmer1 = 1;
+        //  else
+        //    stromabnehmer2 = 1;
+        //}
+        if (spitzenlicht == 1)
+        {
+          if (gedreht == 1)
+          {
+            SpitzenlichtVorneAn = 1;
+            //SpitzenlichtHintenAn = 1;
+          }
+          else
+          {
+            //SpitzenlichtVorneAn = 1;
+            SpitzenlichtHintenAn = 1;
+          }
+        }
+        if (schlusslicht == 1)
+        {
+          if (gedreht == 1)
+          {
+            SchlusslichtHintenAn = 1;
+          }
+          else
+          {
+            SchlusslichtVorneAn = 1;
+          }
+
+          
+        }
+        int result = LS3RenderWrapper.ls3render_AddFahrzeug(fahrzeug_dateiname, offset_x, Fahrzeuglaenge, gedreht, 4.5f, Pantograph1_0, Pantograph1_1, Pantograph1_2, Pantograph1_3, SpitzenlichtVorneAn,SpitzenlichtHintenAn,SchlusslichtVorneAn,SchlusslichtHintenAn);
 
         if (result == 1)
         {
@@ -376,7 +407,7 @@ namespace ZusiStart.Miscellaneous
       }
     }
 
-    public BitmapImage getPicture3(string filename, string cachepath, Window? popup_message = null, bool create_no_image = false, float? blickwinkel = 0)
+    public BitmapImage getPicture3(string filename, string cachepath, Window? popup_message = null, bool create_no_image = false, float? blickwinkel = 0, bool ignorecache = false)
     {
       try
       {
@@ -390,7 +421,7 @@ namespace ZusiStart.Miscellaneous
         string cachefilename2 = filename;
         string cachefilepathname2 = cachepath + "\\" + cachefilename2 + ".png";
         _log.Info("LS3_Render.DLL - get Image for:" + cachefilename2);
-        if (!System.IO.File.Exists(cachefilepathname2))
+        if (!System.IO.File.Exists(cachefilepathname2) || ignorecache)
         {
           if (popup_message != null)
             popup_message.Show();
@@ -687,18 +718,41 @@ namespace ZusiStart.Miscellaneous
         cachefilename = "W" + blickwinkel_str;
       }
 
+      int spitzenlicht = 0;
+      int schlusslicht = 0;
+
       LinkedListNode<FahrzeugInfo> p = zr.First;
 
       if (zugrichtung_von_links_nach_rechts)
       {
         p = zr.Last; // start with last vehicle
-
+        schlusslicht = 1;
       }
+      else
+      {
+        spitzenlicht = 1; // erstes Fahrzeug hat das Spitzenlicht angeschaltet
+      }
+        
 
       while (p != null)
       {
         Fahrzeug fzg = p.Value.Fahrzeug;
         FahrzeugVariante fv = fzg?.GetVariante(p.Value.IDHaupt, p.Value.IDNeben, p.Value.VariantenIndex) ?? null;
+
+        if (zugrichtung_von_links_nach_rechts)
+        {
+          if (p.Previous == null)
+          {
+            spitzenlicht = 1; // erstes Fahrzeug hat das Spitzenlicht angeschaltet
+          }
+        }
+        else
+        {
+          if (p.Next == null)
+          {
+            schlusslicht = 1; // letztes Fahrzeug hat das Schlusslicht angeschaltet
+          }
+        }
         if (fv != null)
         {
           Grid grd = new();
@@ -714,7 +768,9 @@ namespace ZusiStart.Miscellaneous
           }
 
           Fahrzeug_num++;
-          pictureManager.add_Vehicle(fzg, fv, gedreht, saSchaltung , cachepath, dummywindow, von_rechts_nach_links: !zugrichtung_von_links_nach_rechts);
+          pictureManager.add_Vehicle(fzg, fv, gedreht, saSchaltung, spitzenlicht, schlusslicht, cachepath, dummywindow, von_rechts_nach_links: !zugrichtung_von_links_nach_rechts);
+          spitzenlicht = 0; // nur erstes Fahrzeug hat das Spitzenlicht angeschaltet
+          schlusslicht = 0;
           if (Fahrzeug_num <= 10)
           {
             cachefilename += string.Format("{0}-{1}-{2}", fzg.Name, fv.IDHaupt, fv.IDNeben).ToLower();
@@ -793,15 +849,26 @@ namespace ZusiStart.Miscellaneous
         if (float.TryParse(blickwinkel_str, NumberStyles.Float, CultureInfo.InvariantCulture, out float result))
         {
           //Console.WriteLine($"Erfolgreich: {result}");
+          blickwinkel = result * 0.01745329252f;
         }
         else
         {
-          result = 0;
+          blickwinkel = 0;
         }
-        blickwinkel = result * 0.01745329252f;
+
+      }
+      bool ignorecache = false;
+      if (DataManager.Instance.CurrentTrainItem != null)
+      {
+        ignorecache = DataManager.Instance.CurrentTrainItem.IsLocoReplaced || DataManager.Instance.CurrentTrainItem.IsLocoReplaced;
+        ignorecache = true;
+        if (ignorecache)
+        {
+          filename = "tmp_image";
+        }
       }
 
-      BitmapImage imagesource = pictureManager.getPicture3(filename, cachepath, dummywindow, blickwinkel: blickwinkel);
+      BitmapImage imagesource = pictureManager.getPicture3(filename, cachepath, dummywindow, blickwinkel: blickwinkel, ignorecache: ignorecache);
 
       return imagesource;
     }

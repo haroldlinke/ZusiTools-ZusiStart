@@ -1,10 +1,14 @@
-﻿using System.Drawing;
+﻿using log4net;
+using System.Drawing;
 using ZusiCLIProject.FileLibrary.Zusi3;
+using ZusiCLIProject.FileLibrary.Zusi3.ZusiFdl;
 
 namespace ZusiBuchfahrplanlib
 {
   public class ZT_Buchfahrplan
   {
+    private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
     private static List<string> AddedPpLog = new List<string>();
     private static bool AddedPp = false;
     public List<string> LaNumberList = new List<string>();
@@ -49,7 +53,7 @@ namespace ZusiBuchfahrplanlib
       AddedPp = true;
     }
 
-     public Bitmap show_Buchfahrplan(string fileName)
+    public Bitmap show_Buchfahrplan(string fileName)
     {
       //string moduleName = "FahrzeitenheftGeschwindigkeitsheft_DB_1988";
       string moduleName = "Buchfahrplan_DB_2006";
@@ -82,7 +86,7 @@ namespace ZusiBuchfahrplanlib
           }
       }
 
-        var layout = currentConfigs.buchfahrplanPdfLayout;
+      var layout = currentConfigs.buchfahrplanPdfLayout;
       foreach (Buchfahrplan b in z.Buchfahrplaene)
       {
         string header = b.ToHeaderString(currentConfigs.conversionDisplayStyle, currentConfigs.conversionSettings);
@@ -102,8 +106,9 @@ namespace ZusiBuchfahrplanlib
         //bitmap.Save("Data.png");
         return bitmap;
 
-       
+
       }
+
       return null;
     }
 
@@ -124,6 +129,69 @@ namespace ZusiBuchfahrplanlib
       {
         int testvalue = 3;
         return testvalue;
+      }
+    }
+
+    public void TestLoadingFramework(string fileName, string nummer, out int utmx, out int utmy, out int zone, out string zone2)
+    {
+      try
+      {
+        var lFr = new ZusiCLIProject.FileLibrary.Zusi3.ZusiFdl.LoadingFramework<int>();
+        string[] zddir = new string[] { System.IO.Directory.GetCurrentDirectory() + @"\..\..\Zusi3DatenDir" };
+        if (System.IO.Directory.Exists(zddir[0]))
+          lFr.DataDirs = zddir;
+        lFr.FahrplanPfade = new string[] {
+		//@"Timetables\Deutschland\SFS_Goettingen_Kassel\Goettingen_Kassel_2017_14Uhr-01Uhr.fpn"
+		//@"Timetables\Deutschland\Hamburg_Kassel\Lehrte-Veddel_Berlinumleiter_2021_15Uhr-00Uhr.fpn"
+    fileName
+    };
+        int linesTotal = 0;
+        lFr.InitItems(delegate (string s)
+        {
+          ++linesTotal;
+          //System.Console.WriteLine(s);
+          return linesTotal - 1;
+        });
+        lFr.StartLoading(delegate (string nw, string ol, int oi)
+        {
+          //System.Console.CursorTop -= linesTotal - oi;
+          //System.Console.CursorLeft = 0;
+          while (nw.Length < ol.Length)
+            nw = nw + " ";
+          //System.Console.Write(nw);
+          //System.Console.CursorLeft = 0;
+          //System.Console.CursorTop += linesTotal - oi;
+          return oi;
+        }, delegate (string nw, int oi)
+        {
+          //System.Console.CursorTop -= linesTotal - oi;
+          //System.Console.CursorLeft = nw.Length;
+          //System.Console.Write(" OK");
+          //System.Console.CursorLeft = 0;
+          //System.Console.CursorTop += linesTotal - oi;
+        });
+        Zug zug = lFr.Zuege.FirstOrDefault(z => z.Nummer == nummer);
+
+        ZugDispoState dispo = new ZugDispoState(lFr.Fdl2, zug);
+        //Finden des bevorzugten Fahrweges
+        List<KeyValuePair<Zug.FahrplanEintrag, Strecke.Fahrstrasse>> hauptpfad = dispo.CalculateHauptbuchfplFstr();
+        Strecke.ElementInfo[][] alleMoeglichenFahrwegeDieserFahrstrasseInclNichtDefinierterWeichen = hauptpfad.First().Value.GetFahrwege();
+        Strecke.ElementInfo[] relevantesterFahrweg = alleMoeglichenFahrwegeDieserFahrstrasseInclNichtDefinierterWeichen.First();
+        Location elementPunkt = relevantesterFahrweg.First().ParentBuffer.BlueDirectionInfo == relevantesterFahrweg.First() ?
+          relevantesterFahrweg.First().ParentBuffer.BlueLocation : relevantesterFahrweg.First().ParentBuffer.GreenLocation;
+        Strecke.UTM utm = relevantesterFahrweg.First().ParentBuffer.ParentBuffer.UTMPoint;
+        utmx = utm.WE;
+        utmy = utm.NS;
+        zone = utm.Zone;
+        zone2 = utm.Zone2;
+        elementPunkt = elementPunkt.Add(relevantesterFahrweg.First().ParentBuffer.ParentBuffer.UTMPoint.ToLocation());
+        elementPunkt = elementPunkt;
+      }
+      catch (Exception ex)
+      {
+        _log.Error(ex);
+        _log.Info(fileName + "-" + nummer + ":Could not load framework, setting UTM to 0");
+        utmx = 0; utmy = 0; zone = 0; zone2 = "U";
       }
     }
   }

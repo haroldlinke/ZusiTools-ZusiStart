@@ -8,6 +8,9 @@
       <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/ZusiMeterGaugesLib;component/Themes/Generic.xaml"/>
         <ResourceDictionary Source="pack://application:,,,/ZusiMeterGaugesLib;component/Themes/Generic.Knob.xaml"/>
+        <!--<ResourceDictionary Source="pack://application:,,,/Sovoma.ControlsKit;component/Themes/Generic.xaml"/>-->
+        <!--<ResourceDictionary Source="pack://application:,,,/ZusiMeter;component/Themes/Generic.xaml"/>-->
+        <ResourceDictionary Source="pack://application:,,,/ZusiMeterGaugesLib;component/Themes/Generic.Include.xaml"/>
         <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.xaml"/>
         <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.MessageBox.xaml"/>
         <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.SortButton.xaml"/>
@@ -18,6 +21,7 @@
         <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.TimeTableInfoControl.xaml"/>
         <ResourceDictionary Source="/ZusiStart;component/Themes/Generic.TimeTableOverviewControl.xaml"/>
         <ResourceDictionary Source="/ZusiStart;component/Themes/SemaphoreToggleButtonStyle.xaml"/>
+        
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </Application.Resources>

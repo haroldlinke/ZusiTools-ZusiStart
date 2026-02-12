@@ -1,0 +1,47 @@
+This is the Demo-Version of the Zusi-Train Simulator
+
+To be used only for evaluation purposes.  Hosting on the Internet, 
+Further Distribution, Public Performance and any use of the 
+Data outside of the Demo is not permitted.
+
+In the Demo, the following restrictions apply:
+
+- Other Routes and Timetables are not selectable.
+- Only the BR 216 and 120 are provided with realistic Driving Cab  
+graphics.  The other vehicles use a symbolic Driving Cab.
+- No Network Commmunication (Zusi-Display etc.)
+- Limited access to Program Settings.
+- No editing possible of the Routes, Vehicles and Timetables.
+____________________________________________________
+Authors:
+
+Software, Documentation: Carsten Hölscher
+
+Route Building: Gerd Schütz, Klaus Zimmermann, Michael 
+Poschmann, Carsten Hölscher
+
+Vehicles: Hans-Peter Schramm, Steven Graham, Jens Haupert
+
+Driving Cabs: Daniel Reinecke, Jens Haupert
+
+Signal Systems: Jörg Sanftleben, Andreas Brandtner
+
+Track Systems: Elmar Gröne, Jörg Sanftleben
+
+Catenary System: Andreas Brandtner
+
+Timetable Construction: Holger Lürkens
+
+Buildings/Structures etc: Jürgen Verheien, Andreas Funkhänel, 
+Karsten Bauer, Kai Schadeberg, Christian Gründler, Christian Heer, 
+Marco Rößner, Mirko Barthauer, Gerd Pinter, Andreas Brandtner, 
+Jörg Sanftleben, Stefan Aussum, Uwe Keyser, Immo Birnbaum, 
+Hans-Peter Schramm, Jochen Löscher, Carsten Hölscher, Daniel Huxoll, 
+Rolf Reichardt, Klaus Zimmermann
+
+Additional Design: Klaus Zimmermann, Jürgen Verheien, Steven 
+Graham
+
+English Translation: Steven Graham
+
+

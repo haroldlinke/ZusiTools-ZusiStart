@@ -59,7 +59,7 @@ namespace ZusiStart.Controls
 
       ZusiDocumentBase doc = timeTable.GetDocument();
 
-      if (false) //!doc.Filename.StartsWith(Zusi.DataPath[DataPathType.Official]))
+      if (!doc.Filename.StartsWith(Zusi.DataPath[DataPathType.Official]))
       {
         if (doc.Filename.StartsWith(Zusi.DataPath[DataPathType.DataDir]))
           Name = System.IO.Path.GetFileNameWithoutExtension(doc.Filename) + " (private)";

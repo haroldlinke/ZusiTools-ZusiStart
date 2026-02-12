@@ -44,6 +44,7 @@ namespace ZusiStart.Data
     private readonly bool _assignVariant;
     private bool _dirty;
     private readonly bool _ignoreChanges;
+    private readonly FahrzeugVarianten _fzgvar = null;
 
     public static readonly DependencyProperty NameProperty = DependencyProperty.Register(
         "Name",
@@ -143,6 +144,11 @@ namespace ZusiStart.Data
 
       _assignVariant = true;
       _dirty = false;
+    }
+
+    public ReplacementTrain(FahrzeugVarianten fzgvar)
+    {
+      _fzgvar = fzgvar;
     }
 
     public ReplacementTrain(ReplacementTrain source)

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Buchfahrplan" Version="A.1" MinVersion="A.1">
+<AutorEintrag/>
+</Info>
+<Buchfahrplan Gattung="Deko" Nummer="Altenbeken Gleis 7" BR="Gbs 245" Masse="431900" spMax="22.2222" Bremsh="0.859" Laenge="206.06" kmStart="110.4907">
+<Datei_fpn Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986.fpn" NurInfo="1"/>
+<Datei_trn Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\DekoAltenbeken Gleis 7.trn" NurInfo="1"/>
+<FplZeile FplLaufweg="26.0946">
+<FplvMax vMax="22.2222"/>
+<Fplkm/>
+</FplZeile>
+<FplZeile FplLaufweg="261.9616">
+<FplName FplNameText="Altenbeken"/>
+<Fplkm km="110.7603"/>
+<FplAnk Ank="1986-09-03 11:20:00"/>
+<FplAbf Abf="1986-09-03 14:20:00"/>
+</FplZeile>
+</Buchfahrplan>
+</Zusi>

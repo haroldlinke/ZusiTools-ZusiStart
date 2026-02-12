@@ -199,7 +199,7 @@ namespace ZusiStart.Data
           Bremshundertstel = dlg.BrHSelector == 0 ? 0 : dlg.BrH,
           DotraMode = DotraMode.Default,
           //IgnoreDoors = _firstLoco.Value.Tuerignorieren,
-          IgnoreDoors = false, //(bool)dlg.IgnoreDoors.IsChecked,
+          IgnoreDoors = (bool)dlg.IgnoreDoors.IsChecked,
           Gedreht = (bool)dlg.Gedreht1.IsChecked,
           SASchaltung = dlg.GetPantograph(1),
           Zugrichtung = (bool)dlg.Lokrichtung.IsChecked,
@@ -251,7 +251,7 @@ namespace ZusiStart.Data
             Bremsstellung = dlg.Bremsstellung,
             Bremshundertstel = dlg.BrHSelector == 0 ? 0 : dlg.BrH,
             DotraMode = DotraMode.PartOfMultipleHeading,
-            //*IgnoreDoors = (bool)dlg.IgnoreDoors.IsChecked,
+            IgnoreDoors = (bool)dlg.IgnoreDoors.IsChecked,
             //IgnoreDoors = _firstLoco.Value.Tuerignorieren,
             Gedreht = (bool)dlg.Gedreht1.IsChecked,
             SASchaltung = dlg.GetPantograph(1),
@@ -275,7 +275,7 @@ namespace ZusiStart.Data
             Bremsstellung = dlg.Bremsstellung,
             Bremshundertstel = dlg.BrHSelector == 0 ? 0 : dlg.BrH,
             DotraMode = DotraMode.PartOfMultipleHeading,
-            IgnoreDoors = false, //(bool)dlg.IgnoreDoors.IsChecked,
+            IgnoreDoors = (bool)dlg.IgnoreDoors.IsChecked,
             //*IgnoreDoors = _secondLoco.Value.Tuerignorieren,
             Gedreht = (bool)dlg.Gedreht2.IsChecked,
             SASchaltung = dlg.GetPantograph(2),
@@ -415,12 +415,12 @@ namespace ZusiStart.Data
           Bremshundertstel = dlg.BrHSelector == 0 ? 0 : dlg.BrH,
           DotraMode = DotraMode.Default,
           //IgnoreDoors = _firstLoco.Value.Tuerignorieren,
-          IgnoreDoors = false, // (bool)dlg.IgnoreDoors.IsChecked,
+          IgnoreDoors = false,//(bool)dlg.IgnoreDoors.IsChecked,
           Gedreht = false, //(bool)dlg.Gedreht1.IsChecked,
           SASchaltung = dlg.GetPantograph(1),
           Zugrichtung = false, //(bool)dlg.Lokrichtung.IsChecked,
           Zuggedreht = (bool)dlg.Zuggedreht.IsChecked
-        };
+        };  //
 
 
         ReplacementTrain rloco = DataManager.Instance.ReplacementTrains[dlg.SelectedReplTrain1];

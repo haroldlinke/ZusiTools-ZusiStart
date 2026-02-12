@@ -242,9 +242,12 @@ namespace ZusiStart.Miscellaneous
           
           foreach (XElement xr in doc.Root.Elements("recenttrain"))
           {
-            string timeTableName = xr.Element("timetable").Value;
-            tmp.Add(timeTableName);
-            //base.Add(new RecentTrain(null, timeTableName, xr.GetAttrValue("used", 1)));
+            if (xr.Element("timetable") != null)
+            {
+              string timeTableName = xr.Element("timetable").Value;
+              tmp.Add(timeTableName);
+              //base.Add(new RecentTrain(null, timeTableName, xr.GetAttrValue("used", 1)));
+            }
           }
           //tmp.Sort((x, y) => x.Used > y.Used ? -1 : (x.Used < y.Used ? 1 : 0));
           //tmp.ForEach(i => base.Add(i));

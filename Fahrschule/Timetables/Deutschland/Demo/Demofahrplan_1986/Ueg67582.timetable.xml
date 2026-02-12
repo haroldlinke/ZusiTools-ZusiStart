@@ -1,0 +1,187 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Buchfahrplan" Version="A.1" MinVersion="A.1">
+<AutorEintrag/>
+</Info>
+<Buchfahrplan Gattung="Üg" Nummer="67582" Zuglauf="Bad Driburg - Altenbeken" BR="260" Masse="163000" spMax="16.6667" Bremsh="0.8221" MBrh="0.39" Laenge="60.45" kmStart="10.1409">
+<Datei_fpn Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986.fpn" NurInfo="1"/>
+<Datei_trn Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\Ueg67582.trn" NurInfo="1"/>
+<FplZeile FplLaufweg="71.9833">
+<FplIcon FplIconNr="1"/>
+<FplName FplNameText="- ZBF A 65 -"/>
+<FplvMax vMax="27.7778"/>
+</FplZeile>
+<FplZeile FplLaufweg="73.9833">
+<FplvMax vMax="27.7778"/>
+<Fplkm/>
+</FplZeile>
+<FplZeile FplLaufweg="264.5604">
+<FplName FplNameText="Bad Driburg"/>
+<Fplkm km="9.8764"/>
+<FplAnk Ank="1986-09-03 12:20:00"/>
+<FplAbf Abf="1986-09-03 12:48:00"/>
+</FplZeile>
+<FplZeile FplLaufweg="586.8701">
+<FplNameRechts FplNameText="A 60"/>
+<FplSignaltyp FplSignaltypNr="9"/>
+<Fplkm km="9.554"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="683.5234" FahrstrStrecke="2974b">
+<FplIcon FplIconNr="1"/>
+<FplName FplNameText="- ZBF A 65 -"/>
+<FplvMax/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="685.5234" FahrstrStrecke="2974b">
+<Fplkm km="9.4554"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="730.9332" FahrstrStrecke="2974b">
+<Fplkm km="9.4065"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="755.0808" FahrstrStrecke="2974b">
+<Fplkm km="9.3823"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="767.5651" FahrstrStrecke="2974b">
+<Fplkm km="9.37"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="832.2919" FahrstrStrecke="2974b">
+<FplIcon FplIconNr="17"/>
+<Fplkm km="9.3052"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="923.119" FahrstrStrecke="2974b">
+<FplIcon FplIconNr="17"/>
+<Fplkm km="9.218"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="2750.8745" FahrstrStrecke="2974b">
+<FplTunnel FplNameText="Reelsener Tunnel" FplTunnelAnfang="1"/>
+<Fplkm km="7.3874"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="2752.9778" FahrstrStrecke="2974b">
+<FplTunnel FplNameText="Reelsener Tunnel" FplTunnelAnfang="1"/>
+<Fplkm km="7.3874"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="2955.3369" FahrstrStrecke="2974b">
+<FplTunnel/>
+<Fplkm km="7.1954"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="2956.9207" FahrstrStrecke="2974b">
+<FplTunnel/>
+<Fplkm km="7.1944"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="3347.1272" FahrstrStrecke="2974b">
+<Fplkm km="6.8042"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="3692.4971" FahrstrStrecke="2974b">
+<Fplkm km="6.4589"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="4266.583" FahrstrStrecke="2974b">
+<FplName FplNameText="Reelsen Hp"/>
+<Fplkm km="5.8842"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="4267.7236" FahrstrStrecke="2974b">
+<FplName FplNameText="Reelsen Hp"/>
+<Fplkm km="5.8837"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="4702.6865" FahrstrStrecke="2974b">
+<Fplkm km="5.4487"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="5456.9443" FahrstrStrecke="2974b">
+<FplvMax vMax="25"/>
+<Fplkm km="4.705"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="5457.7402" FahrstrStrecke="2974b">
+<FplvMax vMax="25"/>
+<Fplkm km="4.7047"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="5468.0713" FahrstrStrecke="2974b">
+<FplName FplNameText="- ZBF A 73 -"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="5468.8369" FahrstrStrecke="2974b">
+<FplIcon FplIconNr="1"/>
+<FplName FplNameText="- ZBF A 73 -"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="5587.9282" FahrstrStrecke="2974b">
+<FplSignaltyp FplSignaltypNr="13"/>
+<Fplkm km="4.5629"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="5588.479" FahrstrStrecke="2974b">
+<FplSignaltyp FplSignaltypNr="7"/>
+<Fplkm km="4.5629"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplLaufweg="6679.7656">
+<FplName FplNameText="Langeland"/>
+<FplSignaltyp FplSignaltypNr="9"/>
+<Fplkm km="3.4727"/>
+<FplSaegelinien FplAnzahl="1"/>
+<FplAbf Abf="1986-09-03 12:57:00"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="6685.915" FahrstrStrecke="1760a">
+<Fplkm km="3.4794" FplSprung="1" FplkmNeu="107.6337"/>
+<FplvMax vMax="22.2222"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="6686.4658" FahrstrStrecke="1760a">
+<Fplkm km="3.4794" FplSprung="1" FplkmNeu="107.6337"/>
+<FplvMax vMax="22.2222"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="6919.4004" FahrstrStrecke="1760a">
+<FplIcon FplIconNr="17"/>
+<Fplkm km="107.867"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="6957.5562" FahrstrStrecke="1760a">
+<FplIcon FplIconNr="17"/>
+<Fplkm km="107.9069"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="6982.7881" FahrstrStrecke="1760a">
+<FplTunnel FplNameText="Rehbergtunnel" FplTunnelAnfang="1"/>
+<Fplkm km="107.9304"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="6984.3896" FahrstrStrecke="1760a">
+<FplTunnel FplNameText="Rehbergtunnel" FplTunnelAnfang="1"/>
+<Fplkm km="107.9337"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="6991.771" FahrstrStrecke="1760a">
+<FplIcon FplIconNr="1"/>
+<FplName FplNameText="- ZBF A 73 -"/>
+<Fplkm km="107.9394"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="8600.8555" FahrstrStrecke="1760a">
+<FplTunnel/>
+<Fplkm km="109.5252"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="8605.4365" FahrstrStrecke="1760a">
+<FplTunnel/>
+<Fplkm km="109.5292"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="8650.0635" FahrstrStrecke="1760a">
+<FplSignaltyp FplSignaltypNr="7"/>
+<Fplkm km="109.5981"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="8650.4697" FahrstrStrecke="1760a">
+<FplSignaltyp FplSignaltypNr="7"/>
+<Fplkm km="109.5982"/>
+</FplZeile>
+<FplZeile FplLaufweg="9859.9092">
+<FplName FplNameText="Altenbeken"/>
+<Fplkm km="110.8105"/>
+<FplAnk Ank="1986-09-03 13:03:00"/>
+<FplAbf Abf="1986-09-03 13:12:00"/>
+</FplZeile>
+<FplZeile FplLaufweg="9916.0674">
+<FplSignaltyp FplSignaltypNr="9"/>
+<Fplkm km="110.867"/>
+</FplZeile>
+</Buchfahrplan>
+</Zusi>
