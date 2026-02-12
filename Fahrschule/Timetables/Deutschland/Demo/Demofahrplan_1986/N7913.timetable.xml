@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Buchfahrplan" Version="A.1" MinVersion="A.1">
+<AutorEintrag/>
+</Info>
+<Buchfahrplan Gattung="N" Nummer="7913" Zuglauf="Bielefeld Hbf - Altenbeken" BR="110" Masse="189000" spMax="33.3333" Bremsh="1.0582" MBrh="1.02" Laenge="88.75" kmStart="103.9783" Bremsstellung="1">
+<Datei_fpn Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986.fpn" NurInfo="1"/>
+<Datei_trn Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\N7913.trn" NurInfo="1"/>
+<FplZeile FplLaufweg="8.0314">
+<FplIcon FplIconNr="1"/>
+<FplName FplNameText="- ZBF A 73 -"/>
+<FplvMax vMax="25"/>
+</FplZeile>
+<FplZeile FplLaufweg="10.0314">
+<FplvMax vMax="25"/>
+<Fplkm/>
+</FplZeile>
+<FplZeile FplLaufweg="913.7879">
+<FplName FplNameText="Bk Erpentrup"/>
+<FplSignaltyp FplSignaltypNr="10"/>
+<Fplkm km="104.8921"/>
+<FplAnk Ank="1986-09-03 11:33:00" FplEintrag="1"/>
+<FplAbf Abf="1986-09-03 11:33:00"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="2030.8224" FahrstrStrecke="1760a">
+<FplIcon FplIconNr="1"/>
+<FplName FplNameText="- ZBF A 73 -"/>
+<FplvMax vMax="22.2222"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="2032.8224" FahrstrStrecke="1760a">
+<FplvMax vMax="22.2222"/>
+<Fplkm km="105.9552"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="2032.8224" FahrstrStrecke="1760a">
+<FplvMax vMax="22.2222"/>
+<Fplkm km="105.9552"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="2296.4783" FahrstrStrecke="1760a">
+<FplSignaltyp FplSignaltypNr="7"/>
+<Fplkm km="106.278"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="2296.4783" FahrstrStrecke="1760a">
+<FplSignaltyp FplSignaltypNr="7"/>
+<Fplkm km="106.278"/>
+</FplZeile>
+<FplZeile FplLaufweg="2305.3652">
+<Fplkm km="106.2363"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplLaufweg="3163.6799">
+<Fplkm km="107.0947" FplSprung="1" FplkmNeu="107.2306"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplLaufweg="3570.9707">
+<FplName FplNameText="Langeland"/>
+<FplSignaltyp FplSignaltypNr="9"/>
+<Fplkm km="107.6379"/>
+<FplSaegelinien FplAnzahl="1"/>
+<FplAbf Abf="1986-09-03 11:36:00"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="3811.7778" FahrstrStrecke="1760a">
+<FplIcon FplIconNr="17"/>
+<Fplkm km="107.867"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="3850.8533" FahrstrStrecke="1760a">
+<FplIcon FplIconNr="17"/>
+<Fplkm km="107.9069"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="3875.1655" FahrstrStrecke="1760a">
+<FplTunnel FplNameText="Rehbergtunnel" FplTunnelAnfang="1"/>
+<Fplkm km="107.9304"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="3877.6865" FahrstrStrecke="1760a">
+<FplTunnel FplNameText="Rehbergtunnel" FplTunnelAnfang="1"/>
+<Fplkm km="107.9337"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="5494.1523" FahrstrStrecke="1760a">
+<FplTunnel/>
+<Fplkm km="109.5252"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="5497.814" FahrstrStrecke="1760a">
+<FplTunnel/>
+<Fplkm km="109.5292"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="5542.8467" FahrstrStrecke="1760a">
+<FplSignaltyp FplSignaltypNr="7"/>
+<Fplkm km="109.5982"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="5543.3599" FahrstrStrecke="1760a">
+<FplSignaltyp FplSignaltypNr="7"/>
+<Fplkm km="109.5981"/>
+</FplZeile>
+<FplZeile FplLaufweg="6703.2109">
+<FplName FplNameText="Altenbeken"/>
+<FplSignaltyp FplSignaltypNr="13"/>
+<Fplkm km="110.756"/>
+<FplAnk Ank="1986-09-03 11:40:00"/>
+<FplAbf Abf="1986-09-03 12:00:00"/>
+</FplZeile>
+</Buchfahrplan>
+</Zusi>

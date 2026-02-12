@@ -396,7 +396,7 @@ namespace ZusiStart.Controls
           DataPathType dtp = DataPathType.Unknown;
           string orgRelativeTimetableName = Zusi.GetRelativePathOf(zug.GetDocument().Filename, ref dtp);
           orgRelativeTimetableName = orgRelativeTimetableName.Replace("\\", "%5C");
-          //string url = "http://zusidatenbank.pilborough.de/fahrplanzug/" + orgRelativeTimetableName;
+          //string url = "http://zusidatenbank.de/fahrplanzug/" + orgRelativeTimetableName;
 
 
           //DataManager.Instance.webview_ZDB.Source = new Uri(url);
@@ -611,7 +611,7 @@ namespace ZusiStart.Controls
       {
         System.Windows.Controls.Image image = new() { Source = imagesource };
         grd1.Children.Add(image);
-        grd1.Margin = new Thickness(20, 0, 20, 0);
+        grd1.Margin = new Thickness(20, 0, 20, 10);
 
         //System.Windows.Controls.Image smallimage = new() { Source = imagesource, Height = 20, Stretch = System.Windows.Media.Stretch.Uniform };
         //smallgrd1.Children.Add(smallimage);

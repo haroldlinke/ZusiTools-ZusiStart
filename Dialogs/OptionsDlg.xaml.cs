@@ -31,7 +31,7 @@ namespace ZusiStart.Dialogs
       string lang = Properties.Settings.Default.Language;
       if (!string.IsNullOrEmpty(lang) && lang != "auto")
       {
-          DataManager.CurrentLanguage = lang;
+        DataManager.CurrentLanguage = lang;
       }
       else
       {
@@ -49,6 +49,11 @@ namespace ZusiStart.Dialogs
     }
 
     private void SaveOptions_Click(object sender, RoutedEventArgs e)
+    {
+      SaveOptions();
+    }
+
+    public void SaveOptions()
     {
       // Sprache speichern
       if (ComboBox_Language.SelectedItem is ComboBoxItem item)
@@ -73,14 +78,30 @@ namespace ZusiStart.Dialogs
         ZusiMeter_Param = TextBox_ZusiMeter_Param.Text,
         New_RenderEngine = CheckBox_New_RenderEngine.IsChecked ?? false,
         Blickwinkel_value = TextBox_Blickwinkel.Text,
+        RemoteZusi = CheckBox_RemoteZusi.IsChecked ?? false,
+        RemoteZusiIP = TextBox_RemoteZusiIP.Text,
+        RemoteTrackingSupport = CheckBox_RemoteTrackingSupport.IsChecked ?? false,
         DecoTrain_Separate = CheckBox_DecoTrain_Separate.IsChecked ?? false,
+        DonotHideZusiStart = CheckBox_DonotHideZusiStart.IsChecked ?? false,
+        //StartOnlySelectedTrain = CheckBox_StartOnlySelectedTrain.IsChecked ?? false,
+        Show_ZusiMeter_Data = CheckBox_Show_ZusiMeter_Data.IsChecked ?? false,
+        ZusiMeter_Standard_Layoutfile = TextBox_ZusiMeter_Standard_Layoutfile.Text,
       };
       DataManager.Instance.options = local_options;
-      DataManager.Instance.main_window.ZSKButtonVisibility = local_options.Show_ZSK? Visibility.Visible: Visibility.Collapsed;
+      DataManager.Instance.main_window.ZSKButtonVisibility = local_options.Show_ZSK ? Visibility.Visible : Visibility.Collapsed;
       DataManager.Instance.main_window.ZDBButtonVisibility = local_options.Show_ZDB ? Visibility.Visible : Visibility.Collapsed;
       DataManager.Instance.main_window.BfpButtonVisibility = local_options.Show_Bfpl ? Visibility.Visible : Visibility.Collapsed;
       this.Close();
-
+      if (local_options.RemoteZusi)
+      {
+        ((RoutedUICommand)MainWindow.StartTrainCommand).Text = LocalizationManager.Translate("Remote Zug monitoren");
+        DataManager.Instance.main_window.BtnStartTrain.Content = ((RoutedUICommand)MainWindow.StartTrainCommand).Text;
+      }
+      else
+      {
+        ((RoutedUICommand)MainWindow.StartTrainCommand).Text = LocalizationManager.Translate("Ausgewählten Zug fahren");
+        DataManager.Instance.main_window.BtnStartTrain.Content = ((RoutedUICommand)MainWindow.StartTrainCommand).Text;
+      }
     }
 
     private void UpdateLanguageComboBoxTexts()
@@ -108,7 +129,7 @@ namespace ZusiStart.Dialogs
         TextBox_ZDB_URL.Text = local_options.ZDB_Url;
       else
       {
-        TextBox_ZDB_URL.Text = "http://zusidatenbank.pilborough.de/?zusistart";
+        TextBox_ZDB_URL.Text = "http://zusidatenbank.de/?zusistart";
       }
 
       CheckBox_Bfpl.IsChecked = local_options.Show_Bfpl;
@@ -153,11 +174,42 @@ namespace ZusiStart.Dialogs
         TextBox_ZusiMeter_Param.Text = DataManager.Instance.ZusiMeterStartParam;
       }
 
+      CheckBox_Show_ZusiMeter_Data.IsChecked = local_options.Show_ZusiMeter_Data;
+      if (!string.IsNullOrEmpty(local_options.ZusiMeter_Standard_Layoutfile))
+        TextBox_ZusiMeter_Standard_Layoutfile.Text = local_options.ZusiMeter_Standard_Layoutfile;
+      else
+      {
+        TextBox_ZusiMeter_Standard_Layoutfile.Text = DataManager.Instance.options.ZusiMeter_Standard_Layoutfile;
+      }
+      if (!string.IsNullOrEmpty(local_options.ZusiMeter_Param))
+        TextBox_ZusiMeter_Param.Text = local_options.ZusiMeter_Param;
+      else
+      {
+        TextBox_ZusiMeter_Param.Text = DataManager.Instance.ZusiMeterStartParam;
+      }
+
       CheckBox_New_RenderEngine.IsChecked = local_options.New_RenderEngine;
       TextBox_Blickwinkel.Text = local_options.Blickwinkel_value;
+
+      CheckBox_RemoteZusi.IsChecked = local_options.RemoteZusi;
+      TextBox_RemoteZusiIP.Text = local_options.RemoteZusiIP;
+      CheckBox_RemoteTrackingSupport.IsChecked = local_options.RemoteTrackingSupport;
+
+      if (DataManager.Instance.options.RemoteZusi)
+      {
+        ((RoutedUICommand)MainWindow.StartTrainCommand).Text = LocalizationManager.Translate("Remote Zug monitoren");
+        DataManager.Instance.main_window.BtnStartTrain.Content = ((RoutedUICommand)MainWindow.StartTrainCommand).Text;
+      }
+      else
+      {
+        ((RoutedUICommand)MainWindow.StartTrainCommand).Text = LocalizationManager.Translate("Ausgewählten Zug fahren");
+        DataManager.Instance.main_window.BtnStartTrain.Content = ((RoutedUICommand)MainWindow.StartTrainCommand).Text;
+      }
       // Sprache im Dialog auf aktuelle Auswahl setzen
 
       CheckBox_DecoTrain_Separate.IsChecked = local_options.DecoTrain_Separate;
+      CheckBox_DonotHideZusiStart.IsChecked = local_options.DonotHideZusiStart;
+      //CheckBox_StartOnlySelectedTrain.IsChecked = local_options.StartOnlySelectedTrain;
 
       string currentLang = DataManager.CurrentLanguage ?? "auto";
       foreach (ComboBoxItem item in ComboBox_Language.Items)
@@ -169,6 +221,16 @@ namespace ZusiStart.Dialogs
         }
       }
       UpdateLanguageComboBoxTexts();
+
+      //string currenttraincat = local_options.CurrentTrainCat ?? "all";
+      //foreach (ComboBoxItem item in ComboBox_TrainCategories.Items)
+      //{
+      //  if ((string)item.Tag == currenttraincat)
+      //  {
+      //    ComboBox_TrainCategories.SelectedItem = item;
+      //    break;
+      //  }
+      //}
     }
   }
 }

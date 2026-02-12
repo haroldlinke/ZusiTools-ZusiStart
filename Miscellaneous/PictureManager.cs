@@ -129,7 +129,7 @@ namespace ZusiStart.Miscellaneous
 
           // Add a vehicle
 
-          int result = LS3RenderWrapper.ls3render_AddFahrzeug(fahrzeug_dateiname, 50.0f/pixel_pro_meter, Fahrzeuglaenge, gedreht, 4.5f, 1, 0, 0, 0);
+          int result = LS3RenderWrapper.ls3render_AddFahrzeug(fahrzeug_dateiname, 50.0f/pixel_pro_meter, Fahrzeuglaenge, gedreht, 4.5f, 1, 0, 0, 0,0,0,0,0);
           if (result == 1)
           {
             _log.Debug("Vehicle added successfully!");

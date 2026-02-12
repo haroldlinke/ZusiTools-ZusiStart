@@ -67,9 +67,14 @@ ls3render_EXPORT void ls3render_SetAxonometrieParameter(float Winkel, float Skal
  * @param Stromabnehmer3Oben 1, wenn Stromabnehmer 3 gehoben ist, sonst 0.
  * @param Stromabnehmer4Oben 1, wenn Stromabnehmer 4 gehoben ist, sonst 0.
  *
+ * @param SpitzenlichtVorneAn 1, wenn Mesh-Subsets vom Typ "Spitzenlicht vorne" angezeigt werden sollen, sonst 0.
+ * @param SpitzenlichtHintenAn 1, wenn Mesh-Subsets vom Typ "Spitzenlicht hinten" angezeigt werden sollen, sonst 0.
+ * @param SchlusslichtVorneAn 1, wenn Mesh-Subsets vom Typ "Schlusslicht vorne" angezeigt werden sollen, sonst 0.
+ * @param SchlusslichtHintenAn 1, wenn Mesh-Subsets vom Typ "Schlusslicht hinten" angezeigt werden sollen, sonst 0.
+ *
  * @return 1 bei Erfolg, 0 bei Fehlschlag.
  */
-ls3render_EXPORT int ls3render_AddFahrzeug(const char* Dateiname, float OffsetX, float Fahrzeuglaenge, int Gedreht, float StromabnehmerHoehe, int Stromabnehmer1Oben, int Stromabnehmer2Oben, int Stromabnehmer3Oben, int Stromabnehmer4Oben);
+ls3render_EXPORT int ls3render_AddFahrzeug(const char* Dateiname, float OffsetX, float Fahrzeuglaenge, int Gedreht, float StromabnehmerHoehe, int Stromabnehmer1Oben, int Stromabnehmer2Oben, int Stromabnehmer3Oben, int Stromabnehmer4Oben, int SpitzenlichtVorneAn, int SpitzenlichtHintenAn, int SchlusslichtVorneAn, int SchlusslichtHintenAn);
 
 /**
  * Fuegt die 3D-Datei einer Fahrzeugbeladung zum zuletzt hinzugefügten Fahrzeug hinzu.

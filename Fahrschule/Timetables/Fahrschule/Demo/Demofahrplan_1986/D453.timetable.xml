@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Buchfahrplan" Version="A.1" MinVersion="A.1">
+<AutorEintrag/>
+</Info>
+<Buchfahrplan Gattung="D" Nummer="453" Zuglauf="Mönchengladbach Hbf - Leipzig Hbf" BR="110" Masse="582000" spMax="33.3333" Bremsh="1.5223" MBrh="1.12" Laenge="333.29" kmStart="113.6158" Bremsstellung="3">
+<Datei_fpn Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986.fpn" NurInfo="1"/>
+<Datei_trn Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\D453.trn" NurInfo="1"/>
+<FplZeile FplLaufweg="25.9713">
+<FplIcon FplIconNr="1"/>
+<FplName FplNameText="- ZBF A 73 -"/>
+<FplvMax vMax="30.5556"/>
+</FplZeile>
+<FplZeile FplLaufweg="27.9713">
+<FplvMax vMax="30.5556"/>
+<Fplkm/>
+</FplZeile>
+<FplZeile FplLaufweg="1324.9331">
+<FplName FplNameText="Esig"/>
+<FplSignaltyp FplSignaltypNr="7"/>
+<Fplkm km="112.293"/>
+</FplZeile>
+<FplZeile FplLaufweg="1330.9331">
+<FplvMax vMax="22.2222"/>
+<Fplkm km="112.293"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplLaufweg="2831.802">
+<FplName FplNameText="Altenbeken"/>
+<Fplkm km="110.784"/>
+<FplSaegelinien FplAnzahl="1"/>
+<FplAnk Ank="1986-09-03 12:51:00" FplEintrag="1"/>
+<FplAbf Abf="1986-09-03 12:51:00"/>
+</FplZeile>
+<FplZeile FplLaufweg="2837.0427">
+<Fplkm km="110.7892" FplSprung="1" FplkmNeu="111.0039"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplLaufweg="3263.3501">
+<FplSignaltyp FplSignaltypNr="9"/>
+<Fplkm km="111.4304"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="3556.4531" FahrstrStrecke="2970a">
+<FplIcon FplIconNr="1"/>
+<FplName FplNameText="- ZBF A 73 -"/>
+<FplvMax/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="3639.9937" FahrstrStrecke="2970a">
+<FplvMax vMax="33.3333"/>
+<Fplkm km="111.7864"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="3659.5952" FahrstrStrecke="2970a">
+<FplIcon FplIconNr="17"/>
+<Fplkm km="111.8267"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="3706.8469" FahrstrStrecke="2970a">
+<FplIcon FplIconNr="17"/>
+<Fplkm km="111.8746"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="3742.594" FahrstrStrecke="2970a">
+<FplvMax vMax="33.3333"/>
+<Fplkm km="111.8974"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="4760.6523" FahrstrStrecke="2970a">
+<FplName FplNameText="Sbk 1"/>
+<FplSignaltyp FplSignaltypNr="10"/>
+<Fplkm km="112.9284"/>
+<FplSaegelinien FplAnzahl="1"/>
+<FplAnk Ank="1986-09-03 13:03:00" FplEintrag="1"/>
+<FplAbf Abf="1986-09-03 13:03:00"/>
+</FplZeile>
+</Buchfahrplan>
+</Zusi>

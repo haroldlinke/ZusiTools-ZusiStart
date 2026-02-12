@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Zug" Version="A.1" MinVersion="A.1">
+<AutorEintrag AutorID="34" AutorName="Holger Lürkens"/>
+</Info>
+<Zug Gattung="E" Nummer="3541" Zuglauf="Altenbeken - Braunschweig Hbf" Prio="2500" Bremsstellung="1" MBrh="1.03" LODzug="3" ReisendenDichte="0.65" FahrplanGruppe="1. Altenbeken - Bad Driburg" Rekursionstiefe="5" FahrstrName="Aufgleispunkt -&gt; Altenbeken L34" Zugtyp="1" Buchfahrplandll="_InstSetup\lib\timetable\Buchfahrplan_DB_1979.dll">
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986.fpn" NurInfo="1"/>
+<FahrplanEintrag Ank="1986-09-03 11:26:00" Abf="1986-09-03 11:48:00" Betrst="Altenbeken">
+<FahrplanSignalEintrag FahrplanSignal="L34"/>
+</FahrplanEintrag>
+<FahrplanEintrag Abf="1986-09-03 11:51:00" Betrst="Langeland">
+<FahrplanSignalEintrag FahrplanSignal="N3"/>
+<FahrplanFahrstrasseEintrag FahrplanFahrstrasse="Langeland N3 -&gt; Bad Driburg A\"/>
+</FahrplanEintrag>
+<FahrplanEintrag Abf="1986-09-03 11:54:00" Betrst="Bad Driburg">
+<FahrplanSignalEintrag FahrplanSignal="A\"/>
+</FahrplanEintrag>
+<FahrplanEintrag Ank="1986-09-03 11:56:00" Abf="1986-09-03 11:56:30" Betrst="Bad Driburg">
+<FahrplanSignalEintrag FahrplanSignal="E"/>
+</FahrplanEintrag>
+<FahrplanEintrag Ank="1986-09-03 11:59:00" Abf="1986-09-03 11:59:00" Betrst="Herste" FplEintrag="1">
+<FahrplanSignalEintrag FahrplanSignal="Herste"/>
+</FahrplanEintrag>
+<FahrzeugVarianten Bezeichnung="default" ZufallsWert="1">
+<FahrzeugVarianten Bezeichnung="Lok" PerZufallUebernehmen="1" ZufallsWert="1">
+<FahrzeugInfo IDHaupt="3" IDNeben="1" Bremsstellung="1" Zugart="M">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Dieselloks\BRD\V160_Familie\V160\V160.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="2" IDNeben="1" Bremsstellung="1" Gedreht="1" Zugart="M">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Dieselloks\BRD\V160_Familie\V160\V160.rv.fzg"/>
+</FahrzeugInfo>
+</FahrzeugVarianten>
+<FahrzeugVarianten Bezeichnung="Wagen" PerZufallUebernehmen="1" ZufallsWert="1" FzgPosition="1">
+<FahrzeugVarianten Bezeichnung="Park 1" ZufallsWert="1">
+<FahrzeugInfo IDHaupt="3" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\Eilzugwagen\BD4ymf54.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="1" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\n_Wagen_Silberlinge\ABnb703.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="1" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\n_Wagen_Silberlinge\Bnb719.rv.fzg"/>
+</FahrzeugInfo>
+</FahrzeugVarianten>
+<FahrzeugVarianten Bezeichnung="Park 2" ZufallsWert="1" FzgPosition="1">
+<FahrzeugInfo IDHaupt="2" IDNeben="1" Gedreht="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\Umbauwagen\BPw4yg56.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="2" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\Umbauwagen\AByg58.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="3" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\Eilzugwagen\B4ym51.rv.fzg"/>
+</FahrzeugInfo>
+</FahrzeugVarianten>
+</FahrzeugVarianten>
+</FahrzeugVarianten>
+</Zug>
+</Zusi>

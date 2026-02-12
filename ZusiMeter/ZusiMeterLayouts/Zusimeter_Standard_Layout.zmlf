@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<ZusiMeter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="zusimeter.xsd" version="1.3">
+  <Layout version="1.3" zoom="1">
+    <Background mode="text">
+      <Value></Value>
+    </Background>
+    <TextGauge row="1" sizeX="2" sizeY="1" type="ChronometerGauge" FtdID="LM_Uhrzeit" style="ChronometerText" />
+    <TextGauge row="2" sizeX="2" sizeY="1" Name="Strecken-Km" FtdID="KilometrierungZugSpitze" NumDecimals="1" />
+    <TextGauge row="3" sizeX="2" sizeY="1" Name="Geschwindigkeit" Unit="Speed_kmh" ValueMultiplier="3.6" FtdID="Geschwindigkeit" />
+    <TextGauge row="4" sizeX="2" sizeY="1" Name="Höchstgeschwindigk." Unit="Speed_kmh" ValueMultiplier="3.6" FtdID="StreckenMaxGeschwindigkeit" />
+    <TextGauge row="5" sizeX="2" sizeY="1" Name="Fahren/Bremsen" Unit="Beschleunigung" FtdID="BeschleunigungX" NumDecimals="4" />
+    <TextGauge row="6" sizeX="2" sizeY="1" Name="HLL" Unit="Pressure" FtdID="DruckHauptluftleitung" NumDecimals="2" />
+  </Layout>
+</ZusiMeter>

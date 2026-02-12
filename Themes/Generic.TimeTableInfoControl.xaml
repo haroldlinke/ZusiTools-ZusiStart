@@ -15,6 +15,7 @@
   <local:AverageSpeedConverter x:Key="AverageSpeedConverter"/>
   <local:TrainLengthConverter x:Key="TrainLengthConverter"/>
   <local:TrainMassConverter x:Key="TrainMassConverter"/>
+  <local:TrainMaxMassConverter x:Key="TrainMaxMassConverter"/>
   <local:UseCounterConverter x:Key="UseCounterConverter"/>
   <cv:ReferenceEqualityConverter x:Key="ReferenceEqualityConverter"/>
   <cv:LocalizationConverter x:Key="Loc"/>
@@ -175,12 +176,13 @@
                   </Style>
                 </Expander.Style>
                 <Grid Grid.Row="2">
-                  <ScrollViewer x:Name="PART_PicsScroller" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" HorizontalAlignment="Center">
+                  <ScrollViewer x:Name="PART_PicsScroller" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" HorizontalAlignment="Center" Grid.Row="0">
                     <StackPanel x:Name="PART_PicsPanel" Orientation="Horizontal"/>
                   </ScrollViewer>
-                  <StackPanel Orientation="Horizontal" Panel.ZIndex="7" VerticalAlignment="Bottom" HorizontalAlignment="Center">
-                    <TextBlock Text="{Binding TrainLength, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TrainLengthConverter}}" Foreground="Black"/>
+                  <StackPanel Orientation="Horizontal" Panel.ZIndex="7" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,-10" Grid.Row="1">
+                    <TextBlock Text="{Binding TrainLength, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TrainLengthConverter}}" Margin="0,0,0,0" Foreground="Black"/>
                     <TextBlock Text="{Binding TrainMass, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TrainMassConverter}}" Margin="24,0,0,0" Foreground="Black"/>
+                    <TextBlock Text="{Binding TrainMaxMass, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TrainMaxMassConverter}}" Margin="0,0,0,0" Foreground="Black"/>
                     <!--<TextBlock Margin="24,0,0,0" Foreground="Black" Text="{Binding Bremsstellung, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource Bremsstellung2StringConverter}, Mode=OneWay}"/>-->
                   </StackPanel>
                 </Grid>

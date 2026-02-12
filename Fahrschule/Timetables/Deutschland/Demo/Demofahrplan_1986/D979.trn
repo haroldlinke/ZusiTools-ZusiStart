@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Zug" Version="A.1" MinVersion="A.1">
+<AutorEintrag AutorID="34" AutorName="Holger Lürkens"/>
+</Info>
+<Zug Gattung="D" Nummer="979" Zuglauf="Bielefeld Hbf - Frankfurt (M) Hbf" Prio="3000" Bremsstellung="3" MBrh="1.45" LODzug="3" ReisendenDichte="0.5" FahrplanGruppe="4. Himmighausen - Altenbeken" Rekursionstiefe="5" FahrstrName="Aufgleispunkt -&gt; Bk Erpentrup A" Zugtyp="1" Buchfahrplandll="_InstSetup\lib\timetable\Buchfahrplan_DB_1979.dll">
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986.fpn" NurInfo="1"/>
+<FahrplanEintrag Ank="1986-09-03 12:08:00" Abf="1986-09-03 12:08:00" Betrst="Bk Erpentrup" FplEintrag="1">
+<FahrplanSignalEintrag FahrplanSignal="A"/>
+</FahrplanEintrag>
+<FahrplanEintrag Abf="1986-09-03 12:11:00" Betrst="Langeland">
+<FahrplanSignalEintrag FahrplanSignal="P4"/>
+<FahrplanSignalEintrag FahrplanSignal="P3"/>
+</FahrplanEintrag>
+<FahrplanEintrag Ank="1986-09-03 12:15:00" Abf="1986-09-03 12:22:00" Betrst="Altenbeken" FzgVerbandAktion="1" FzgVerbandAktionWendesignal="1" FzgVerbandWendeSignalabstand="120">
+<FahrplanSignalEintrag FahrplanSignal="R21"/>
+</FahrplanEintrag>
+<FahrplanEintrag Ank="1986-09-03 12:15:00" Abf="1986-09-03 12:22:00" Betrst="Altenbeken" FplEintrag="1">
+<FahrplanSignalEintrag FahrplanSignal="T21"/>
+</FahrplanEintrag>
+<FahrplanEintrag Ank="1986-09-03 12:24:00" Abf="1986-09-03 12:24:00" Betrst="Sbk 1" FplEintrag="1">
+<FahrplanSignalEintrag FahrplanSignal="Sbk 1"/>
+</FahrplanEintrag>
+<FahrzeugVarianten Bezeichnung="default" ZufallsWert="1">
+<FahrzeugInfo IDHaupt="4" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\UIC-X-Wagen\B4uem54.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="4" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\UIC-X-Wagen\AB4uem54.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="4" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\UIC-X-Wagen\B4uem54.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugVarianten Bezeichnung="Lok" PerZufallUebernehmen="1" ZufallsWert="1">
+<FahrzeugInfo IDHaupt="2" IDNeben="1" Bremsstellung="3" SASchaltung="2" Gedreht="1" Zugart="O">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Elektroloks\BRD\Einheitsloks\E10.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="4" IDNeben="1" Bremsstellung="3" SASchaltung="2" Zugart="O">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Elektroloks\BRD\Einheitsloks\E10.rv.fzg"/>
+</FahrzeugInfo>
+</FahrzeugVarianten>
+</FahrzeugVarianten>
+</Zug>
+</Zusi>

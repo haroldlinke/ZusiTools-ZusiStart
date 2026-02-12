@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Zug" Version="A.1" MinVersion="A.1">
+<AutorEintrag AutorID="34" AutorName="Holger Lürkens"/>
+</Info>
+<Zug Gattung="E" Nummer="3817" Zuglauf="Altenbeken - Herford" Prio="2500" Bremsstellung="1" MBrh="0.8" spZugNiedriger="27.7778" LODzug="1" ReisendenDichte="0.45" FahrplanGruppe="3. Altenbeken - Himmighausen" Rekursionstiefe="5" FahrstrName="Aufgleispunkt -&gt; Altenbeken L31" Zugtyp="1" Buchfahrplandll="_InstSetup\lib\timetable\Buchfahrplan_DB_1979.dll">
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986.fpn" NurInfo="1"/>
+<FahrplanEintrag Ank="1986-09-03 13:05:00" Abf="1986-09-03 13:10:00" Betrst="Altenbeken">
+<FahrplanSignalEintrag FahrplanSignal="L31"/>
+</FahrplanEintrag>
+<FahrplanEintrag Abf="1986-09-03 13:13:00" Betrst="Langeland">
+<FahrplanSignalEintrag FahrplanSignal="N5"/>
+<FahrplanSignalEintrag FahrplanSignal="N7"/>
+</FahrplanEintrag>
+<FahrplanEintrag Ank="1986-09-03 13:15:00" Abf="1986-09-03 13:15:00" Betrst="Bk Erpentrup">
+<FahrplanSignalEintrag FahrplanSignal="B"/>
+</FahrplanEintrag>
+<FahrzeugVarianten Bezeichnung="default" ZufallsWert="1">
+<FahrzeugInfo IDHaupt="4" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\UIC-X-Wagen\B4uem54.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="1" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\n_Wagen_Silberlinge\ABnb703.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="3" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\Eilzugwagen\B4ym51.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="3" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\Eilzugwagen\BD4ymf54.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="1" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\n_Wagen_Silberlinge\Bnb719.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugVarianten Bezeichnung="Lok" PerZufallUebernehmen="1" ZufallsWert="1">
+<FahrzeugInfo IDHaupt="2" IDNeben="1" Bremsstellung="1" SASchaltung="2" Zugart="O">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Elektroloks\BRD\Einheitsloks\E10.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="5" IDNeben="1" Bremsstellung="1" SASchaltung="2" Zugart="O">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Elektroloks\BRD\Einheitsloks\E10.rv.fzg"/>
+</FahrzeugInfo>
+</FahrzeugVarianten>
+</FahrzeugVarianten>
+</Zug>
+</Zusi>

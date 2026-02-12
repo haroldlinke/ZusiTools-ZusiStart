@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Buchfahrplan" Version="A.1" MinVersion="A.1">
+<AutorEintrag/>
+</Info>
+<Buchfahrplan Gattung="E" Nummer="3653" Zuglauf="Dortmund Hbf - Altenbeken" BR="110" Masse="189000" spMax="33.3333" Bremsh="1.0582" MBrh="1.06" Laenge="88.75" kmStart="113.6158" Bremsstellung="1">
+<Datei_fpn Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986.fpn" NurInfo="1"/>
+<Datei_trn Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\E3653.trn" NurInfo="1"/>
+<FplZeile FplLaufweg="27.9713">
+<FplvMax vMax="30.5556"/>
+<Fplkm/>
+</FplZeile>
+<FplZeile FplLaufweg="1324.9331">
+<FplName FplNameText="Esig"/>
+<FplSignaltyp FplSignaltypNr="7"/>
+<Fplkm km="112.293"/>
+</FplZeile>
+<FplZeile FplLaufweg="1330.9331">
+<FplvMax vMax="22.2222"/>
+<Fplkm km="112.293"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplLaufweg="2745.0811">
+<Fplkm km="110.8706"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplLaufweg="2759.2563">
+<Fplkm km="110.8565"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplLaufweg="2857.8733">
+<Fplkm km="110.7951" FplSprung="1" FplkmNeu="111.0237"/>
+<FplName FplNameText="Altenbeken"/>
+<FplSaegelinien FplAnzahl="1"/>
+<FplAnk Ank="1986-09-03 11:52:00" FplEintrag="1"/>
+<FplAbf Abf="1986-09-03 11:52:00"/>
+</FplZeile>
+<FplZeile FplLaufweg="3007.1218">
+<Fplkm km="111.1767"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplLaufweg="3257.1216">
+<FplSignaltyp FplSignaltypNr="9"/>
+<Fplkm km="111.4299"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+</Buchfahrplan>
+</Zusi>

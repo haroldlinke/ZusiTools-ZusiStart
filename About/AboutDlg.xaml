@@ -63,8 +63,8 @@
       </Grid>
 
       <TextBlock TextWrapping="Wrap" Grid.Row="1" Margin="0,12,0,0">
-                <Run FontStyle="Italic" Text="{Binding Source={x:Static s:AsmInfo.Product}, Mode=OneWay}"/> <Run>wird unter der GNU Lesser General Public License veröffentlicht. Eine deutsche Übersetzung der Lizenz kann unter</Run> 
-                <Hyperlink>http://www.gnu.de/documents/lgpl-3.0.de.html</Hyperlink>
+                <Run FontStyle="Italic" Text="{Binding Source={x:Static s:AsmInfo.Product}, Mode=OneWay}"/> <Run>wird unter der GNU General Public License veröffentlicht. Eine deutsche Übersetzung der Lizenz kann unter</Run> 
+                <Hyperlink>https://www.gnu.de/documents/gpl-3.0.de.html</Hyperlink>
                 <Run>abgerufen werden.</Run>
       </TextBlock>
 
@@ -79,10 +79,10 @@
             <Run>The Chromium Embedded Framework Authors</Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">Chromium-Browserkomponente</Run><LineBreak/>-->
             <Run>Andrew Ward</Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">NVorbis, NAudio.Vorbis</Run><LineBreak/>
             <Run>Jochen Kühner</Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">WPFExtendedToolkit</Run> <Hyperlink FontSize="9">https://github.com/dotnetprojects/WpfExtendedToolkit</Hyperlink><LineBreak/>
-            <Run>Johannes </Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">LS3-Renderer</Run> <Hyperlink FontSize="9">https://github.com/zusitools/zusitools/tree/master</Hyperlink><LineBreak/>
+            <Run>Johannes </Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">LS3-Renderer, RouteGraph</Run> <Hyperlink FontSize="9">https://github.com/zusitools/zusitools/tree/master</Hyperlink><LineBreak/>
             <Run>Frank Wenzel </Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">Zusi Streckenkarte</Run> <Hyperlink FontSize="9">https://zusi-sk.eu</Hyperlink><LineBreak/>
             <Run>Jonathan Pilborough </Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">ZusiDatenbank</Run> <Hyperlink FontSize="9">https://www.zusidatenbank.de/</Hyperlink><LineBreak/>
-            <Run>F.Schn. </Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">Buchfahrplan-DLL</Run>
+            <Run>F.Schn. </Run> <Run FontStyle="Italic" FontSize="9" Foreground="Gray">Buchfahrplan-DLL, RouteGraph C#, Fahrschule</Run>
       </TextBlock>
       <Button Command="{x:Static local:AboutDlg.CommandClose}" Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="4" 
                     Style="{DynamicResource ZusiStartButtonStyle}" IsDefault="True" Margin="0,12,0,6"/>

@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Buchfahrplan" Version="A.1" MinVersion="A.1">
+<AutorEintrag/>
+</Info>
+<Buchfahrplan Gattung="D" Nummer="2946" Zuglauf="Kassel Hbf - Rheine" BR="110" Masse="211000" spMax="38.8889" Bremsh="1.4692" MBrh="1.45" Laenge="95.69" kmStart="112.9043" Bremsstellung="3">
+<Datei_fpn Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986.fpn" NurInfo="1"/>
+<Datei_trn Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\D2946.trn" NurInfo="1"/>
+<FplZeile FplLaufweg="5.0961">
+<FplvMax vMax="33.3333"/>
+<Fplkm/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplLaufweg="727.9791">
+<FplName FplNameText="Esig"/>
+<FplSignaltyp FplSignaltypNr="7"/>
+<Fplkm km="112.1764"/>
+<FplSaegelinien FplAnzahl="1"/>
+<FplvMax vMax="22.2222"/>
+<Fplkm km="112.1891"/>
+</FplZeile>
+<FplZeile FplLaufweg="1737.3687">
+<Fplkm km="111.1662"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplLaufweg="1905.3827">
+<FplName FplNameText="Altenbeken"/>
+<Fplkm km="110.9948"/>
+<FplSaegelinien FplAnzahl="1"/>
+<FplAnk Ank="1986-09-03 12:07:40" FplEintrag="1"/>
+<FplAbf Abf="1986-09-03 12:07:40"/>
+</FplZeile>
+<FplZeile FplLaufweg="1910.6232">
+<Fplkm km="111" FplSprung="1" FplkmNeu="110.7891"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplLaufweg="2016.3151">
+<Fplkm km="110.8949"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplLaufweg="2266.3145">
+<FplSignaltyp FplSignaltypNr="9"/>
+<Fplkm km="111.1448"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+</Buchfahrplan>
+</Zusi>

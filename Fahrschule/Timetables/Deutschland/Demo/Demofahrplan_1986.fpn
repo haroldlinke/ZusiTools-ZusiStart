@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Fahrplan" Version="A.1" MinVersion="A.1">
+<AutorEintrag AutorID="34" AutorName="Holger Lürkens"/>
+</Info>
+<Fahrplan AnfangsZeit="1986-09-03 11:20:00">
+<BefehlsKonfiguration Dateiname="Signals\Deutschland\Befehle\DB408_1984.authority.xml"/>
+<Begruessungsdatei/>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\D453.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\D841.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\D979.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\D1453.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\D2170.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\D2171.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\D2640.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\D2940.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\D2946.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\E3541.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\E3653.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\E3808.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\E3817.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\E5912_6919.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\N5921.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\N7910.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\N7912.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\N7913.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\Dg53842.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\Dg53849.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\Dg54714.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\Dstg80248.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\Gag57566.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\Lg59345.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\Sg51610.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\Ueg67581.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\Ueg67582.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\DekoAltenbeken Gleis 7.trn"/>
+</Zug>
+<Zug>
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\Deko AltenbekenGleis 35.trn"/>
+</Zug>
+<StrModul>
+<Datei Dateiname="Routes\Deutschland\32U_0005_0057\000496_005734_Altenbeken\Altenbeken_1985.st3"/>
+<p/>
+<phi/>
+</StrModul>
+<StrModul>
+<Datei Dateiname="Routes\Deutschland\32U_0005_0057\000499_005737_Langeland\Langeland_1985.st3"/>
+<p/>
+<phi/>
+</StrModul>
+<StrModul>
+<Datei Dateiname="Routes\Deutschland\32U_0005_0057\000503_005732_Driburg\Driburg_1985.st3"/>
+<p/>
+<phi/>
+</StrModul>
+<UTM UTM_WE="500" UTM_NS="5733" UTM_Zone="32" UTM_Zone2="U"/>
+</Fahrplan>
+</Zusi>

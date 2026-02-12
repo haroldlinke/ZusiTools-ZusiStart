@@ -1,7 +1,8 @@
 {
   "profiles": {
     "ZusiStart": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "*Test*"
     }
   }
 }

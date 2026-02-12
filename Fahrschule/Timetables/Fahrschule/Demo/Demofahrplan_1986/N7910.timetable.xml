@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Buchfahrplan" Version="A.1" MinVersion="A.1">
+<AutorEintrag/>
+</Info>
+<Buchfahrplan Gattung="N" Nummer="7910" Zuglauf="Paderborn - Osnabrück Hbf" BR="110" Masse="189000" spMax="33.3333" Bremsh="1.0529" MBrh="1.02" Laenge="95.69" kmStart="113.6158" Bremsstellung="1">
+<Datei_fpn Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986.fpn" NurInfo="1"/>
+<Datei_trn Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\N7910.trn" NurInfo="1"/>
+<FplZeile FplLaufweg="25.9713">
+<FplIcon FplIconNr="1"/>
+<FplName FplNameText="- ZBF A 73 -"/>
+<FplvMax vMax="30.5556"/>
+</FplZeile>
+<FplZeile FplLaufweg="27.9713">
+<FplvMax vMax="30.5556"/>
+<Fplkm/>
+</FplZeile>
+<FplZeile FplLaufweg="1324.9331">
+<FplName FplNameText="Esig"/>
+<FplSignaltyp FplSignaltypNr="7"/>
+<Fplkm km="112.293"/>
+</FplZeile>
+<FplZeile FplLaufweg="1330.9331">
+<FplvMax vMax="22.2222"/>
+<Fplkm km="112.293"/>
+</FplZeile>
+<FplZeile FplLaufweg="2819.2317">
+<FplName FplNameText="Altenbeken"/>
+<Fplkm km="110.7976"/>
+<FplAnk Ank="1986-09-03 12:02:30" FplEintrag="1"/>
+<FplAbf Abf="1986-09-03 12:02:30"/>
+</FplZeile>
+<FplZeile FplLaufweg="3263.3096">
+<FplSignaltyp FplSignaltypNr="9"/>
+<Fplkm km="110.3542"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="3971.3044" FahrstrStrecke="1760b">
+<FplIcon FplIconNr="17"/>
+<Fplkm km="109.6452"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="4018.9009" FahrstrStrecke="1760b">
+<FplIcon FplIconNr="1"/>
+<FplName FplNameText="- ZBF A 73 -"/>
+<FplvMax/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="4020.9009" FahrstrStrecke="1760b">
+<FplIcon FplIconNr="17"/>
+<Fplkm km="109.5981"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="4063.3247" FahrstrStrecke="1760b">
+<FplTunnel FplNameText="Rehbergtunnel" FplTunnelAnfang="1"/>
+<Fplkm km="109.5532"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="4070.1084" FahrstrStrecke="1760b">
+<FplTunnel FplNameText="Rehbergtunnel" FplTunnelAnfang="1"/>
+<Fplkm km="109.5489"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="5685.9722" FahrstrStrecke="1760b">
+<FplTunnel/>
+<Fplkm km="107.9304"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="5686.5742" FahrstrStrecke="1760b">
+<FplTunnel/>
+<Fplkm km="107.9337"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="5713.4077" FahrstrStrecke="1760b">
+<FplName FplNameText="Esig"/>
+<FplSignaltyp FplSignaltypNr="7"/>
+<Fplkm km="107.9069"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="5721.9063" FahrstrStrecke="1760b">
+<FplName FplNameText="Esig"/>
+<FplSignaltyp FplSignaltypNr="7"/>
+<Fplkm km="107.8944"/>
+</FplZeile>
+<FplZeile FplLaufweg="5730.8896">
+<Fplkm km="107.8854"/>
+<FplSaegelinien FplAnzahl="1"/>
+<FplvMax vMax="16.6667"/>
+<Fplkm km="107.8944"/>
+</FplZeile>
+<FplZeile FplLaufweg="5914.6543">
+<Fplkm km="107.7146"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplLaufweg="5990.2148">
+<FplName FplNameText="Langeland"/>
+<Fplkm km="107.6256"/>
+<FplSaegelinien FplAnzahl="1"/>
+<FplAbf Abf="1986-09-03 12:09:00"/>
+</FplZeile>
+<FplZeile FplLaufweg="6679.7588">
+<FplName FplNameText="Asig"/>
+<FplSignaltyp FplSignaltypNr="9"/>
+<Fplkm km="106.9358"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="6680.0664" FahrstrStrecke="1760b">
+<FplvMax vMax="22.2222"/>
+<Fplkm km="106.9287"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="6688.5649" FahrstrStrecke="1760b">
+<FplvMax vMax="22.2222"/>
+<Fplkm km="106.9287"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="7148.7524" FahrstrStrecke="1760b">
+<FplIcon FplIconNr="17"/>
+<Fplkm km="106.4662"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="7191.3018" FahrstrStrecke="1760b">
+<FplIcon FplIconNr="17"/>
+<Fplkm km="106.3614"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="7606.0332" FahrstrStrecke="1760b">
+<FplvMax vMax="25"/>
+<Fplkm km="105.9553"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="7620.5371" FahrstrStrecke="1760b">
+<FplvMax vMax="25"/>
+<Fplkm km="106.0029"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="8655.8066" FahrstrStrecke="1760b">
+<FplName FplNameText="Bk Erpentrup"/>
+<Fplkm km="104.9591"/>
+<FplSaegelinien FplAnzahl="1"/>
+<FplAnk Ank="1986-09-03 12:11:00"/>
+<FplAbf Abf="1986-09-03 12:11:00"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="8700.1992" FahrstrStrecke="1760b">
+<FplSignaltyp FplSignaltypNr="10"/>
+<Fplkm km="104.9147"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+</Buchfahrplan>
+</Zusi>

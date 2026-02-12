@@ -365,10 +365,20 @@ namespace ZusiStart.Data
       {
         Zug train = tvm.Object as Zug;
         ZugDatei trainfile = train.Parent as ZugDatei;
-        string trainfilename = trainfile.Filename;
-        //string timeTableName = System.IO.Path.GetFileNameWithoutExtension(timeTablefilename);
+        if (trainfile != null)
+        {
+          string trainfilename = trainfile.Filename;
+          //string timeTableName = System.IO.Path.GetFileNameWithoutExtension(timeTablefilename);
 
-        DataManager.Instance.ReplacementTrains.Add(new ReplacementTrain(trainfilename));
+          DataManager.Instance.ReplacementTrains.Add(new ReplacementTrain(trainfilename));
+        }
+        else
+        {
+          //Error
+          TimeTableFile trainttfile = train.Parent as TimeTableFile;
+          FahrzeugVarianten fzgvar = train.Fahrzeuge;
+          DataManager.Instance.ReplacementTrains.Add(new ReplacementTrain(fzgvar));
+        }
       });
 
       // Abfahrtszeit

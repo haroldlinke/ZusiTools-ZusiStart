@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Buchfahrplan" Version="A.1" MinVersion="A.1">
+<AutorEintrag/>
+</Info>
+<Buchfahrplan Gattung="N" Nummer="7912" Zuglauf="Altenbeken - Herford" BR="110" Masse="224000" spMax="27.7778" Bremsh="1.0446" MBrh="0.8" Laenge="101.27" kmStart="110.756" Bremsstellung="1">
+<Datei_fpn Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986.fpn" NurInfo="1"/>
+<Datei_trn Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986\N7912.trn" NurInfo="1"/>
+<FplZeile FplLaufweg="9.8217">
+<FplIcon FplIconNr="1"/>
+<FplName FplNameText="- ZBF A 73 -"/>
+<FplvMax vMax="22.2222"/>
+</FplZeile>
+<FplZeile FplLaufweg="11.8217">
+<FplvMax vMax="22.2222"/>
+<Fplkm/>
+</FplZeile>
+<FplZeile FplLaufweg="35.465">
+<Fplkm km="110.8"/>
+<FplName FplNameText="Altenbeken"/>
+<FplAnk Ank="1986-09-03 12:11:00"/>
+<FplAbf Abf="1986-09-03 12:28:00"/>
+</FplZeile>
+<FplZeile FplLaufweg="288.2966">
+<FplSignaltyp FplSignaltypNr="9"/>
+<Fplkm km="110.4677"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="1110.1027" FahrstrStrecke="1760b">
+<FplIcon FplIconNr="17"/>
+<Fplkm km="109.6452"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="1157.6978" FahrstrStrecke="1760b">
+<FplIcon FplIconNr="1"/>
+<FplName FplNameText="- ZBF A 73 -"/>
+<FplvMax/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="1159.6978" FahrstrStrecke="1760b">
+<FplIcon FplIconNr="17"/>
+<Fplkm km="109.5981"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="1202.1233" FahrstrStrecke="1760b">
+<FplTunnel FplNameText="Rehbergtunnel" FplTunnelAnfang="1"/>
+<Fplkm km="109.5532"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="1208.9054" FahrstrStrecke="1760b">
+<FplTunnel FplNameText="Rehbergtunnel" FplTunnelAnfang="1"/>
+<Fplkm km="109.5489"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="2824.7717" FahrstrStrecke="1760b">
+<FplTunnel/>
+<Fplkm km="107.9304"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="2825.3711" FahrstrStrecke="1760b">
+<FplTunnel/>
+<Fplkm km="107.9337"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="2852.2043" FahrstrStrecke="1760b">
+<FplName FplNameText="Esig"/>
+<FplSignaltyp FplSignaltypNr="7"/>
+<Fplkm km="107.9069"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="2860.7056" FahrstrStrecke="1760b">
+<FplName FplNameText="Esig"/>
+<FplSignaltyp FplSignaltypNr="7"/>
+<Fplkm km="107.8944"/>
+</FplZeile>
+<FplZeile FplLaufweg="2869.689">
+<Fplkm km="107.8854"/>
+<FplSaegelinien FplAnzahl="1"/>
+<FplvMax vMax="16.6667"/>
+<Fplkm km="107.8944"/>
+</FplZeile>
+<FplZeile FplLaufweg="3053.4546">
+<Fplkm km="107.7146"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplLaufweg="3129.0149">
+<FplName FplNameText="Langeland"/>
+<Fplkm km="107.6256"/>
+<FplSaegelinien FplAnzahl="1"/>
+<FplAbf Abf="1986-09-03 12:31:00"/>
+</FplZeile>
+<FplZeile FplLaufweg="3818.5557">
+<FplName FplNameText="Asig"/>
+<FplSignaltyp FplSignaltypNr="9"/>
+<Fplkm km="106.9358"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="3818.8601" FahrstrStrecke="1760b">
+<FplvMax vMax="22.2222"/>
+<Fplkm km="106.9287"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="3827.3613" FahrstrStrecke="1760b">
+<FplvMax vMax="22.2222"/>
+<Fplkm km="106.9287"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="4287.5493" FahrstrStrecke="1760b">
+<FplIcon FplIconNr="17"/>
+<Fplkm km="106.4662"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="4330.0957" FahrstrStrecke="1760b">
+<FplIcon FplIconNr="17"/>
+<Fplkm km="106.3614"/>
+</FplZeile>
+<FplZeile FplRglGgl="3" FplLaufweg="4744.8271" FahrstrStrecke="1760b">
+<FplvMax vMax="25"/>
+<Fplkm km="105.9553"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="4759.334" FahrstrStrecke="1760b">
+<FplvMax vMax="25"/>
+<Fplkm km="106.0029"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="5794.6064" FahrstrStrecke="1760b">
+<FplName FplNameText="Bk Erpentrup"/>
+<Fplkm km="104.9591"/>
+<FplSaegelinien FplAnzahl="1"/>
+<FplAnk Ank="1986-09-03 12:33:00"/>
+<FplAbf Abf="1986-09-03 12:33:00"/>
+</FplZeile>
+<FplZeile FplRglGgl="2" FplLaufweg="5838.999" FahrstrStrecke="1760b">
+<FplSignaltyp FplSignaltypNr="10"/>
+<Fplkm km="104.9147"/>
+<FplSaegelinien FplAnzahl="1"/>
+</FplZeile>
+</Buchfahrplan>
+</Zusi>

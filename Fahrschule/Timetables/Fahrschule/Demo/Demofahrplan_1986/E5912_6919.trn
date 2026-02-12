@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Zug" Version="A.1" MinVersion="A.1">
+<AutorEintrag AutorID="34" AutorName="Holger Lürkens"/>
+</Info>
+<Zug Gattung="E" Nummer="5912_6919" Zuglauf="Holzminden - Altenbeken - Göttingen" Prio="2500" Bremsstellung="1" spAnfang="23.6111" MBrh="0.8" spZugNiedriger="27.7778" LODzug="3" ReisendenDichte="0.55" FahrplanGruppe="2. Bad Driburg - Altenbeken" Rekursionstiefe="5" FahrstrName="Aufgleispunkt -&gt; Bad Driburg F" Zugtyp="1" Buchfahrplandll="_InstSetup\lib\timetable\Buchfahrplan_DB_1979.dll">
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986.fpn" NurInfo="1"/>
+<FahrplanEintrag Ank="1986-09-03 11:31:45" Abf="1986-09-03 11:31:45" Betrst="Bad Driburg" FplEintrag="1">
+<FahrplanSignalEintrag FahrplanSignal="F"/>
+</FahrplanEintrag>
+<FahrplanEintrag Ank="1986-09-03 11:34:00" Abf="1986-09-03 11:35:00" Betrst="Bad Driburg">
+<FahrplanSignalEintrag FahrplanSignal="B"/>
+<FahrplanSignalEintrag FahrplanSignal="C"/>
+</FahrplanEintrag>
+<FahrplanEintrag Abf="1986-09-03 11:40:00" Betrst="Langeland">
+<FahrplanSignalEintrag FahrplanSignal="F"/>
+</FahrplanEintrag>
+<FahrplanEintrag Ank="1986-09-03 11:45:00" Abf="1986-09-03 12:23:00" Betrst="Altenbeken" FzgVerbandAktion="2" FzgVerbandWendeSignalabstand="100">
+<FahrplanSignalEintrag FahrplanSignal="31"/>
+<FahrplanSignalEintrag FahrplanSignal="32"/>
+</FahrplanEintrag>
+<FahrplanEintrag Ank="1986-09-03 11:45:00" Abf="1986-09-03 12:23:00" Betrst="Altenbeken" FplEintrag="1">
+<FahrplanSignalEintrag FahrplanSignal="L31"/>
+<FahrplanSignalEintrag FahrplanSignal="L32"/>
+</FahrplanEintrag>
+<FahrplanEintrag Abf="1986-09-03 12:27:00" Betrst="Langeland">
+<FahrplanSignalEintrag FahrplanSignal="N1"/>
+<FahrplanSignalEintrag FahrplanSignal="N3"/>
+</FahrplanEintrag>
+<FahrplanEintrag Abf="1986-09-03 12:31:00" Betrst="Bad Driburg">
+<FahrplanSignalEintrag FahrplanSignal="A"/>
+</FahrplanEintrag>
+<FahrplanEintrag Ank="1986-09-03 12:32:00" Abf="1986-09-03 12:33:00" Betrst="Bad Driburg">
+<FahrplanSignalEintrag FahrplanSignal="D"/>
+<FahrplanSignalEintrag FahrplanSignal="E"/>
+</FahrplanEintrag>
+<FahrplanEintrag Ank="1986-09-03 12:36:00" Abf="1986-09-03 12:36:00" Betrst="Herste" FplEintrag="1">
+<FahrplanSignalEintrag FahrplanSignal="Herste"/>
+</FahrplanEintrag>
+<FahrzeugVarianten Bezeichnung="default" ZufallsWert="1">
+<FahrzeugInfo IDHaupt="1" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\n_Wagen_Silberlinge\Bnb719.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="1" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\n_Wagen_Silberlinge\ABnb703.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="1" IDNeben="1" DotraModus="1" Gedreht="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\n_Wagen_Silberlinge\BDnf738.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugVarianten Bezeichnung="Lok" PerZufallUebernehmen="1" ZufallsWert="1">
+<FahrzeugInfo IDHaupt="3" IDNeben="1" Bremsstellung="1" DotraModus="1" Zugart="M">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Dieselloks\BRD\V160_Familie\V160\V160.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="2" IDNeben="1" Bremsstellung="1" DotraModus="1" Zugart="M">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Dieselloks\BRD\V160_Familie\V160\V160.rv.fzg"/>
+</FahrzeugInfo>
+</FahrzeugVarianten>
+</FahrzeugVarianten>
+</Zug>
+</Zusi>

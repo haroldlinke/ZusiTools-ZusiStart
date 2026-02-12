@@ -91,7 +91,19 @@ namespace ZusiStart.Dialogs
       get => (bool)GetValue(StartZusiMeterProperty);
       set => SetValue(StartZusiMeterProperty, value);
     }
-    
+
+    //---------------------------------------------------------------------
+    public static readonly DependencyProperty StartimStillstandProperty = DependencyProperty.Register(
+        "StartimStillstand",
+        typeof(bool),
+        typeof(TrainStartSettingsDialog),
+        new PropertyMetadata(false));
+    public bool StartimStillstand
+    {
+      get => (bool)GetValue(StartimStillstandProperty);
+      set => SetValue(StartimStillstandProperty, value);
+    }
+
     //---------------------------------------------------------------------
     public static readonly RoutedUICommand OkCommand = new("Ok", "OkCommand", typeof(TrainStartSettingsDialog));
 
@@ -115,6 +127,7 @@ namespace ZusiStart.Dialogs
       StartBildfahrplan = Properties.Settings.Default.StartBildfahrplan == 0;
       StartFIS = Properties.Settings.Default.StartFIS == 0;
       StartZusiMeter = Properties.Settings.Default.StartZusiMeter == 0;
+      StartimStillstand = Properties.Settings.Default.StartimStillstand == 0;
     }
   }
 }

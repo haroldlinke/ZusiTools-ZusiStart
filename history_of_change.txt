@@ -1,4 +1,58 @@
-﻿
+﻿8.6.13 - 03-02-2026
+- when a train was started via the direct Zusi call and no timetable.xml files are available, a wrong train could be started
+
+8.6.12 - 02-02-2026
+- crash when reading unknown xml-files fixed - unknown files are now ignored
+
+8.6.11 - 26-01-2026
+- improved readbility of selected train length and mass
+
+8.6.10 - 21-01-2026
+- added goback and gofoward button for Zusi-DB tab
+- added combobox for selecting traincategories for starting
+- filter options are saved and restored on next start
+
+8.6.9 - 20-01-2026
+- fixed problem when unhiding the window state maximised state is not preserved
+
+8.6.8 - 19.01.2026
+- fixed issues with front- and backlighting for train images
+- routegraph: staions belonging to the selected timetable are shown in red
+- fixed issue with ZusiDatenbank always opening Startpage instead of selected page
+
+8.6.6 - 23.12.2025
+- made "Streckenplan" creation more robust against errors
+- improved error handling when accessing remote Zusi installations
+
+8.6.5 - 08.12.2025
+- added "Fahrschule"
+- added access to remote Zusi installations
+- concurrency issue in vehicle cache fixed
+
+8.6.4 - 30.11.2025
+- changed mouse button for rotating routegraph from right button to SHIFT right button to avoid conflict with context menu
+- added functionality for right mouse button to move routegraph for compatibility with gmap
+- changed routegraph tab name to Streckenplan
+8.6.3 - 30.11.2025
+- replaced tracking marker with crosshair marker and improved accuracy
+- improved integration of routegraph
+  - tracking with crosshair marker
+  - added context-menu (right-click) to stations, allowing to filter the train list based on the station
+- changed license from LGPL to GPL to achieve compatibility with Routegraph GPL license.
+
+8.6.2 - 1.11.2025
+- integration Routegraph
+
+8.6.1 - 9.10.2025
+- added option to start Zusi with one specific train only
+- added option to avoid hiding of ZusiStart window when Zusi is started, instead the info frame is resized to full window size
+- die Layouteinstellung (Grösser der Spalten und Zeilen) wird jetzt gespeichert und beim nächsten Start wieder hergestellt.
+- Fahrpläne aus dem privaten Verzeichnis werden mit (private) gekennzeichnet
+
+8.6.0 - 25.9.2025
+- added tracking of trains already started in Zusi
+- fix: Start-Button in Zusi-DB did not work
+
 8.5.7 - 22.9.2025
 - new: deco trains can be listed in separate train lists.
 - new: train types in the train list are translated into english and french

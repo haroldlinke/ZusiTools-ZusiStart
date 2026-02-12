@@ -268,6 +268,89 @@
     </Setter>
   </Style>
 
+  <Style x:Key="ZusiStartComboBoxStyle" TargetType="{x:Type ComboBox}">
+    <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+    <Setter Property="Background" Value="{DynamicResource Bright.Transparent.Background}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource Blue.Transparent.Background}"/>
+    <Setter Property="Foreground" Value="Black"/>
+    <Setter Property="BorderThickness" Value="2"/>
+    <Setter Property="Padding" Value="6"/>
+    <Setter Property="FontSize" Value="14"/>
+    <Setter Property="MinWidth" Value="40"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ComboBox}">
+          <Grid>
+            <Border x:Name="Border"
+                    CornerRadius="6"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    SnapsToDevicePixels="True">
+              <Grid>
+                <ContentPresenter x:Name="ContentSite"
+                                  Margin="{TemplateBinding Padding}"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Left"
+                                  Content="{TemplateBinding SelectionBoxItem}"
+                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                  ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                  RecognizesAccessKey="True"/>
+                <ToggleButton x:Name="ToggleButton"
+                              IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                              Focusable="False"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Center"
+                              Width="30" Height="30" Margin="0,0,2,0">
+                  <Path Data="M 0 4 L 4 0 L 8 4 Z"
+                        Fill="{TemplateBinding Foreground}"
+                        Stretch="Uniform"
+                        Width="15" Height="15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </ToggleButton>
+              </Grid>
+            </Border>
+
+            <Popup x:Name="Popup"
+                   Placement="Bottom"
+                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                   AllowsTransparency="True"
+                   Focusable="False"
+                   PopupAnimation="Fade">
+              <Border CornerRadius="6" 
+                      Background="{DynamicResource Bright.Transparent.Background}"
+                      BorderBrush="{DynamicResource Blue.Transparent.Background}"
+                      BorderThickness="1"
+                      Padding="4"
+                      SnapsToDevicePixels="True">
+                <ScrollViewer CanContentScroll="True" MaxHeight="300">
+                  <ItemsPresenter />
+                </ScrollViewer>
+              </Border>
+            </Popup>
+          </Grid>
+
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter TargetName="Border" Property="Opacity" Value="0.6"/>
+              <Setter Property="Foreground" Value="Gray"/>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Border" Property="BorderBrush" Value="Orange"/>
+            </Trigger>
+            <Trigger Property="IsDropDownOpen" Value="True">
+              <Setter TargetName="Border" Property="BorderBrush" Value="OrangeRed"/>
+            </Trigger>
+            <Trigger Property="HasItems" Value="false">
+              <Setter TargetName="Popup" Property="Visibility" Value="Collapsed"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
   <Style x:Key="ZusiStartMinimizeButtonStyle" TargetType="{x:Type Button}">
     <Setter Property="Background" Value="WhiteSmoke"/>
     <Setter Property="Foreground" Value="Black"/>
@@ -577,5 +660,59 @@
         </ControlTemplate>
       </Setter.Value>
     </Setter>
+  </Style>
+  <Style x:Key="PauseButtonStyle" TargetType="{x:Type Button}">
+    <Setter Property="Control.Foreground" Value="CornflowerBlue"/>
+    <Setter Property="ContentControl.Content">
+      <Setter.Value>
+        <Path Stretch="Fill" Data="M 0.1,0.1 L 0.38,0.1 0.38,0.9 0.1,0.9 M 0.62,0.1 L 0.9,0.1 0.9,0.9 0.62,0.9 Z"
+            StrokeThickness="1" Fill="{Binding Stroke, RelativeSource={RelativeSource Self}}"
+            Stroke="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Button}}}"/>
+      </Setter.Value>
+    </Setter>
+    <Style.Triggers>
+      <Trigger Property="UIElement.IsMouseOver" Value="true">
+        <Setter Property="Control.Foreground" Value="LightBlue"/>
+      </Trigger>
+      <Trigger Property="ButtonBase.IsPressed" Value="true">
+        <Setter Property="Control.Foreground" Value="DeepSkyBlue"/>
+      </Trigger>
+    </Style.Triggers>
+  </Style>
+  <Style x:Key="TimejumpButtonStyle" TargetType="{x:Type Button}">
+    <Setter Property="Control.Foreground" Value="DarkRed"/>
+    <Setter Property="ContentControl.Content">
+      <Setter.Value>
+        <Path Stretch="Fill" Data="M 0.1,0.1 L 0.7,0.5 0.1,0.9 M 0.7,0.1 L 0.9,0.1 0.9,0.9 0.7,0.9 Z"
+            StrokeThickness="1" Fill="{Binding Stroke, RelativeSource={RelativeSource Self}}"
+            Stroke="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Button}}}"/>
+      </Setter.Value>
+    </Setter>
+    <Style.Triggers>
+      <Trigger Property="UIElement.IsMouseOver" Value="true">
+        <Setter Property="Control.Foreground" Value="Orange"/>
+      </Trigger>
+      <Trigger Property="ButtonBase.IsPressed" Value="true">
+        <Setter Property="Control.Foreground" Value="Brown"/>
+      </Trigger>
+    </Style.Triggers>
+  </Style>
+  <Style x:Key="TimelapseButtonStyle" TargetType="{x:Type Button}">
+    <Setter Property="Control.Foreground" Value="Green"/>
+    <Setter Property="ContentControl.Content">
+      <Setter.Value>
+        <Path Stretch="Fill" Data="M 0.1,0.1 L 0.45,0.5 0.1,0.9 M 0.55,0.1 L 0.9,0.5 0.55,0.9 Z"
+            StrokeThickness="1" Fill="{Binding Stroke, RelativeSource={RelativeSource Self}}"
+            Stroke="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Button}}}"/>
+      </Setter.Value>
+    </Setter>
+    <Style.Triggers>
+      <Trigger Property="UIElement.IsMouseOver" Value="true">
+        <Setter Property="Control.Foreground" Value="LightGreen"/>
+      </Trigger>
+      <Trigger Property="ButtonBase.IsPressed" Value="true">
+        <Setter Property="Control.Foreground" Value="DarkGreen"/>
+      </Trigger>
+    </Style.Triggers>
   </Style>
 </ResourceDictionary>

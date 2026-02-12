@@ -1,13 +1,15 @@
 ﻿using log4net;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting;
+using Sovoma;
 using System;
+using System.Globalization;
+using System.IO;
 using System.Windows;
 using ZusiKlassenLib;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using System.Globalization;
 using ZusiStart.Data;
 
 namespace ZusiStart
@@ -53,6 +55,25 @@ namespace ZusiStart
       {
         throw new InvalidOperationException("Dieses Programm kann nicht ausgeführt werden, da die Vollversion des Zusi nicht installiert ist.");
       }
+      string tmpBaseFolder = Zusi.DataPath[2] + @"Temp\";
+      GlobalContext.Properties["LogPath"] = tmpBaseFolder;
+      log4net.Config.XmlConfigurator.Configure(new FileInfo("log4net.config"));
+      //og4net.Config.XmlConfigurator.Configure();
+      _log.Debug(" ");
+      _log.Debug("**************************************************************************");
+      _log.Debug("*");
+      _log.Debug("* ZusiStart started - Version:" + AsmInfo.Version.ToString());
+      _log.Debug("*");
+      _log.Debug("*Test*************************************************************************");
+      _log.Info("Get Dirs: ZusiExecutable: " + Zusi.Executable);
+      _log.Info("Get Dirs: ZusiVerzeichnis:" + Zusi.ZusiPath);
+      _log.Info("Get Dirs: ZusiDatenVerzeichnisOffiziell: " + Zusi.DataPath[0]);
+      _log.Info("Get Dirs: ZusiDatenVerzeichnis:" + Zusi.DataPath[2]);
+      _log.Debug("Debug lebel enabled");
+      _log.Warn("Warning level enabled");
+      _log.Info("Info level enabled");
+      _log.Error("Error level enabled");
+      _log.Fatal("Fatal level enabled");
 
       base.OnStartup(e);
 
@@ -86,6 +107,13 @@ namespace ZusiStart
 
       if (e.ExceptionObject is Exception ex)
       {
+        if (ex.InnerException != null)
+        {
+          _log.Fatal("Inner Exception:");
+          _log.Fatal(ex.InnerException.ToString);
+          _log.Fatal(ex.InnerException.StackTrace);
+        }
+
         Xceed.Wpf.Toolkit.MessageBox.Show(ex.Message, LocalizationManager.Translate("Dieser Fehler lässt sich nicht gerade biegen"), MessageBoxButton.OK, MessageBoxImage.Error);
       }
       else

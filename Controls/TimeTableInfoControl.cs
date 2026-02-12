@@ -1,34 +1,35 @@
 ﻿using log4net;
-using Sovoma.WPF;// Utilities;
+using Microsoft.VisualBasic.ApplicationServices;
+using Microsoft.VisualBasic.Logging;
 using Sovoma;
+using Sovoma.WPF;// Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+//using System.Drawing;
+using System.Drawing.Imaging;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
+using System.Xml.Linq;
+using Xceed.Wpf.Toolkit.Primitives;
+using ZusiKlassenLib;
 using ZusiKlassenLib.Buchfahrplan;
 using ZusiKlassenLib.Common;
 using ZusiKlassenLib.Fahrplan;
 using ZusiKlassenLib.Vehicle;
-using ZusiStart.Miscellaneous;
-using System.IO;
-//using System.Drawing;
-using System.Drawing.Imaging;
-using System.Windows.Media.Imaging;
-using System.Xml.Linq;
-using Microsoft.VisualBasic.ApplicationServices;
-using System.Diagnostics;
-using System.Numerics;
-using System.Windows.Media.Media3D;
-using ZusiStart.Dialogs;
-using Microsoft.VisualBasic.Logging;
 using ZusiStart.Data;
+using ZusiStart.Dialogs;
+using ZusiStart.Miscellaneous;
 using static System.Net.Mime.MediaTypeNames;
-using ZusiKlassenLib;
 
 namespace ZusiStart.Controls
 {
@@ -254,6 +255,18 @@ namespace ZusiStart.Controls
     }
 
     //---------------------------------------------------------------------
+    public static readonly DependencyProperty TrainMaxMassProperty = DependencyProperty.Register(
+        "TrainMaxMass",
+        typeof(double),
+        typeof(TimeTableInfoControl),
+        new PropertyMetadata(0.0));
+    public double TrainMaxMass
+    {
+      get { return (double)GetValue(TrainMaxMassProperty); }
+      set { SetValue(TrainMaxMassProperty, value); }
+    }
+
+    //---------------------------------------------------------------------
     public static readonly DependencyProperty UseCounterProperty = DependencyProperty.Register(
         "UseCounter",
         typeof(int),
@@ -284,7 +297,7 @@ namespace ZusiStart.Controls
 
       if (Source != null)
       {
-        AssembleTrain(Source);
+        AssembleTrain3(Source);
       }
     }
 
@@ -376,17 +389,23 @@ namespace ZusiStart.Controls
 
         try
         {
-          AssembleTrain(zug);
+          AssembleTrain3(zug);
           DataManager.Instance.main_window.SearchBuchfahrplan();
 
           DataPathType dtp = DataPathType.Unknown;
           string orgRelativeTimetableName = Zusi.GetRelativePathOf(zug.GetDocument().Filename, ref dtp);
           orgRelativeTimetableName = orgRelativeTimetableName.Replace("\\", "%5C");
-          string url = "http://zusidatenbank.pilborough.de/fahrplanzug/" + orgRelativeTimetableName;
+          string url = "http://zusidatenbank.de/fahrplanzug/" + orgRelativeTimetableName;
 
 
           //DataManager.Instance.webview_ZDB.Source = new Uri(url);
           DataManager.Instance.set_websource("Zusi-DB", url);
+
+          //if (zug.Buchfahrplan != null && zug.Buchfahrplan.UTM != null)
+          //{
+          //  System.Windows.Point point = zug.Buchfahrplan.UTM.ToLatLon();
+          //  DataManager.Instance.main_window.UpdateMarkerPosition(point.Y, point.X);
+          //}
         }
         catch (Exception ex)
         {
@@ -396,408 +415,408 @@ namespace ZusiStart.Controls
     }
 
     //---------------------------------------------------------------------
-    private void AssembleTrain(Zug zug)
-    {
-      if (true) //DataManager.Instance.options.New_RenderEngine)
-      {
-        AssembleTrain3(zug);
-        return;
-      }
+    //private void AssembleTrain(Zug zug)
+    //{
+    //  if (true) //DataManager.Instance.options.New_RenderEngine)
+    //  {
+    //    AssembleTrain3(zug);
+    //    return;
+    //  }
 
-      PictureManager pictureManager = new PictureManager();
+    //  PictureManager pictureManager = new PictureManager();
 
-      if (_picsPanel == null || _smallpicsPanel == null)
-      {
-        return;
-      }
+    //  if (_picsPanel == null || _smallpicsPanel == null)
+    //  {
+    //    return;
+    //  }
 
-      DummyWindow dummywindow = new DummyWindow();
+    //  DummyWindow dummywindow = new DummyWindow();
 
-      //dummywindow.Title = "Test";
-      dummywindow.Show();
+    //  //dummywindow.Title = "Test";
+    //  dummywindow.Show();
 
-      _picsPanel.Children.Clear();
-      _smallpicsPanel.Children.Clear();
+    //  _picsPanel.Children.Clear();
+    //  _smallpicsPanel.Children.Clear();
 
-      ZusiDocumentBase doc = zug.GetDocument();
-      Log.DebugFormat("assemble train: {0}", doc.Filename);
+    //  ZusiDocumentBase doc = zug.GetDocument();
+    //  Log.DebugFormat("assemble train: {0}", doc.Filename);
 
-      ZugReihung zr = new(zug);
-      zr.BuildTrain();
+    //  ZugReihung zr = new(zug);
+    //  zr.BuildTrain();
 
-      TrainLength = 0; // Math.Round(zr.Length, 0);
-      TrainMass = Math.Round(zr.Mass * 0.001);
-      //string cachepath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\ZusiStart\\cache";
-      string cachepath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), DataManager.localfoldername, "cache");
-      //if (Properties.Settings.Default.Use_LS3_Renderer_DLL == 1)
-      //{
-      //  cachepath = cachepath + "1";
-      //}
-      if (zug.Buchfahrplan != null)
-      {
-        DataManager.Instance.spMax = zug.Buchfahrplan.MaxSpeed * 3.6;
-      }
-      else
-      {
-        DataManager.Instance.spMax = 0;
-      }
-      DataManager.Instance.cachepath = cachepath;
+    //  TrainLength = 0; // Math.Round(zr.Length, 0);
+    //  TrainMass = Math.Round(zr.Mass * 0.001);
+    //  //string cachepath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\ZusiStart\\cache";
+    //  string cachepath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), DataManager.localfoldername, "cache");
+    //  //if (Properties.Settings.Default.Use_LS3_Renderer_DLL == 1)
+    //  //{
+    //  //  cachepath = cachepath + "1";
+    //  //}
+    //  if (zug.Buchfahrplan != null)
+    //  {
+    //    DataManager.Instance.spMax = zug.Buchfahrplan.MaxSpeed * 3.6;
+    //  }
+    //  else
+    //  {
+    //    DataManager.Instance.spMax = 0;
+    //  }
+    //  DataManager.Instance.cachepath = cachepath;
 
-      if (!System.IO.Directory.Exists(cachepath))
-      {
-        try
-        {
-          System.IO.Directory.CreateDirectory(cachepath);
-          Log.Debug("Cache Directory created:" + cachepath);
-        }
-        catch
-        {
-          Log.Debug("ERROR: Cache Directory cannot be created:" + cachepath);
-        }
-      }
+    //  if (!System.IO.Directory.Exists(cachepath))
+    //  {
+    //    try
+    //    {
+    //      System.IO.Directory.CreateDirectory(cachepath);
+    //      Log.Debug("Cache Directory created:" + cachepath);
+    //    }
+    //    catch
+    //    {
+    //      Log.Debug("ERROR: Cache Directory cannot be created:" + cachepath);
+    //    }
+    //  }
 
-      LinkedListNode<FahrzeugInfo> p = zr.First;
-      int Fahrzeug_num = 0;
+    //  LinkedListNode<FahrzeugInfo> p = zr.First;
+    //  int Fahrzeug_num = 0;
 
-      bool background1 = false;
+    //  bool background1 = false;
 
-      SolidColorBrush myBrush1 = new SolidColorBrush(Colors.Blue);
-      myBrush1.Opacity = 0.5; // Set to 50% opacity
-      SolidColorBrush myBrush2 = new SolidColorBrush(Colors.Red);
-      myBrush2.Opacity = 0.5; // Set to 50% opacity
-      //dummywindow.VehicleProgressBar.Value = 0;
+    //  SolidColorBrush myBrush1 = new SolidColorBrush(Colors.Blue);
+    //  myBrush1.Opacity = 0.5; // Set to 50% opacity
+    //  SolidColorBrush myBrush2 = new SolidColorBrush(Colors.Red);
+    //  myBrush2.Opacity = 0.5; // Set to 50% opacity
+    //  //dummywindow.VehicleProgressBar.Value = 0;
 
-      while (p != null)
-      {
-        Fahrzeug fzg = p.Value.Fahrzeug;
-        FahrzeugVariante fv = fzg?.GetVariante(p.Value.IDHaupt, p.Value.IDNeben, p.Value.VariantenIndex) ?? null;
-        if (fv != null)
-        {
-          Grid grd = new();
-          Grid smallgrd = new();
-          FahrzeugGrunddaten fzggd = fv.Grunddaten;
+    //  while (p != null)
+    //  {
+    //    Fahrzeug fzg = p.Value.Fahrzeug;
+    //    FahrzeugVariante fv = fzg?.GetVariante(p.Value.IDHaupt, p.Value.IDNeben, p.Value.VariantenIndex) ?? null;
+    //    if (fv != null)
+    //    {
+    //      Grid grd = new();
+    //      Grid smallgrd = new();
+    //      FahrzeugGrunddaten fzggd = fv.Grunddaten;
 
-          bool gedreht = p.Value.Gedreht;
-          //dummywindow.VehicleProgressBar.Value = Fahrzeug_num*100/zr.Count;
-          //dummywindow.percentageText.Text = (Fahrzeug_num * 100 / zr.Count).ToString();
-          //dummywindow.UpdateLayout();
-          //DataManager.Instance.dataLoaderWindow.pbLoaded.Value = Fahrzeug_num/zr.Count * 100;
-          //DataManager.Instance.dataLoaderWindow.UpdateLayout();
-          Fahrzeug_num++;
-          BitmapImage imagesource = pictureManager.getPicture(fzg, fv, gedreht, cachepath, dummywindow);
+    //      bool gedreht = p.Value.Gedreht;
+    //      //dummywindow.VehicleProgressBar.Value = Fahrzeug_num*100/zr.Count;
+    //      //dummywindow.percentageText.Text = (Fahrzeug_num * 100 / zr.Count).ToString();
+    //      //dummywindow.UpdateLayout();
+    //      //DataManager.Instance.dataLoaderWindow.pbLoaded.Value = Fahrzeug_num/zr.Count * 100;
+    //      //DataManager.Instance.dataLoaderWindow.UpdateLayout();
+    //      Fahrzeug_num++;
+    //      BitmapImage imagesource = pictureManager.getPicture(fzg, fv, gedreht, cachepath, dummywindow);
 
-          if (imagesource != null && fzggd != null)
-          {
-            System.Windows.Controls.Image image = new() { Source = imagesource };
-            grd.Children.Add(image);
-            System.Windows.Controls.Image smallimage = new() { Source = imagesource, Height = 20, Stretch = System.Windows.Media.Stretch.Uniform };
-            smallgrd.Children.Add(smallimage);
+    //      if (imagesource != null && fzggd != null)
+    //      {
+    //        System.Windows.Controls.Image image = new() { Source = imagesource };
+    //        grd.Children.Add(image);
+    //        System.Windows.Controls.Image smallimage = new() { Source = imagesource, Height = 20, Stretch = System.Windows.Media.Stretch.Uniform };
+    //        smallgrd.Children.Add(smallimage);
 
-            //double length_factor = 16.55 / 100; //empirisch ermittelt bei erzeugetr Bildhöhe 100
-            //double front_margin = 0.0;
-            //double rear_margin = 0.0;
-            //int height = (int)Math.Round(imagesource.Height)*3/2; //imagesource.PixelHeight;
-            //double width_d = (int)Math.Round(imagesource.Width) * 3/2; //imagesource.PixelWidth;
-            //int width = (int)Math.Round(width_d);
-            //int vehiclewidth = (int)Math.Round(fzggd.Laenge * length_factor * height);
+    //        //double length_factor = 16.55 / 100; //empirisch ermittelt bei erzeugetr Bildhöhe 100
+    //        //double front_margin = 0.0;
+    //        //double rear_margin = 0.0;
+    //        //int height = (int)Math.Round(imagesource.Height)*3/2; //imagesource.PixelHeight;
+    //        //double width_d = (int)Math.Round(imagesource.Width) * 3/2; //imagesource.PixelWidth;
+    //        //int width = (int)Math.Round(width_d);
+    //        //int vehiclewidth = (int)Math.Round(fzggd.Laenge * length_factor * height);
 
-            //double front_gap = height / 2;
-            //double rear_gap = width - (front_gap + vehiclewidth);
-            //if (rear_gap < 0)
-            //{
-            //  rear_gap = 0;
-            //}
+    //        //double front_gap = height / 2;
+    //        //double rear_gap = width - (front_gap + vehiclewidth);
+    //        //if (rear_gap < 0)
+    //        //{
+    //        //  rear_gap = 0;
+    //        //}
 
-            //double margin_factor = -0.65;
+    //        //double margin_factor = -0.65;
 
-            //if (p.Value.Gedreht)
-            //{
-            //  front_margin = margin_factor * front_gap;
-            //  rear_margin = margin_factor * rear_gap;
-            //}
-            //else // fahrzeug ist gedreht, vertausche front und rear margin
-            //{
-            //  rear_margin = margin_factor * front_gap;
-            //  front_margin = margin_factor * rear_gap;
-            //}
+    //        //if (p.Value.Gedreht)
+    //        //{
+    //        //  front_margin = margin_factor * front_gap;
+    //        //  rear_margin = margin_factor * rear_gap;
+    //        //}
+    //        //else // fahrzeug ist gedreht, vertausche front und rear margin
+    //        //{
+    //        //  rear_margin = margin_factor * front_gap;
+    //        //  front_margin = margin_factor * rear_gap;
+    //        //}
 
-            //grd.Margin = new Thickness(front_margin, 0, rear_margin, 12);
+    //        //grd.Margin = new Thickness(front_margin, 0, rear_margin, 12);
 
-            Thickness orig_thickness = pictureManager.Calculate_Margin(imagesource, fzggd.Laenge, p.Value.Gedreht);
-            grd.Margin = pictureManager.Calculate_Margin(imagesource, fzggd.Laenge, p.Value.Gedreht);
+    //        Thickness orig_thickness = pictureManager.Calculate_Margin(imagesource, fzggd.Laenge, p.Value.Gedreht);
+    //        grd.Margin = pictureManager.Calculate_Margin(imagesource, fzggd.Laenge, p.Value.Gedreht);
 
 
 
-            double factor = 20.0 / imagesource.Height;
-            smallgrd.Margin = new Thickness(grd.Margin.Left * factor, grd.Margin.Top * factor, grd.Margin.Right * factor, grd.Margin.Bottom * factor);
+    //        double factor = 20.0 / imagesource.Height;
+    //        smallgrd.Margin = new Thickness(grd.Margin.Left * factor, grd.Margin.Top * factor, grd.Margin.Right * factor, grd.Margin.Bottom * factor);
 
-            factor = 110.0445 / imagesource.Height;
-            grd.Margin = new Thickness(grd.Margin.Left * factor, grd.Margin.Top * factor, grd.Margin.Right * factor, grd.Margin.Bottom * factor);
-            //grd.ShowGridLines = true;
-            //if (background1)
-            //  grd.Background = myBrush1;
-            //else
-            //  grd.Background = myBrush2;
-            background1 = !background1;
-            string br = fv.BR.StartsWithNumber() ? $"BR {fv.BR}" : fv.BR;
-            if (p.Value.Gedreht)
-              br = br + "-r";
-            double front_margin = grd.Margin.Left;
-            double rear_margin = grd.Margin.Right;
-            // fzg.Name
-            // *test* br = string.Format("{0}-{1}-{2} ({3}-{4})", fzg.Name, fv.IDHaupt, fv.IDNeben, (int)Math.Round(front_margin,0), (int)Math.Round(rear_margin,0)).ToLower();
-            TextBlock txt = new()
-            {
-              Text = br,
-              Foreground = Brushes.Black,
-              //Background = Brushes.Gray,
-              FontStyle = FontStyles.Italic,
-              // *test* FontSize = 8,
-              HorizontalAlignment = HorizontalAlignment.Center,
-              VerticalAlignment = VerticalAlignment.Bottom,
-              Margin = new Thickness(-front_margin, 0, -rear_margin, -12)
-            };
+    //        factor = 110.0445 / imagesource.Height;
+    //        grd.Margin = new Thickness(grd.Margin.Left * factor, grd.Margin.Top * factor, grd.Margin.Right * factor, grd.Margin.Bottom * factor);
+    //        //grd.ShowGridLines = true;
+    //        //if (background1)
+    //        //  grd.Background = myBrush1;
+    //        //else
+    //        //  grd.Background = myBrush2;
+    //        background1 = !background1;
+    //        string br = fv.BR.StartsWithNumber() ? $"BR {fv.BR}" : fv.BR;
+    //        if (p.Value.Gedreht)
+    //          br = br + "-r";
+    //        double front_margin = grd.Margin.Left;
+    //        double rear_margin = grd.Margin.Right;
+    //        // fzg.Name
+    //        // *test* br = string.Format("{0}-{1}-{2} ({3}-{4})", fzg.Name, fv.IDHaupt, fv.IDNeben, (int)Math.Round(front_margin,0), (int)Math.Round(rear_margin,0)).ToLower();
+    //        TextBlock txt = new()
+    //        {
+    //          Text = br,
+    //          Foreground = Brushes.Black,
+    //          //Background = Brushes.Gray,
+    //          FontStyle = FontStyles.Italic,
+    //          // *test* FontSize = 8,
+    //          HorizontalAlignment = HorizontalAlignment.Center,
+    //          VerticalAlignment = VerticalAlignment.Bottom,
+    //          Margin = new Thickness(-front_margin, 0, -rear_margin, -12)
+    //        };
 
-            Panel.SetZIndex(txt, 7);
-            grd.Children.Add(txt);
+    //        Panel.SetZIndex(txt, 7);
+    //        grd.Children.Add(txt);
 
-            _picsPanel.Children.Insert(0, grd);
-            _smallpicsPanel.Children.Insert(0, smallgrd);
-          }
-        }
-        p = p.Next;
-      }
-      TrainLength = Math.Round(zr.Length, 0);
-      dummywindow.Close();
+    //        _picsPanel.Children.Insert(0, grd);
+    //        _smallpicsPanel.Children.Insert(0, smallgrd);
+    //      }
+    //    }
+    //    p = p.Next;
+    //  }
+    //  TrainLength = Math.Round(zr.Length, 0);
+    //  dummywindow.Close();
 
-      _picsScroller.ScrollToRightEnd();
-      //_smallpicsScroller.ScrollToRightEnd();
-    }
+    //  _picsScroller.ScrollToRightEnd();
+    //  //_smallpicsScroller.ScrollToRightEnd();
+    //}
 
 
     //---------------------------------------------------------------------
-    private void AssembleTrain2(Zug zug)
-    {
-      PictureManager2 pictureManager = new PictureManager2();
+    //private void AssembleTrain2(Zug zug)
+    //{
+    //  PictureManager2 pictureManager = new PictureManager2();
 
-      if (_picsPanel == null || _smallpicsPanel == null)
-      {
-        return;
-      }
+    //  if (_picsPanel == null || _smallpicsPanel == null)
+    //  {
+    //    return;
+    //  }
 
-      DummyWindow dummywindow = new DummyWindow();
+    //  DummyWindow dummywindow = new DummyWindow();
 
-      //dummywindow.Title = "Test";
-      dummywindow.Show();
+    //  //dummywindow.Title = "Test";
+    //  dummywindow.Show();
 
-      _picsPanel.Children.Clear();
-      _smallpicsPanel.Children.Clear();
+    //  _picsPanel.Children.Clear();
+    //  _smallpicsPanel.Children.Clear();
 
-      ZusiDocumentBase doc = zug.GetDocument();
-      Log.DebugFormat("assemble train: {0}", doc.Filename);
+    //  ZusiDocumentBase doc = zug.GetDocument();
+    //  Log.DebugFormat("assemble train: {0}", doc.Filename);
 
-      ZugReihung zr = new(zug);
-      zr.BuildTrain();
+    //  ZugReihung zr = new(zug);
+    //  zr.BuildTrain();
 
-      TrainLength = 0; // Math.Round(zr.Length, 0);
-      TrainMass = Math.Round(zr.Mass * 0.001);
-      //string cachepath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\ZusiStart\\cache";
-      string cachepath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), DataManager.localfoldername, "cache2");
-      //if (Properties.Settings.Default.Use_LS3_Renderer_DLL == 1)
-      //{
-      //  cachepath = cachepath + "1";
-      //}
-      if (zug.Buchfahrplan != null)
-      {
-        DataManager.Instance.spMax = zug.Buchfahrplan.MaxSpeed * 3.6;
-      }
-      else
-      {
-        DataManager.Instance.spMax = 0;
-      }
-      DataManager.Instance.cachepath = cachepath;
+    //  TrainLength = 0; // Math.Round(zr.Length, 0);
+    //  TrainMass = Math.Round(zr.Mass * 0.001);
+    //  //string cachepath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\ZusiStart\\cache";
+    //  string cachepath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), DataManager.localfoldername, "cache2");
+    //  //if (Properties.Settings.Default.Use_LS3_Renderer_DLL == 1)
+    //  //{
+    //  //  cachepath = cachepath + "1";
+    //  //}
+    //  if (zug.Buchfahrplan != null)
+    //  {
+    //    DataManager.Instance.spMax = zug.Buchfahrplan.MaxSpeed * 3.6;
+    //  }
+    //  else
+    //  {
+    //    DataManager.Instance.spMax = 0;
+    //  }
+    //  DataManager.Instance.cachepath = cachepath;
 
-      if (!System.IO.Directory.Exists(cachepath))
-      {
-        try
-        {
-          System.IO.Directory.CreateDirectory(cachepath);
-          Log.Debug("Cache Directory created:" + cachepath);
-        }
-        catch
-        {
-          Log.Debug("ERROR: Cache Directory cannot be created:" + cachepath);
-        }
-      }
-
-
-      int Fahrzeug_num = 0;
-
-      bool background1 = false;
-
-      SolidColorBrush myBrush1 = new SolidColorBrush(Colors.Blue);
-      myBrush1.Opacity = 0.5; // Set to 50% opacity
-      SolidColorBrush myBrush2 = new SolidColorBrush(Colors.Red);
-      myBrush2.Opacity = 0.5; // Set to 50% opacity
-      //dummywindow.VehicleProgressBar.Value = 0;
-
-      pictureManager.init_renderEngine();
-      string blickwinkel_str = "";
-      string cachefilename = "S";
-
-      if (DataManager.Instance.options.New_RenderEngine)
-      {
-        blickwinkel_str = DataManager.Instance.options.Blickwinkel_value;
+    //  if (!System.IO.Directory.Exists(cachepath))
+    //  {
+    //    try
+    //    {
+    //      System.IO.Directory.CreateDirectory(cachepath);
+    //      Log.Debug("Cache Directory created:" + cachepath);
+    //    }
+    //    catch
+    //    {
+    //      Log.Debug("ERROR: Cache Directory cannot be created:" + cachepath);
+    //    }
+    //  }
 
 
-        cachefilename = "W" + blickwinkel_str;
-      }
+    //  int Fahrzeug_num = 0;
 
-      bool zugrichtung_von_links_nach_rechts = true;
+    //  bool background1 = false;
 
-      LinkedListNode<FahrzeugInfo> p = zr.First;
+    //  SolidColorBrush myBrush1 = new SolidColorBrush(Colors.Blue);
+    //  myBrush1.Opacity = 0.5; // Set to 50% opacity
+    //  SolidColorBrush myBrush2 = new SolidColorBrush(Colors.Red);
+    //  myBrush2.Opacity = 0.5; // Set to 50% opacity
+    //  //dummywindow.VehicleProgressBar.Value = 0;
 
-      if (zugrichtung_von_links_nach_rechts)
-      {
-        p = zr.Last; // start with last vehicle
+    //  pictureManager.init_renderEngine();
+    //  string blickwinkel_str = "";
+    //  string cachefilename = "S";
 
-      }
+    //  if (DataManager.Instance.options.New_RenderEngine)
+    //  {
+    //    blickwinkel_str = DataManager.Instance.options.Blickwinkel_value;
 
-      while (p != null)
-      {
-        Fahrzeug fzg = p.Value.Fahrzeug;
-        FahrzeugVariante fv = fzg?.GetVariante(p.Value.IDHaupt, p.Value.IDNeben, p.Value.VariantenIndex) ?? null;
-        if (fv != null)
-        {
-          Grid grd = new();
-          Grid smallgrd = new();
-          FahrzeugGrunddaten fzggd = fv.Grunddaten;
 
-          bool gedreht = p.Value.Gedreht;
-          int saschaltung = p.Value.SASchaltung;
+    //    cachefilename = "W" + blickwinkel_str;
+    //  }
 
-          if (zugrichtung_von_links_nach_rechts)
-          {
-            gedreht = !gedreht;
-          }
+    //  bool zugrichtung_von_links_nach_rechts = true;
 
-          Fahrzeug_num++;
-          pictureManager.add_Vehicle(fzg, fv, gedreht, saschaltung, cachepath, dummywindow, von_rechts_nach_links: !zugrichtung_von_links_nach_rechts);
-          if (Fahrzeug_num <= 10)
-          {
-            cachefilename += string.Format("{0}-{1}-{2}", fzg.Name, fv.IDHaupt, fv.IDNeben).ToLower();
-          }
+    //  LinkedListNode<FahrzeugInfo> p = zr.First;
 
-          //if (fzggd != null)
-          //{
-          //  //System.Windows.Controls.Image image = new() { Source = imagesource };
-          //  //grd.Children.Add(image);
-          //  //System.Windows.Controls.Image smallimage = new() { Source = imagesource, Height = 20, Stretch = System.Windows.Media.Stretch.Uniform };
-          //  //smallgrd.Children.Add(smallimage);
+    //  if (zugrichtung_von_links_nach_rechts)
+    //  {
+    //    p = zr.Last; // start with last vehicle
 
-          //  Thickness orig_thickness = pictureManager.Calculate_Margin(imagesource, fzggd.Laenge, p.Value.Gedreht);
-          //grd.Margin = pictureManager.Calculate_Margin(imagesource, fzggd.Laenge, p.Value.Gedreht);
+    //  }
 
-          //  double factor = 20.0 / imagesource.Height;
-          //  smallgrd.Margin = new Thickness(grd.Margin.Left * factor, grd.Margin.Top * factor, grd.Margin.Right * factor, grd.Margin.Bottom * factor);
+    //  while (p != null)
+    //  {
+    //    Fahrzeug fzg = p.Value.Fahrzeug;
+    //    FahrzeugVariante fv = fzg?.GetVariante(p.Value.IDHaupt, p.Value.IDNeben, p.Value.VariantenIndex) ?? null;
+    //    if (fv != null)
+    //    {
+    //      Grid grd = new();
+    //      Grid smallgrd = new();
+    //      FahrzeugGrunddaten fzggd = fv.Grunddaten;
 
-          //  factor = 110.0445 / imagesource.Height;
-          //  grd.Margin = new Thickness(grd.Margin.Left * factor, grd.Margin.Top * factor, grd.Margin.Right * factor, grd.Margin.Bottom * factor);
+    //      bool gedreht = p.Value.Gedreht;
+    //      int saschaltung = p.Value.SASchaltung;
 
-          //  background1 = !background1;
-          //  string br = fv.BR.StartsWithNumber() ? $"BR {fv.BR}" : fv.BR;
-          //  if (p.Value.Gedreht)
-          //    br = br + "-r";
-          //  double front_margin = grd.Margin.Left;
-          //  double rear_margin = grd.Margin.Right;
+    //      if (zugrichtung_von_links_nach_rechts)
+    //      {
+    //        gedreht = !gedreht;
+    //      }
 
-          //  TextBlock txt = new()
-          //  {
-          //    Text = br,
-          //    Foreground = Brushes.Black,
-          //    //Background = Brushes.Gray,
-          //    FontStyle = FontStyles.Italic,
-          //    // *test* FontSize = 8,
-          //    HorizontalAlignment = HorizontalAlignment.Center,
-          //    VerticalAlignment = VerticalAlignment.Bottom,
-          //    Margin = new Thickness(-front_margin, 0, -rear_margin, -12)
-          //  };
+    //      Fahrzeug_num++;
+    //      pictureManager.add_Vehicle(fzg, fv, gedreht, saschaltung, cachepath, dummywindow, von_rechts_nach_links: !zugrichtung_von_links_nach_rechts);
+    //      if (Fahrzeug_num <= 10)
+    //      {
+    //        cachefilename += string.Format("{0}-{1}-{2}", fzg.Name, fv.IDHaupt, fv.IDNeben).ToLower();
+    //      }
 
-          //  Panel.SetZIndex(txt, 7);
-          //  grd.Children.Add(txt);
+    //      //if (fzggd != null)
+    //      //{
+    //      //  //System.Windows.Controls.Image image = new() { Source = imagesource };
+    //      //  //grd.Children.Add(image);
+    //      //  //System.Windows.Controls.Image smallimage = new() { Source = imagesource, Height = 20, Stretch = System.Windows.Media.Stretch.Uniform };
+    //      //  //smallgrd.Children.Add(smallimage);
 
-          //  //_picsPanel.Children.Insert(0, grd);
-          //  //_smallpicsPanel.Children.Insert(0, smallgrd);
-          //}
-        }
-        if (zugrichtung_von_links_nach_rechts)
-        {
-          p = p.Previous; // weiter mit dem vorherigen Fahrzeug
-        }
-        else
-        {
-          p = p.Next;
-        }
-      }
+    //      //  Thickness orig_thickness = pictureManager.Calculate_Margin(imagesource, fzggd.Laenge, p.Value.Gedreht);
+    //      //grd.Margin = pictureManager.Calculate_Margin(imagesource, fzggd.Laenge, p.Value.Gedreht);
 
-      Grid grd1 = new();
-      Grid smallgrd1 = new();
-      string filename = "";
+    //      //  double factor = 20.0 / imagesource.Height;
+    //      //  smallgrd.Margin = new Thickness(grd.Margin.Left * factor, grd.Margin.Top * factor, grd.Margin.Right * factor, grd.Margin.Bottom * factor);
 
-      if (cachefilename.Length < 190)
-      {
-        filename = cachefilename;
-      }
-      else
-      {
-        filename = cachefilename.Substring(0, 190) + zug.Gattung + zug.Nummer;
-      }
+    //      //  factor = 110.0445 / imagesource.Height;
+    //      //  grd.Margin = new Thickness(grd.Margin.Left * factor, grd.Margin.Top * factor, grd.Margin.Right * factor, grd.Margin.Bottom * factor);
 
-      float blickwinkel = -1f;
+    //      //  background1 = !background1;
+    //      //  string br = fv.BR.StartsWithNumber() ? $"BR {fv.BR}" : fv.BR;
+    //      //  if (p.Value.Gedreht)
+    //      //    br = br + "-r";
+    //      //  double front_margin = grd.Margin.Left;
+    //      //  double rear_margin = grd.Margin.Right;
 
-      if (DataManager.Instance.options.New_RenderEngine)
-      {
+    //      //  TextBlock txt = new()
+    //      //  {
+    //      //    Text = br,
+    //      //    Foreground = Brushes.Black,
+    //      //    //Background = Brushes.Gray,
+    //      //    FontStyle = FontStyles.Italic,
+    //      //    // *test* FontSize = 8,
+    //      //    HorizontalAlignment = HorizontalAlignment.Center,
+    //      //    VerticalAlignment = VerticalAlignment.Bottom,
+    //      //    Margin = new Thickness(-front_margin, 0, -rear_margin, -12)
+    //      //  };
 
-        if (float.TryParse(blickwinkel_str, NumberStyles.Float, CultureInfo.InvariantCulture, out float result))
-        {
-          Console.WriteLine($"Erfolgreich: {result}");
-        }
-        else
-        {
-          result = 0;
-        }
-        blickwinkel = result * 0.01745329252f;
-      }
+    //      //  Panel.SetZIndex(txt, 7);
+    //      //  grd.Children.Add(txt);
 
-      BitmapImage imagesource = pictureManager.getPicture3(filename, cachepath, dummywindow, blickwinkel: blickwinkel);
+    //      //  //_picsPanel.Children.Insert(0, grd);
+    //      //  //_smallpicsPanel.Children.Insert(0, smallgrd);
+    //      //}
+    //    }
+    //    if (zugrichtung_von_links_nach_rechts)
+    //    {
+    //      p = p.Previous; // weiter mit dem vorherigen Fahrzeug
+    //    }
+    //    else
+    //    {
+    //      p = p.Next;
+    //    }
+    //  }
 
-      if (imagesource != null)
-      {
-        System.Windows.Controls.Image image = new() { Source = imagesource };
-        grd1.Children.Add(image);
-        grd1.Margin = new Thickness(20, 0, 20, 0);
+    //  Grid grd1 = new();
+    //  Grid smallgrd1 = new();
+    //  string filename = "";
 
-        System.Windows.Controls.Image smallimage = new() { Source = imagesource, Height = 20, Stretch = System.Windows.Media.Stretch.Uniform };
-        smallgrd1.Children.Add(smallimage);
-        smallgrd1.Margin = new Thickness(20, 0, 20, 0);
+    //  if (cachefilename.Length < 190)
+    //  {
+    //    filename = cachefilename;
+    //  }
+    //  else
+    //  {
+    //    filename = cachefilename.Substring(0, 190) + zug.Gattung + zug.Nummer;
+    //  }
 
-        _picsPanel.Children.Insert(0, grd1);
-        _smallpicsPanel.Children.Insert(0, smallgrd1);
+    //  float blickwinkel = -1f;
 
-        TrainLength = Math.Round(zr.Length, 0);
+    //  if (DataManager.Instance.options.New_RenderEngine)
+    //  {
 
-        if (zugrichtung_von_links_nach_rechts)
-        {
-          _picsScroller.ScrollToRightEnd();
-        }
-        else
-        {
-          _picsScroller.ScrollToLeftEnd();
-        }
-        //_smallpicsScroller.ScrollToRightEnd();
-      }
-      dummywindow.Close();
-    }
+    //    if (float.TryParse(blickwinkel_str, NumberStyles.Float, CultureInfo.InvariantCulture, out float result))
+    //    {
+    //      Console.WriteLine($"Erfolgreich: {result}");
+    //    }
+    //    else
+    //    {
+    //      result = 0;
+    //    }
+    //    blickwinkel = result * 0.01745329252f;
+    //  }
+
+    //  BitmapImage imagesource = pictureManager.getPicture3(filename, cachepath, dummywindow, blickwinkel: blickwinkel);
+
+    //  if (imagesource != null)
+    //  {
+    //    System.Windows.Controls.Image image = new() { Source = imagesource };
+    //    grd1.Children.Add(image);
+    //    grd1.Margin = new Thickness(20, 0, 20, 0);
+
+    //    System.Windows.Controls.Image smallimage = new() { Source = imagesource, Height = 20, Stretch = System.Windows.Media.Stretch.Uniform };
+    //    smallgrd1.Children.Add(smallimage);
+    //    smallgrd1.Margin = new Thickness(20, 0, 20, 0);
+
+    //    _picsPanel.Children.Insert(0, grd1);
+    //    _smallpicsPanel.Children.Insert(0, smallgrd1);
+
+    //    TrainLength = Math.Round(zr.Length, 0);
+
+    //    if (zugrichtung_von_links_nach_rechts)
+    //    {
+    //      _picsScroller.ScrollToRightEnd();
+    //    }
+    //    else
+    //    {
+    //      _picsScroller.ScrollToLeftEnd();
+    //    }
+    //    //_smallpicsScroller.ScrollToRightEnd();
+    //  }
+    //  dummywindow.Close();
+    //}
   
 
   //---------------------------------------------------------------------
@@ -829,6 +848,7 @@ namespace ZusiStart.Controls
 
       TrainLength = Math.Round(zr.Length, 0);
       TrainMass = Math.Round(zr.Mass * 0.001);
+      TrainMaxMass = zug.FplMasse * 0.001;
 
       BitmapImage imagesource = pictureManager.AssembleTrain(zug, dummywindow, zugrichtung_von_links_nach_rechts);
 
@@ -836,7 +856,7 @@ namespace ZusiStart.Controls
       {
         System.Windows.Controls.Image image = new() { Source = imagesource };
         grd1.Children.Add(image);
-        grd1.Margin = new Thickness(20, 0, 20, 0);
+        grd1.Margin = new Thickness(20, 0, 20, 10);
 
         System.Windows.Controls.Image smallimage = new() { Source = imagesource, Height = 20, Stretch = System.Windows.Media.Stretch.Uniform };
         smallgrd1.Children.Add(smallimage);
@@ -990,6 +1010,24 @@ namespace ZusiStart.Controls
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
       string format = string.IsNullOrEmpty(parameter as string) ? "{0:N0} t" : (string)parameter;
+      return value is double v && v > 0 ? string.Format(CultureInfo.CurrentCulture, format, value) : null;
+    }
+
+    //---------------------------------------------------------------------
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      throw new NotImplementedException();
+    }
+  }
+
+  //=========================================================================
+  [ValueConversion(typeof(double), typeof(string))]
+  public class TrainMaxMassConverter : IValueConverter
+  {
+    //---------------------------------------------------------------------
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      string format = string.IsNullOrEmpty(parameter as string) ? " (max. {0:N0} t)" : (string)parameter;
       return value is double v && v > 0 ? string.Format(CultureInfo.CurrentCulture, format, value) : null;
     }
 

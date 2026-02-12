@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Zug" Version="A.1" MinVersion="A.1">
+<AutorEintrag AutorID="34" AutorName="Holger Lürkens"/>
+</Info>
+<Zug Gattung="D" Nummer="2640" Zuglauf="Braunschweig Hbf - Mönchengladbach Hbf" Prio="3000" Bremsstellung="3" MBrh="1.05" LODzug="2" ReisendenDichte="0.6" FahrplanGruppe="2. Bad Driburg - Altenbeken" Rekursionstiefe="5" FahrstrName="Aufgleispunkt -&gt; Bad Driburg B" Zugtyp="1" Buchfahrplandll="_InstSetup\lib\timetable\Buchfahrplan_DB_1979.dll">
+<Datei Dateiname="Timetables\Deutschland\Demo\Demofahrplan_1986.fpn" NurInfo="1"/>
+<FahrplanEintrag Ank="1986-09-03 12:33:00" Abf="1986-09-03 12:40:00" Betrst="Bad Driburg">
+<FahrplanSignalEintrag FahrplanSignal="B"/>
+</FahrplanEintrag>
+<FahrplanEintrag Abf="1986-09-03 12:44:00" Betrst="Reelsen Hp"/>
+<FahrplanEintrag Abf="1986-09-03 12:46:00" Betrst="Langeland">
+<FahrplanSignalEintrag FahrplanSignal="F"/>
+</FahrplanEintrag>
+<FahrplanEintrag Ank="1986-09-03 12:50:00" Abf="1986-09-03 13:00:00" Betrst="Altenbeken">
+<FahrplanSignalEintrag FahrplanSignal="P2"/>
+</FahrplanEintrag>
+<FahrzeugVarianten Bezeichnung="default" ZufallsWert="1">
+<FahrzeugVarianten Bezeichnung="Lok" PerZufallUebernehmen="1" ZufallsWert="1">
+<FahrzeugInfo IDHaupt="3" IDNeben="1" EigeneBremsstellung="1" Bremsstellung="1" Zugart="O">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Dieselloks\BRD\V160_Familie\V160\V160.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="2" IDNeben="1" EigeneBremsstellung="1" Bremsstellung="1" Zugart="O">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Dieselloks\BRD\V160_Familie\V160\V160.rv.fzg"/>
+</FahrzeugInfo>
+</FahrzeugVarianten>
+<FahrzeugVarianten Bezeichnung="Wagen" PerZufallUebernehmen="1" ZufallsWert="1" FzgPosition="1">
+<FahrzeugVarianten Bezeichnung="Park 1" ZufallsWert="1">
+<FahrzeugInfo IDHaupt="4" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\UIC-X-Wagen\B4uem54.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="4" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\UIC-X-Wagen\B4uem54.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="4" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\UIC-X-Wagen\AB4uem54.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="2" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\UIC-X-Wagen\B4uem54.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="4" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\UIC-X-Wagen\B4uem54.rv.fzg"/>
+</FahrzeugInfo>
+</FahrzeugVarianten>
+<FahrzeugVarianten Bezeichnung="Park 2" ZufallsWert="1" FzgPosition="1">
+<FahrzeugInfo IDHaupt="4" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\UIC-X-Wagen\B4uem54.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="2" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\UIC-X-Wagen\B4uem54.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="2" IDNeben="1" Gedreht="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\UIC-X-Wagen\AB4uem54.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="4" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\UIC-X-Wagen\B4uem54.rv.fzg"/>
+</FahrzeugInfo>
+<FahrzeugInfo IDHaupt="4" IDNeben="1">
+<Datei Dateiname="RollingStock\Deutschland\Epoche3\Reisezugwagen\BRD\UIC-X-Wagen\B4uem54.rv.fzg"/>
+</FahrzeugInfo>
+</FahrzeugVarianten>
+</FahrzeugVarianten>
+</FahrzeugVarianten>
+</Zug>
+</Zusi>

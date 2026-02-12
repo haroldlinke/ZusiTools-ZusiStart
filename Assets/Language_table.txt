@@ -147,3 +147,23 @@ Filtern nach Zugnummer oder Stationsnamen,Filter by train number or station name
 Zu Favoriten hinzufügen,Add to favorites,Ajouter aux favoris
 Aus Favoriten entfernen,Remove from favorites,Retirer des favoris
 " {0} Personen-|_, {0} Güter[zug:züge]|_in {0} Fahr[plan:plänen]"," {0} passenger-|_, {0} freight[train:trains]|_in {0} timetabl[e:es]", " {0} voyageur-|_, {0} marchandises[train:trains]|_dans {0} horair[e:es]"
+"Erstelle Streckenplan für Fahrplan ","Create track layout plan for timetable ","Créer un plan de voie pour l'horaire "
+Streckenplan,Track layout plan,Plan de voie
+Tracking-OSM,Tracking-OSM,Tracking-OSM
+Zu Austauschzugliste hinzufügen,Add to replacement train list,Ajouter à la liste des trains de remplacement
+Ansicht zurücksetzen,Reset view,Réinitialiser la vue
+Fahrschule,Driving school,Auto-école
+Zusi-Datenbank,Zusi database,Base de données Zusi
+ZusiMeter,ZusiMeter,ZusiMeter
+Zusi-Meter Parameter,ZusiMeter parameters,Paramètres ZusiMeter
+Zugdaten beim Tracking anzeigen - ZusiMeter-Layout-Datei:,Show train data during tracking - ZusiMeter layout file:,Afficher les données du train pendant le suivi - Fichier de mise en page ZusiMeter :
+Neue RenderEngine verwenden,Use new render engine,Utiliser le nouveau moteur de rendu
+Blickwinkel:,Viewing angle:,Angle de vue :
+Dekozüge in eigener Liste anzeigen,Show decorative trains in separate list,Afficher les trains décoratifs dans une liste séparée
+ZusiStart nicht verstecken,Do not hide ZusiStart,Ne pas cacher ZusiStart
+Remote Zusi Tracking,Remote Zusi tracking,Suivi Zusi à distance
+IP-Adresse:,IP address:,Adresse IP :
+Remote ZusiStart - Tracking Unterstützung,Remote ZusiStart - tracking support,Remote ZusiStart - support de suivi
+Remote ZusiStart - Tracking Unterstützung ermöglicht die Anzeige von Zusi-Tracking-Daten von einem anderen Computer im Netzwerk. Hier kann die IP-Adresse des Remote-Computers eingegeben werden:,Remote ZusiStart - tracking support allows the display of Zusi tracking data from another computer on the network. Here you can enter the IP address of the remote computer:,Remote ZusiStart - le support de suivi permet l'affichage des données de suivi Zusi à partir d'un autre ordinateur sur le réseau. Ici, vous pouvez entrer l'adresse IP de l'ordinateur distant :
+Zug immer im Stillstand starten,Always start train in standstill,Toujours démarrer le train à l'arrêt
+(Hp1) Züge werden immer im Stillstand gestartet, auch wenn der Fahrplan etwas anderes vorsieht,(Hp1) Trains are always started in standstill, even if the timetable suggests otherwise,(Hp1) Les trains sont toujours démarrés à l'arrêt, même si l'horaire suggère le contraire
