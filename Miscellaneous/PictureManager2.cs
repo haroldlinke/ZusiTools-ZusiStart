@@ -18,12 +18,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Xml.Linq;
-using ZusiKlassenLib;
-using ZusiKlassenLib.Buchfahrplan;
-using ZusiKlassenLib.Common;
-using ZusiKlassenLib.Fahrplan;
-using ZusiKlassenLib.TimeTable;
-using ZusiKlassenLib.Vehicle;
+using ZusiKlassenLib2;
+using ZusiKlassenLib2.Buchfahrplan;
+using ZusiKlassenLib2.Common;
+using ZusiKlassenLib2.Fahrplan;
+using ZusiKlassenLib2.TimeTable;
+using ZusiKlassenLib2.Vehicle;
 using ZusiPicLib;
 using ZusiStart.Data;
 using ZusiStart.Miscellaneous;
@@ -174,12 +174,12 @@ namespace ZusiStart.Miscellaneous
         }
         else
         {
-          _log.Debug("Initialization failed!");
+          _log.Error("Initialization failed!");
         }
       }
       catch (Exception ex)
       {
-        _log.Debug("Error dll-access:" + ex.Message);
+        _log.Error("Error dll-access:" + ex.Message);
       }
     }
 
@@ -240,7 +240,7 @@ namespace ZusiStart.Miscellaneous
       }
       catch (Exception ex)
       {
-        _log.Debug("Error dll-access:" + ex.Message);
+        _log.Error("Error dll-access:" + ex.Message);
       }
     }
 
@@ -258,7 +258,7 @@ namespace ZusiStart.Miscellaneous
 
         if (popup_message != null)
           popup_message.Show();
-        string Arbeitsverzeichnis = ZusiKlassenLib.Zusi.DataPath[0];
+        string Arbeitsverzeichnis = ZusiKlassenLib2.Zusi.DataPath[0];
         string cachefilename = string.Format("{0}-{1}-{2}", fzg.Name, fv.IDHaupt, fv.IDNeben).ToLower();
         string ls3_filename = fv.DateiAussenansicht.Dateiname;
         string ls3_filenamepath = Arbeitsverzeichnis + "\\" + ls3_filename;
@@ -274,7 +274,7 @@ namespace ZusiStart.Miscellaneous
         }
         catch (Exception ex)
         {
-          _log.Debug("Error Generate Image for:" + cachefilename + " - " + ex.Message);
+          _log.Error("Error Generate Image for:" + cachefilename + " - " + ex.Message);
           return;
         }
         offset_x += (float)fzggd.Laenge;
@@ -286,7 +286,7 @@ namespace ZusiStart.Miscellaneous
 
       catch (Exception ex)
       {
-        _log.Debug("Error Generate Image:" + ex.Message);
+        _log.Error("Error Generate Image:" + ex.Message);
         return;
       }
     }
@@ -307,12 +307,12 @@ namespace ZusiStart.Miscellaneous
         }
         else
         {
-          _log.Debug("Initialization failed!");
+          _log.Error("Initialization failed!");
         }
       }
       catch (Exception ex)
       {
-        _log.Debug("Error dll-access:" + ex.Message);
+        _log.Error("Error dll-access:" + ex.Message);
       }
     }
 
@@ -403,7 +403,7 @@ namespace ZusiStart.Miscellaneous
       }
       catch (Exception ex)
       {
-        _log.Debug("Error dll-access:" + ex.Message);
+        _log.Error("Error dll-access:" + ex.Message);
       }
     }
 
@@ -425,7 +425,7 @@ namespace ZusiStart.Miscellaneous
         {
           if (popup_message != null)
             popup_message.Show();
-          string Arbeitsverzeichnis = ZusiKlassenLib.Zusi.DataPath[0];
+          string Arbeitsverzeichnis = ZusiKlassenLib2.Zusi.DataPath[0];
           //string cachefilename = string.Format("{0}-{1}-{2}", fzg.Name, fv.IDHaupt, fv.IDNeben).ToLower();
           string cachefilename = filename;
           //string ls3_filename = fv.DateiAussenansicht.Dateiname;
@@ -440,7 +440,7 @@ namespace ZusiStart.Miscellaneous
           }
           catch (Exception ex)
           {
-            _log.Debug("Error Generate Image for:" + cachefilename + " - " + ex.Message);
+            _log.Error("Error Generate Image for:" + cachefilename + " - " + ex.Message);
             return null;
           }
 
@@ -483,7 +483,7 @@ namespace ZusiStart.Miscellaneous
       }
       catch (Exception ex)
       {
-        _log.Debug("Error Generate Image:" + ex.Message);
+        _log.Error("Error Generate Image:" + ex.Message);
         return null;
       }
     }
@@ -505,7 +505,7 @@ namespace ZusiStart.Miscellaneous
         {
           if (popup_message != null)
             popup_message.Show();
-          string Arbeitsverzeichnis = ZusiKlassenLib.Zusi.DataPath[0];
+          string Arbeitsverzeichnis = ZusiKlassenLib2.Zusi.DataPath[0];
           string cachefilename = string.Format("{0}-{1}-{2}", fzg.Name, fv.IDHaupt, fv.IDNeben).ToLower();
           string ls3_filename = fv.DateiAussenansicht.Dateiname;
           string ls3_filenamepath = Arbeitsverzeichnis + "\\" + ls3_filename;
@@ -521,7 +521,7 @@ namespace ZusiStart.Miscellaneous
           }
           catch (Exception ex)
           {
-            _log.Debug("Error Generate Image for:" + cachefilename + " - " + ex.Message);
+            _log.Error("Error Generate Image for:" + cachefilename + " - " + ex.Message);
             return null;
           }
 
@@ -564,7 +564,7 @@ namespace ZusiStart.Miscellaneous
       }
       catch (Exception ex)
       {
-        _log.Debug("Error Generate Image:" + ex.Message);
+        _log.Error("Error Generate Image:" + ex.Message);
         return null;
       }
     }
@@ -593,7 +593,7 @@ namespace ZusiStart.Miscellaneous
         string cachefilename = string.Format("{0}-{1}-{2}", fzg.Name, fv.IDHaupt, fv.IDNeben + (!gedreht ? "-s2" : "-s1")).ToLower();
         string ls3_filename = fv.DateiAussenansicht.Dateiname;
 
-        string Arbeitsverzeichnis = ZusiKlassenLib.Zusi.DataPath[0];
+        string Arbeitsverzeichnis = ZusiKlassenLib2.Zusi.DataPath[0];
         string[] ZusiDataDirs = { Arbeitsverzeichnis };
         string DateiNameRelativ = ls3_filename;
         NativeMethods.ls3Ansicht mode = NativeMethods.ls3Ansicht.Seitenansicht;
@@ -610,7 +610,7 @@ namespace ZusiStart.Miscellaneous
         }
         catch (Exception ex)
         {
-          _log.Debug("Error Generate Image for:" + cachefilename + " - " + ex.Message);
+          _log.Error("Error Generate Image for:" + cachefilename + " - " + ex.Message);
           filename = "";
         }
 
@@ -691,7 +691,7 @@ namespace ZusiStart.Miscellaneous
         }
         catch
         {
-          _log.Debug("ERROR: Cache Directory cannot be created:" + cachepath);
+          _log.Error("ERROR: Cache Directory cannot be created:" + cachepath);
         }
       }
 

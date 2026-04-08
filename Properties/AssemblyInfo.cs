@@ -143,7 +143,7 @@ using System.Windows;
 // Zusi-Start-Modus konfigurierbar
 
 // 1.5 - 16.10.2019
-// Steam-Version tauglich (ZusiKlassenLib)
+// Steam-Version tauglich (ZusiKlassenLib2)
 // Windows-Konformen "Minimize"-Button hinzugefügt
 
 // 1.6 - 19.10.2019
@@ -179,7 +179,7 @@ using System.Windows;
 // Zwischenversion für Fehlersuche
 
 // 1.12 - 22.06.2021
-// Fehler in ZusiKlassenLib beseitigt (siehe dort)
+// Fehler in ZusiKlassenLib2 beseitigt (siehe dort)
 
 // 1.12.1 - 22.06.2021
 // weitere Fehlersuche für Steam-Version

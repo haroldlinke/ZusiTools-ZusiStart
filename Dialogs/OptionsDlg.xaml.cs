@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ZusiStart.Data;
 using System.Globalization;
+using log4net;
 
 namespace ZusiStart.Dialogs
 {
@@ -24,12 +25,15 @@ namespace ZusiStart.Dialogs
   public partial class OptionsDlg : Window
   {
 
+    private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+
     public OptionsDlg()
     {
       InitializeComponent();
       // Sprache beim Öffnen setzen
       string lang = Properties.Settings.Default.Language;
-      if (!string.IsNullOrEmpty(lang) && lang != "auto")
+      if (!string.IsNullOrEmpty(lang) && !lang.Contains("auto"))
       {
         DataManager.CurrentLanguage = lang;
       }
@@ -66,7 +70,7 @@ namespace ZusiStart.Dialogs
       {
         Show_ZSK = true,// CheckBox_ZSK.IsChecked ?? false,
         Show_ZDB = true, //CheckBox_ZDB.IsChecked ?? false,
-        Show_Bfpl = CheckBox_Bfpl.IsChecked ?? false,
+        //Show_Bfpl = CheckBox_Bfpl.IsChecked ?? false,
         ZSK_Url = TextBox_ZSK_URL.Text,
         ZDB_Url = TextBox_ZDB_URL.Text,
         Bfpl_Exe = TextBox_Bfpl_Exe.Text,
@@ -86,6 +90,10 @@ namespace ZusiStart.Dialogs
         //StartOnlySelectedTrain = CheckBox_StartOnlySelectedTrain.IsChecked ?? false,
         Show_ZusiMeter_Data = CheckBox_Show_ZusiMeter_Data.IsChecked ?? false,
         ZusiMeter_Standard_Layoutfile = TextBox_ZusiMeter_Standard_Layoutfile.Text,
+        RO_starttime_no_decotrains = CheckBox_RO_starttime_no_decotrains.IsChecked ?? false,
+        RO_trainselectioncriteria_Stations = CheckBox_RO_trainselectioncriteria_Stations.IsChecked ?? false,
+        RO_trainselection_Streckenmodule = CheckBox_RO_trainselection_Streckenmodule.IsChecked ?? false,
+        Buchfahrplanlayout = ComboBox_BuchfahrplanLayout.SelectedItem.ToString() ?? "Automatisch aus TRN-Datei",
       };
       DataManager.Instance.options = local_options;
       DataManager.Instance.main_window.ZSKButtonVisibility = local_options.Show_ZSK ? Visibility.Visible : Visibility.Collapsed;
@@ -112,6 +120,27 @@ namespace ZusiStart.Dialogs
       ComboBoxItem_Fr.Content = LocalizationManager.Translate("Französisch");
     }
 
+    //Native Directorys for BuchfahrplanDLL 
+    private static string[] NativeDirectorys;
+
+    public static void ManualInitNativeStandardsFileName(string nativeStandardsFilePath)
+    {
+      NativeDirectorys = [];
+      NativeDirectorys.Append("Automatic");
+      string[] array = File.ReadAllText(nativeStandardsFilePath, Encoding.UTF8).Split(new string[1] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+      foreach (string text in array)
+      {
+        if (!text.StartsWith(";"))
+        {
+          string[] array2 = text.Split('\t');
+          if (array2.Length >= 2)
+          {
+            NativeDirectorys.Append(array2[0]);
+          }
+        }
+      }
+    }
+
     private void GetOptions()
     {
       var local_options = DataManager.Instance.options;
@@ -132,7 +161,7 @@ namespace ZusiStart.Dialogs
         TextBox_ZDB_URL.Text = "http://zusidatenbank.de/?zusistart";
       }
 
-      CheckBox_Bfpl.IsChecked = local_options.Show_Bfpl;
+      //CheckBox_Bfpl.IsChecked = local_options.Show_Bfpl;
       if (!string.IsNullOrEmpty(local_options.Bfpl_Exe))
         TextBox_Bfpl_Exe.Text = local_options.Bfpl_Exe;
       else
@@ -211,6 +240,10 @@ namespace ZusiStart.Dialogs
       CheckBox_DonotHideZusiStart.IsChecked = local_options.DonotHideZusiStart;
       //CheckBox_StartOnlySelectedTrain.IsChecked = local_options.StartOnlySelectedTrain;
 
+      CheckBox_RO_starttime_no_decotrains.IsChecked= local_options.RO_starttime_no_decotrains;
+      CheckBox_RO_trainselectioncriteria_Stations.IsChecked= local_options.RO_trainselectioncriteria_Stations;
+      CheckBox_RO_trainselection_Streckenmodule.IsChecked = local_options.RO_trainselection_Streckenmodule;
+
       string currentLang = DataManager.CurrentLanguage ?? "auto";
       foreach (ComboBoxItem item in ComboBox_Language.Items)
       {
@@ -222,15 +255,58 @@ namespace ZusiStart.Dialogs
       }
       UpdateLanguageComboBoxTexts();
 
-      //string currenttraincat = local_options.CurrentTrainCat ?? "all";
-      //foreach (ComboBoxItem item in ComboBox_TrainCategories.Items)
-      //{
-      //  if ((string)item.Tag == currenttraincat)
-      //  {
-      //    ComboBox_TrainCategories.SelectedItem = item;
-      //    break;
-      //  }
-      //}
-    }
+      try
+      {
+        _log.Debug("Intializiere Buchfahrplanlayouts...");
+        ComboBox_BuchfahrplanLayout.Items.Clear();
+        ComboBox_BuchfahrplanLayout.Items.Add("Automatisch aus TRN-Datei");
+
+        ZusiKlassenLib2.DataPathType _dataPath = ZusiKlassenLib2.DataPathType.Unknown;
+        _log.Debug("Lade Buchfahrplanlayouts aus NativeStandards.csv");
+        string nativestandards_csv_file = ZusiKlassenLib2.Zusi.ZusiPath + @"_InstSetup\lib\timetable\lib\NativeStandards.csv";
+
+        if (nativestandards_csv_file == null || !File.Exists(nativestandards_csv_file))
+        {
+          _log.Error("NativeStandards.csv nicht gefunden. Buchfahrplanlayouts können nicht geladen werden.");
+          return;
+        }
+        string[] layout_array = File.ReadAllText(nativestandards_csv_file, Encoding.UTF8).Split(new string[1] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+
+        _log.Debug($"Gefundene Buchfahrplanlayouts: {layout_array.Length}");
+
+        foreach (string data in layout_array)
+        {
+          if (!data.StartsWith(";"))
+          {
+            string[] array2 = data.Split('\t');
+
+            if (array2.Length >= 2)
+            {
+              ComboBox_BuchfahrplanLayout.Items.Add(array2[0]);
+            }
+          }
+        }
+        if (ComboBox_BuchfahrplanLayout.Items.Contains(local_options.Buchfahrplanlayout))
+        {
+          ComboBox_BuchfahrplanLayout.SelectedItem = local_options.Buchfahrplanlayout;
+        }
+        _log.Debug($"Aktuelles Buchfahrplanlayout: {local_options.Buchfahrplanlayout}");
+      }
+      catch (Exception ex)
+      {
+        _log.Error("Fehler beim Laden der Buchfahrplanlayouts: " + ex.Message);
+      }
+
+
+        //string currenttraincat = local_options.CurrentTrainCat ?? "all";
+        //foreach (ComboBoxItem item in ComboBox_TrainCategories.Items)
+        //{
+        //  if ((string)item.Tag == currenttraincat)
+        //  {
+        //    ComboBox_TrainCategories.SelectedItem = item;
+        //    break;
+        //  }
+        //}
+      }
   }
 }

@@ -21,15 +21,17 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Xml.Linq;
 using Xceed.Wpf.Toolkit.Primitives;
-using ZusiKlassenLib;
-using ZusiKlassenLib.Buchfahrplan;
-using ZusiKlassenLib.Common;
-using ZusiKlassenLib.Fahrplan;
-using ZusiKlassenLib.Vehicle;
+using ZusiKlassenLib2;
+using ZusiKlassenLib2.Buchfahrplan;
+using ZusiKlassenLib2.Common;
+using ZusiKlassenLib2.Fahrplan;
+using ZusiKlassenLib2.Vehicle;
 using ZusiStart.Data;
 using ZusiStart.Dialogs;
+using ZusiStart.KlLib2;
 using ZusiStart.Miscellaneous;
 using static System.Net.Mime.MediaTypeNames;
+using static ZusiStart.Data.DataManager;
 
 namespace ZusiStart.Controls
 {
@@ -391,6 +393,37 @@ namespace ZusiStart.Controls
         {
           AssembleTrain3(zug);
           DataManager.Instance.main_window.SearchBuchfahrplan();
+
+          /***********************************************************
+           * Test creating Streckenelementliste from Zug
+           * ************************************************/
+
+          if (false)
+          {
+            string selectedTrainfile = zug.GetDocument().Filename;
+            var buffer = new Dictionary<string, ZusiCLIProject.FileLibrary.Zusi3.Zusi>(System.StringComparer.InvariantCulture);
+            ZusiCLIProject.FileLibrary.Zusi3.Datei selectedzugDatei = ZusiCLIProject.FileLibrary.Zusi3.Datei.CreateAndLoad(selectedTrainfile, ZusiCLIProject.FileLibrary.Zusi3.Datei.GetZusiDataDirs(), buffer);
+            ZusiCLIProject.FileLibrary.Zusi3.Zug selectedzug = selectedzugDatei.Content.Zuege.FirstOrDefault();
+            if (selectedzug != null)
+            {
+              /***************************************************
+               * Test Loading Framework
+               * ************************************************/
+              string relPfad = zug.FahrplanDatei.Dateiname;
+              var lFr = new ZusiCLIProject.FileLibrary.Zusi3.ZusiFdl.LoadingFramework<int>();
+              lFr.DataDirs = ZusiCLIProject.FileLibrary.Zusi3.Datei.GetZusiDataDirs();
+              //lFr.FahrplanPfade = new string[] { relPfad };
+              lFr.FahrplanPfade = [relPfad];
+              var intHelper = new LoadingFrameworkSystemWpfImpl();
+
+              lFr.InitItems(intHelper.ItemAdder);
+              lFr.StartLoading(intHelper.ItemUpdater, intHelper.ItemFinished);
+
+              DataManager.Instance.usedStreckenElemente = selectedzug.getStreckenElemente(lFr.Fdl2);
+            }
+          }
+
+
 
           DataPathType dtp = DataPathType.Unknown;
           string orgRelativeTimetableName = Zusi.GetRelativePathOf(zug.GetDocument().Filename, ref dtp);

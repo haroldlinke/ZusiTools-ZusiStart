@@ -26,7 +26,7 @@ using System.Windows.Markup;
 using System.Windows.Threading;
 using System.Xml.Linq;
 using ZusiFahrpultLib;
-//using ZusiKlassenLib;
+//using ZusiKlassenLib2;
 using ZusiMeter.Miscellaneous;
 using ZusiMeter.Properties;
 using ZusiMeter.About;

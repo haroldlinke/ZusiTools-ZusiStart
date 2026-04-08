@@ -16,8 +16,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using ZusiKlassenLib;
-using ZusiKlassenLib.Fahrplan;
+using ZusiKlassenLib2;
+using ZusiKlassenLib2.Fahrplan;
 using ZusiStart.Data;
 using Zusisuplib;
 using System;
@@ -65,7 +65,7 @@ namespace ZusiStart
 
 
 
-class Startup
+  class Startup
   {
     private static readonly string _appGuid = "5DED5276-60FF-419F-B64D-864637E44C6C";
 
@@ -103,7 +103,7 @@ class Startup
           _log.Debug($"create_ZUSI_menu_entry key {keyVal} found");
         }
         else
-          _log.Debug($"create_ZUSI_menu_entry key {keyVal} NOT found");
+          _log.Error($"create_ZUSI_menu_entry key {keyVal} NOT found");
         try
         {
           key = Registry.Users.CreateSubKey(keyVal);
@@ -111,7 +111,7 @@ class Startup
         }
         catch (Exception e)
         {
-          _log.Debug($"Error in create_ZUSI_menu_entry {e}");
+          _log.Error($"Error in create_ZUSI_menu_entry {e}");
           return;
         }
       }
@@ -125,7 +125,7 @@ class Startup
         }
         catch (Exception e)
         {
-          _log.Debug($"Error in create_ZUSI_menu_entry {e}");
+          _log.Error($"Error in create_ZUSI_menu_entry {e}");
           return;
         }
       }
@@ -143,7 +143,7 @@ class Startup
       }
       catch (Exception e)
       {
-        _log.Debug($"Error in create_ZUSI_menu_entry_2 {e}");
+        _log.Error($"Error in create_ZUSI_menu_entry_2 {e}");
       }
       finally
       {
@@ -202,7 +202,7 @@ class Startup
 
       if (nozusifound)
       {
-        _log.Debug("create_ZUSI_menu_entry no ZUSI entry found");
+        _log.Error("create_ZUSI_menu_entry no ZUSI entry found");
         return;
       }
 
@@ -237,24 +237,25 @@ class Startup
         MessageBox.Show(LocalizationManager.Translate("ZusiStart wird bereits ausgeführt."), LocalizationManager.Translate("Hinweis"), MessageBoxButton.OK, MessageBoxImage.Exclamation);
         return;
       }
+      // setup log4net
 
       string[] commandLineArgs = Environment.GetCommandLineArgs();
       bool testflag = false;
 
-      //GlobalContext.Properties["LogPath"] = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-      //log4net.Config.XmlConfigurator.Configure();
-      //_log.Debug(" ");
-      //_log.Debug("**************************************************************************");
-      //_log.Debug("*");
-      //_log.Debug("* ZusiStart started - Version:" + AsmInfo.Version.ToString());
-      //_log.Debug("*");
-      //_log.Debug("*test*************************************************************************");
-      //_log.Debug("Debug lebel enabled");
-      //_log.Warn("Warning level enabled");
-      //_log.Info("Info level enabled");
-      //_log.Error("Error level enabled");
-      //_log.Fatal("Fatal level enabled");
-     
+      GlobalContext.Properties["LogPath"] = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+      log4net.Config.XmlConfigurator.Configure();
+      _log.Info(" ");
+      _log.Info("**************************************************************************");
+      _log.Info("*");
+      _log.Info("* ZusiStart started - Version:" + AsmInfo.Version.ToString());
+      _log.Info("*");
+      _log.Info("*test*************************************************************************");
+      _log.Debug("Debug level enabled");
+      _log.Warn("Warning level enabled");
+      _log.Info("Info level enabled");
+      _log.Error("Error level enabled");
+      _log.Fatal("Fatal level enabled");
+
       string? executablePath = Process.GetCurrentProcess().MainModule?.FileName;
 
       if ((commandLineArgs.Length == 2 && commandLineArgs[1] == "*Installation*") || testflag)
@@ -286,7 +287,6 @@ class Startup
           {
             FeatureManager.initFeatures(new List<FeatureManager.Features> { FeatureManager.Features.Tracking, FeatureManager.Features.RouteGraph });
           }
-
         }
 
         if (executablePath != null)
@@ -294,40 +294,47 @@ class Startup
           Directory.SetCurrentDirectory(Path.GetDirectoryName(executablePath));
         }
 
-
         // Create the mDNS service
-        using (var mdns = new Makaretu.Dns.ServiceDiscovery())
+        //    using (var mdns = new Makaretu.Dns.ServiceDiscovery())
+        //    {
+        //      // Define the service to advertise
+        //      var service = new Makaretu.Dns.ServiceProfile(
+        //          "MyTestService",   // Service instance name
+        //          "_myservice._tcp", // Service type
+        //          5000               // Port number
+        //      );
+
+        //      // Optional: Add TXT records (key-value metadata)
+        //      service.AddProperty("version", "1.0");
+        //      service.AddProperty("description", "Test Zeroconf service in C#");
+
+        //      // Advertise the service
+        //      mdns.Advertise(service);
+
+        //      //Console.WriteLine("Service published. Press Ctrl+C to stop.");
+        //      //Console.WriteLine($"Name: {service.InstanceName}");
+        //      //Console.WriteLine($"Type: {service.QualifiedServiceName}");
+        //      //Console.WriteLine($"Port: {service.Port}");
+        //}
+        try
         {
-          // Define the service to advertise
-          var service = new Makaretu.Dns.ServiceProfile(
-              "MyTestService",   // Service instance name
-              "_myservice._tcp", // Service type
-              5000               // Port number
-          );
-
-          // Optional: Add TXT records (key-value metadata)
-          service.AddProperty("version", "1.0");
-          service.AddProperty("description", "Test Zeroconf service in C#");
-
-          // Advertise the service
-          mdns.Advertise(service);
-
-          //Console.WriteLine("Service published. Press Ctrl+C to stop.");
-          //Console.WriteLine($"Name: {service.InstanceName}");
-          //Console.WriteLine($"Type: {service.QualifiedServiceName}");
-          //Console.WriteLine($"Port: {service.Port}");
-
-                   
-       
-     
-    }
-
-
-    App app = new();
+        App app = new();
         app.InitializeComponent();
         commandlineargs = commandLineArgs;
-        
+
         _ = app.Run();
+        }
+        catch (Exception ex)
+        {
+          _log.Error(ex.ToString());
+          if (ex.InnerException != null)
+          {
+            _log.Fatal("Inner Exception:");
+            _log.Fatal(ex.InnerException.ToString);
+            _log.Fatal(ex.InnerException.StackTrace);
+          }
+          MessageBox.Show(ex.Message, LocalizationManager.Translate("Dieser Fehler lässt sich nicht gerade biegen"), MessageBoxButton.OK, MessageBoxImage.Error);
+        }
       }
     }
   }

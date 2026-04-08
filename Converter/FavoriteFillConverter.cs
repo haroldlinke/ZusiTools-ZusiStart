@@ -16,7 +16,7 @@ namespace ZusiStart.Converter
   {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      var train = value as ZusiKlassenLib.Fahrplan.Zug;
+      var train = value as ZusiKlassenLib2.Fahrplan.Zug;
       string timeTablefilename = train.FahrplanDatei.FullPath;
       RecentTrain rt = new(train, timeTablefilename);
       var favorites = parameter as RecentTrainsCollection;

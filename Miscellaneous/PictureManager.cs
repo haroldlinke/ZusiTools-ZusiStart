@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
-using ZusiKlassenLib;
-using ZusiKlassenLib.Buchfahrplan;
-using ZusiKlassenLib.Common;
-using ZusiKlassenLib.TimeTable;
+using ZusiKlassenLib2;
+using ZusiKlassenLib2.Buchfahrplan;
+using ZusiKlassenLib2.Common;
+using ZusiKlassenLib2.TimeTable;
 using ZusiPicLib;
-using ZusiKlassenLib.Vehicle;
-using ZusiKlassenLib.Fahrplan;
+using ZusiKlassenLib2.Vehicle;
+using ZusiKlassenLib2.Fahrplan;
 using System.Windows.Media.Imaging;
 using System.Windows;
 using System.Xml.Linq;
@@ -172,12 +172,12 @@ namespace ZusiStart.Miscellaneous
         }
         else
         {
-          _log.Debug("Initialization failed!");
+          _log.Error("Initialization failed!");
         }
       }
       catch (Exception ex)
       {
-        _log.Debug("Error dll-access:" + ex.Message);
+        _log.Error("Error dll-access:" + ex.Message);
       }
     }
 
@@ -193,12 +193,12 @@ namespace ZusiStart.Miscellaneous
 
         string cachefilename2 = string.Format("{0}-{1}-{2}", fzg.Name, fv.IDHaupt, fv.IDNeben + (!gedreht ? "-r" : "-n")).ToLower();
         string cachefilepathname2 = cachepath + "\\" + cachefilename2 + ".png";
-        _log.Info("LS3_Render.DLL - get Image for:" + cachefilename2);
+        _log.Debug("LS3_Render.DLL - get Image for:" + cachefilename2);
         if (!System.IO.File.Exists(cachefilepathname2))
         {
           if (popup_message != null)
             popup_message.Show();
-          string Arbeitsverzeichnis = ZusiKlassenLib.Zusi.DataPath[0];
+          string Arbeitsverzeichnis = ZusiKlassenLib2.Zusi.DataPath[0];
           string cachefilename = string.Format("{0}-{1}-{2}", fzg.Name, fv.IDHaupt, fv.IDNeben).ToLower();
           string ls3_filename = fv.DateiAussenansicht.Dateiname;
           string ls3_filenamepath = Arbeitsverzeichnis + "\\" + ls3_filename;
@@ -214,7 +214,7 @@ namespace ZusiStart.Miscellaneous
           }
           catch (Exception ex)
           {
-            _log.Debug("Error Generate Image for:" + cachefilename + " - " + ex.Message);
+            _log.Error("Error Generate Image for:" + cachefilename + " - " + ex.Message);
             return null;
           }
 
@@ -257,7 +257,7 @@ namespace ZusiStart.Miscellaneous
       }
       catch (Exception ex)
       {
-        _log.Debug("Error Generate Image:" + ex.Message);
+        _log.Error("Error Generate Image:" + ex.Message);
         return null;
       }
     }
@@ -286,7 +286,7 @@ namespace ZusiStart.Miscellaneous
         string cachefilename = string.Format("{0}-{1}-{2}", fzg.Name, fv.IDHaupt, fv.IDNeben + (!gedreht ? "-s2" : "-s1")).ToLower();
         string ls3_filename = fv.DateiAussenansicht.Dateiname;
 
-        string Arbeitsverzeichnis = ZusiKlassenLib.Zusi.DataPath[0];
+        string Arbeitsverzeichnis = ZusiKlassenLib2.Zusi.DataPath[0];
         string[] ZusiDataDirs = { Arbeitsverzeichnis };
         string DateiNameRelativ = ls3_filename;
         NativeMethods.ls3Ansicht mode = NativeMethods.ls3Ansicht.Seitenansicht;
@@ -303,7 +303,7 @@ namespace ZusiStart.Miscellaneous
         }
         catch (Exception ex)
         {
-          _log.Debug("Error Generate Image for:" + cachefilename + " - " + ex.Message);
+          _log.Error("Error Generate Image for:" + cachefilename + " - " + ex.Message);
           filename = "";
         }
 

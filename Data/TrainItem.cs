@@ -7,9 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
-using ZusiKlassenLib.Common;
-using ZusiKlassenLib.Fahrplan;
-using ZusiKlassenLib.Vehicle;
+using ZusiKlassenLib2.Common;
+using ZusiKlassenLib2.Fahrplan;
+using ZusiKlassenLib2.Vehicle;
 using ZusiStart.Dialogs;
 using ZusiStart.Data;
 using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
@@ -392,7 +392,7 @@ namespace ZusiStart.Data
       }
       catch (Exception ex)
       {
-        _log.Debug("SetLocos:" + ex.ToString() + " Zug:" + Zug.Gattung + " " + Zug.Nummer);
+        _log.Error("SetLocos:" + ex.ToString() + " Zug:" + Zug.Gattung + " " + Zug.Nummer);
         MessageBox.Show(ex.Message, "Fehler in Zugdefinition - Zugnummer:" + Zug.Gattung + " " + Zug.Nummer, MessageBoxButton.OK, MessageBoxImage.Error);
       }
     }
@@ -519,7 +519,7 @@ namespace ZusiStart.Data
       }
       catch (Exception ex)
       {
-        _log.Debug("SetLocos:" + ex.ToString() + " Zug:" + Zug.Gattung + " " + Zug.Nummer);
+        _log.Error("SetLocos:" + ex.ToString() + " Zug:" + Zug.Gattung + " " + Zug.Nummer);
         MessageBox.Show(ex.Message, LocalizationManager.Translate("Fehler in Zugdefinition - Zugnummer:") + Zug.Gattung + " " + Zug.Nummer, MessageBoxButton.OK, MessageBoxImage.Error);
       }
     }

@@ -14,7 +14,7 @@
     <Description>ZusiStart</Description>
     <Copyright>Harold Linke</Copyright>
     <Authors>Harold Linke</Authors>
-    <Version>8.6.14</Version>
+    <Version>8.7.8</Version>
     <Title>ZusiStart</Title>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Platforms>AnyCPU;x64</Platforms>
@@ -169,6 +169,9 @@
     <None Update="history_of_change.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="log4net.release.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="ReplacementLoco.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -256,6 +259,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="ZusiMeter\ZusiMeterLayouts\Example03.zmlf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZUSIStart_Installation.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

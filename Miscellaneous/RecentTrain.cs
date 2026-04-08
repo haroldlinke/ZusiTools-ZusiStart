@@ -11,16 +11,18 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Windows;
 using ZusiDisplayLib;
-using ZusiKlassenLib;
-using ZusiKlassenLib.Common;
-using ZusiKlassenLib.Fahrplan;
-using ZusiKlassenLib.TimeTable;
+using ZusiKlassenLib2;
+using ZusiKlassenLib2.Common;
+using ZusiKlassenLib2.Fahrplan;
+using ZusiKlassenLib2.TimeTable;
 using ZusiStart.Data;
+using log4net;
 
 namespace ZusiStart.Miscellaneous
 {
   public sealed class RecentTrain : INotifyPropertyChanged
   {
+    private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
     private readonly string _timeTableName;
     private int _used;
     private string _comment;
@@ -129,6 +131,7 @@ namespace ZusiStart.Miscellaneous
 
   public sealed class RecentTrainsCollection : ObservableCollection<RecentTrain>
   {
+    private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
     private string _path;
     private bool _dirty;
 
@@ -230,6 +233,7 @@ namespace ZusiStart.Miscellaneous
     {
       _path = FileName;
       List<string> tmp = new();
+      _log.Debug($"LoadTimeTableListFromFile: {_path}");
 
       if (File.Exists(_path))
       {
@@ -247,6 +251,7 @@ namespace ZusiStart.Miscellaneous
               string timeTableName = xr.Element("timetable").Value;
               tmp.Add(timeTableName);
               //base.Add(new RecentTrain(null, timeTableName, xr.GetAttrValue("used", 1)));
+              _log.Debug($"LoadTimeTableListFromFile: {timeTableName}");
             }
           }
           //tmp.Sort((x, y) => x.Used > y.Used ? -1 : (x.Used < y.Used ? 1 : 0));

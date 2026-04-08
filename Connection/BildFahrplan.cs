@@ -2,7 +2,7 @@
 using Sovoma;
 using System.IO;
 using System.Linq;
-using ZusiKlassenLib;
+using ZusiKlassenLib2;
 
 namespace ZusiStart.Connection
 {

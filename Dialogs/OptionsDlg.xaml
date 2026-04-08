@@ -51,6 +51,9 @@
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
       <Border Grid.ColumnSpan="2" Background="{StaticResource Blue.Transparent.Background}" Margin="-12,0,-12,0" Padding="6" CornerRadius="6,6,0,0">
         <TextBlock Text="{Binding Source='Optionen', Converter={StaticResource Loc}}" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" Foreground="FloralWhite"/>
@@ -69,30 +72,18 @@
 
       <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Source='Bildfahrplan', Converter={StaticResource Loc}}" Margin="0,12,0,0"/>
 
-      <CheckBox x:Name="CheckBox_Bfpl" Grid.Row="8" Grid.Column="1" Margin="12,0,12,0" Grid.RowSpan="1" VerticalAlignment="Bottom" />
-      <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding Source='Bildfahrplan Button in der Statusleiste anzeigen', Converter={StaticResource Loc}}" Margin="30,0,0,0"/>
+      <!--<CheckBox x:Name="CheckBox_Bfpl" Grid.Row="8" Grid.Column="1" Margin="12,0,12,0" Grid.RowSpan="1" VerticalAlignment="Bottom" />
+      <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding Source='Bildfahrplan Button in der Statusleiste anzeigen', Converter={StaticResource Loc}}" Margin="30,0,0,0"/>-->
       <TextBlock Grid.Row="9" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10" Text="{Binding Source='Hier kann der Pfad zum Bildfahrplanprogramm eingegeben werden:', Converter={StaticResource Loc}}"/>
-
       <TextBox x:Name="TextBox_Bfpl_Exe" Grid.Row="10" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="12" Background="White"/>
 
-      <!--<CheckBox x:Name="CheckBox_Zusi_Exe" Grid.Row="10" Margin="0,0,12,0" Grid.RowSpan="1" VerticalAlignment="Bottom" />
-      <TextBlock Grid.Row="10" Grid.Column="1" Text="Zusi Exe individuell angeben" Margin="0,12,0,0"/>
-      <TextBlock Grid.Row="11" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10">
- <Run>Hier kann der Pfad und Dateiname der Zusi-Exe angegeben werden, wenn er nicht automatisch gefunden wurde</Run>
-      </TextBlock>
-      <TextBox x:Name="TextBox_Zusi_Exe" Grid.Row="14" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="12" Background="White"/>-->
-
-      <!--<CheckBox x:Name="CheckBox_Start_FIS" Grid.Row="10" Margin="0,0,12,0" Grid.RowSpan="1" VerticalAlignment="Bottom" />-->
       <TextBlock Grid.Row="11" Grid.Column="1" Text="{Binding Source='FIS (Fahrgast Informationssystem)', Converter={StaticResource Loc}}" Margin="0,12,0,0"/>
       <TextBlock Grid.Row="12" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10" Text="{Binding Source='Für Züge, die ein FIS haben, kann in den Start-Optionen eingestellt werden, daß das FIS automatisch gestartet wird. Hier kann der Pfad zum ZusiDisplay-Programm und der Zusi-Display Parameter eingegeben werden:', Converter={StaticResource Loc}}"/>
-
       <TextBox x:Name="TextBox_ZusiDisplay_Exe" Grid.Row="13" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="12" Background="White"/>
-
       <TextBlock Grid.Row="14" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10" Text="{Binding Source='Zusi-Display Parameter', Converter={StaticResource Loc}}"/>
-
       <TextBox x:Name="TextBox_ZusiDisplay_Param" Grid.Row="15" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="12" Background="White"/>
 
-      <!--<CheckBox x:Name="CheckBox_Start_ZusiMeter" Grid.Row="15" Margin="0,0,12,0" Grid.RowSpan="1" VerticalAlignment="Bottom" />-->
+      <!-- ZusiMeter-->
       <TextBlock Grid.Row="16" Grid.Column="1" Text="{Binding Source='ZusiMeter', Converter={StaticResource Loc}}" Margin="0,12,0,0"/>
       <TextBlock Grid.Row="17" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10" Text="{Binding Source='Hier kann der Pfad zum ZusiMeter-Programm eingegeben werden:', Converter={StaticResource Loc}}"/>
 
@@ -106,27 +97,30 @@
       <TextBlock Grid.Row="21" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="40,0,0,0" FontSize="10" Text="{Binding Source='Zugdaten beim Tracking anzeigen - ZusiMeter-Layout-Datei:', Converter={StaticResource Loc}}"/>
       <TextBox x:Name="TextBox_ZusiMeter_Standard_Layoutfile" Grid.Row="22" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="12" Background="White"/>
 
-
-      <StackPanel Orientation="Horizontal" Grid.Row="23" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,6,0,0">
-        <CheckBox x:Name="CheckBox_New_RenderEngine" Margin="12,0,12,0" VerticalAlignment="Bottom" />
-        <TextBlock  Text="{Binding Source='Neue RenderEngine verwenden', Converter={StaticResource Loc}}" VerticalAlignment="Bottom" Margin="30,0,0,0"/>
-        <TextBlock  Text="{Binding Source='Blickwinkel:', Converter={StaticResource Loc}}" VerticalAlignment="Bottom" Margin="30,0,0,0"/>
-        <TextBox Name="TextBox_Blickwinkel" MaxLength="5" Width="30" Height="20" Margin="10,0" VerticalAlignment="Bottom"/>
+      <!-- Route optimisation-->
+      <StackPanel Orientation="Vertical" Grid.Row="23" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,6,0,0">
+        <TextBlock Text="{Binding Source='Routeoptimisation', Converter={StaticResource Loc}}" Margin="0,12,0,0"/>
+        <TextBlock TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10" Text="{Binding Source='Hier können spezielle Funktionen für die Fahrplanoptimierung eingestellt werden', Converter={StaticResource Loc}}"/>
+        <CheckBox x:Name="CheckBox_RO_starttime_no_decotrains" Content="{Binding Source='Startzeitanpassung: Dekozüge nicht berücksichtigen', Converter={StaticResource Loc}}" Margin="12,6,12,0" VerticalAlignment="Bottom" />
+        <CheckBox x:Name="CheckBox_RO_trainselectioncriteria_Stations" Content="{Binding Source='Zugauswahl: Nur Züge im optimierten Fahrplan berücksichtigen, die die vom ausgewählten Zug befahrenen Streckenmodule ebenfalls in diesem Zeitraum befahren', Converter={StaticResource Loc}}" Margin="12,6,12,0" VerticalAlignment="Bottom" />
+        <CheckBox x:Name="CheckBox_RO_trainselection_Streckenmodule" Content="{Binding Source='Streckenmodulauswahl: Nur Streckenmodule im optimierten Fahrplan berücksichtigen, die die von Zügen befahrenen werden', Converter={StaticResource Loc}}" Margin="12,6,12,0" VerticalAlignment="Bottom" />
       </StackPanel>
-      <StackPanel Orientation="Horizontal" Grid.Row="24" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,6,0,0">
-        <CheckBox x:Name="CheckBox_DecoTrain_Separate" Margin="12,0,12,0" VerticalAlignment="Bottom" />
-        <TextBlock  Text="{Binding Source='Dekozüge in eigener Liste anzeigen', Converter={StaticResource Loc}}" VerticalAlignment="Bottom" Margin="30,0,0,0"/>
+      <!-- additional parameters -->
+      <StackPanel Orientation="Vertical" Grid.Row="24" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,6,0,0">
+        <TextBlock Text="{Binding Source='Weitere Parameter', Converter={StaticResource Loc}}" Margin="0,12,0,0"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="24" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,6,0,0">
+          <CheckBox x:Name="CheckBox_New_RenderEngine" Content="{Binding Source='Neue RenderEngine verwenden', Converter={StaticResource Loc}}" Margin="12,0,12,0" VerticalAlignment="Bottom" />
+          <TextBlock  Text="{Binding Source='Blickwinkel:', Converter={StaticResource Loc}}" VerticalAlignment="Bottom" Margin="30,0,0,0"/>
+          <TextBox Name="TextBox_Blickwinkel" MaxLength="5" Width="30" Height="20" Margin="10,0" VerticalAlignment="Bottom"/>
+        </StackPanel>
+        <CheckBox x:Name="CheckBox_DecoTrain_Separate" Content="{Binding Source='Dekozüge in eigener Liste anzeigen', Converter={StaticResource Loc}}" Margin="12,6,12,0" VerticalAlignment="Bottom" Grid.Row="25" Grid.Column="1" Grid.ColumnSpan="4"/>
+        <CheckBox x:Name="CheckBox_DonotHideZusiStart" Content="{Binding Source='ZusiStart nicht verstecken', Converter={StaticResource Loc}}" Margin="12,6,12,0"  Grid.Row="26" Grid.Column="1" Grid.ColumnSpan="4" VerticalAlignment="Bottom" />
       </StackPanel>
+      <!-- Remote Zusi Tracking -->
       <StackPanel Orientation="Horizontal" Grid.Row="25" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,6,0,0">
-        <CheckBox x:Name="CheckBox_DonotHideZusiStart" Margin="12,0,12,0"  VerticalAlignment="Bottom" />
-        <TextBlock  Text="{Binding Source='ZusiStart nicht verstecken', Converter={StaticResource Loc}}" VerticalAlignment="Bottom" Margin="30,0,0,0"/>
+        <TextBlock Text="{Binding Source='Remote Zusi Tracking', Converter={StaticResource Loc}}" Margin="0,12,0,0"/>
       </StackPanel>
-      <!--<StackPanel Orientation="Horizontal" Grid.Row="26" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,6,0,0">
-        <CheckBox x:Name="CheckBox_StartOnlySelectedTrain" Margin="12,0,12,0" VerticalAlignment="Center" />
-        <TextBlock  Text="{Binding Source='Bei Fahrplanoptimierung nur den ausgewählten Zug im Fahrplan verwenden   (Für Tests)', Converter={StaticResource Loc}}" VerticalAlignment="Bottom" Margin="30,0,0,0" TextWrapping="Wrap" MaxWidth="430"/>
-      </StackPanel>-->
-      <!-- Sprachwahl -->
-      <StackPanel Orientation="Horizontal" Grid.Row="27" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,6,0,0">
+      <StackPanel Orientation="Horizontal" Grid.Row="26" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,6,0,0">
         <CheckBox x:Name="CheckBox_RemoteZusi" Margin="12,0,12,0" VerticalAlignment="Bottom" />
         <TextBlock  Text="{Binding Source='Remote Zusi Tracking', Converter={StaticResource Loc}}" VerticalAlignment="Bottom" Margin="30,0,0,0"/>
         <TextBlock  Text="{Binding Source='IP-Adresse:', Converter={StaticResource Loc}}" VerticalAlignment="Bottom" Margin="30,0,0,0"/>
@@ -149,7 +143,15 @@
         </ComboBox>
       </StackPanel>
 
-      <StackPanel Orientation="Horizontal" Grid.Row="30" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0,12,0,0">
+      <!-- BuchfahrplanLayout -->
+      <StackPanel Orientation="Horizontal" Grid.Row="30" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,6,0,0">
+        <TextBlock Text="{Binding Source='Buchfahrplan Layout', Converter={StaticResource Loc}}" Margin="0,12,0,0" VerticalAlignment="Center"/>
+        <ComboBox x:Name="ComboBox_BuchfahrplanLayout" Margin="12,12,0,0" Width="150">
+          <ComboBoxItem x:Name="ComboBoxItem_Bfpl_Auto" Tag="auto">Automatisch</ComboBoxItem>
+        </ComboBox>
+      </StackPanel>
+
+      <StackPanel Orientation="Horizontal" Grid.Row="32" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0,12,0,0">
         <Button Click="SaveOptions_Click" Content="{Binding Source='Übernehmen', Converter={StaticResource Loc}}" IsDefault="True" Style="{StaticResource ZusiStartGreenButtonStyle}" Margin="0,0,6,0"/>
         <Button Content="{Binding Source='Abbrechen', Converter={StaticResource Loc}}" IsCancel="True" Style="{StaticResource ZusiStartRedButtonStyle}"/>
       </StackPanel>

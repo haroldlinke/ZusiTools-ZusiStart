@@ -8,13 +8,13 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
-using ZusiKlassenLib.Fahrplan;
-using ZusiKlassenLib.TimeTable;
+using ZusiKlassenLib2.Fahrplan;
+using ZusiKlassenLib2.TimeTable;
 using ZusiStart.Miscellaneous;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.Input;
 using System.Runtime.CompilerServices;
-using ZusiKlassenLib.Vehicle;
+using ZusiKlassenLib2.Vehicle;
 //using ZusiCLIProject.FileLibrary.Zusi3;
 //using ZusiCLIProject.FileLibrary.Zusi3;
 
@@ -337,6 +337,7 @@ namespace ZusiStart.Data
         if (!DataManager.Instance.RecentTrains.Any(f => f.Train.BelongsToTimeTable == train.BelongsToTimeTable && f.Train.Nummer == train.Nummer))
         {
           DataManager.Instance.RecentTrains.Add(rt);
+          DataManager.Instance.RecentTrains.Save();
           IsFavorite = true;
         }
 

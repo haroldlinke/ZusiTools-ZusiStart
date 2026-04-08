@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ZusiKlassenLib;
-using ZusiKlassenLib.Common;
-using ZusiKlassenLib.TimeTable;
+using ZusiKlassenLib2;
+using ZusiKlassenLib2.Common;
+using ZusiKlassenLib2.TimeTable;
 
 namespace ZusiStart.Miscellaneous
 {

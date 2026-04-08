@@ -10,10 +10,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
-using ZusiKlassenLib.Buchfahrplan;
-using ZusiKlassenLib.Common;
-using ZusiKlassenLib.Fahrplan;
-using ZusiKlassenLib.Vehicle;
+using ZusiKlassenLib2.Buchfahrplan;
+using ZusiKlassenLib2.Common;
+using ZusiKlassenLib2.Fahrplan;
+using ZusiKlassenLib2.Vehicle;
 using ZusiStart.Miscellaneous;
 using System.IO;
 //using System.Drawing;
@@ -28,7 +28,7 @@ using ZusiStart.Dialogs;
 using Microsoft.VisualBasic.Logging;
 using ZusiStart.Data;
 using static System.Net.Mime.MediaTypeNames;
-using ZusiKlassenLib;
+using ZusiKlassenLib2;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows.Input;
 
@@ -636,7 +636,7 @@ namespace ZusiStart.Controls
     }
   }
 
-  //public ICommand MarkAsFavoriteCommand => new RelayCommand<ZusiKlassenLib.Fahrplan.Zug>(train =>
+  //public ICommand MarkAsFavoriteCommand => new RelayCommand<ZusiKlassenLib2.Fahrplan.Zug>(train =>
   //{
   //  string timeTablefilename = train.FahrplanDatei.FullPath;
   //  string timeTableName = System.IO.Path.GetFileNameWithoutExtension(timeTablefilename);
@@ -649,7 +649,7 @@ namespace ZusiStart.Controls
   //  }
   //});
 
-  //public ICommand UnmarkFavoriteCommand => new RelayCommand<ZusiKlassenLib.Fahrplan.Zug>(train =>
+  //public ICommand UnmarkFavoriteCommand => new RelayCommand<ZusiKlassenLib2.Fahrplan.Zug>(train =>
   //{
   //  string timeTablefilename = train.FahrplanDatei.FullPath;
   //  string timeTableName = System.IO.Path.GetFileNameWithoutExtension(timeTablefilename);
@@ -662,7 +662,7 @@ namespace ZusiStart.Controls
   //  }
   //});
 
-  //public ICommand MarkRepTrainCommand => new RelayCommand<ZusiKlassenLib.Fahrplan.Zug>(train =>
+  //public ICommand MarkRepTrainCommand => new RelayCommand<ZusiKlassenLib2.Fahrplan.Zug>(train =>
   //{
   //  string timeTablefilename = train.FahrplanDatei.FullPath;
   //  string timeTableName = System.IO.Path.GetFileNameWithoutExtension(timeTablefilename);

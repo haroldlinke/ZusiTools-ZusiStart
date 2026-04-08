@@ -28,6 +28,8 @@
         <MenuItem Header="Oberbau" IsCheckable="True" Name="OberbauMenuItem" Checked="VisualisierungTriggered" Unchecked="VisualisierungUnchecked"/>
         <MenuItem Header="Fahrleitung" IsCheckable="True" Name="FahrleitungMenuItem" Checked="VisualisierungTriggered" Unchecked="VisualisierungUnchecked"/>
         <MenuItem Header="ETCS Trusted Areas" IsCheckable="True" Name="ETCSTrustedAreasMenuItem" Checked="VisualisierungTriggered" Unchecked="VisualisierungUnchecked"/>
+        <MenuItem Header="Streckenmodulalter" IsCheckable="True" Name="AlterMenuItem" Checked="VisualisierungTriggered" Unchecked="VisualisierungUnchecked"/>
+        <MenuItem Header="optimierte Streckenmodule" IsCheckable="True" Name="StreckenModulMenuItem" Checked="VisualisierungTriggered" Unchecked="VisualisierungUnchecked" Visibility="Visible"/>
       </MenuItem>
       <MenuItem Header="Ansicht">
         <MenuItem Header="Vergrößeren" Click="VergroessernMenuItem_Click"/>

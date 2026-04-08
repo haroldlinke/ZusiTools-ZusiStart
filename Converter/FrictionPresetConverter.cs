@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using ZusiKlassenLib;
+using ZusiKlassenLib2;
 
 namespace ZusiStart.Converter
 {

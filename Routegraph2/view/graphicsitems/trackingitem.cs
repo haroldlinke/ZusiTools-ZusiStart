@@ -6,8 +6,8 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using ZusiCLIProject.FileLibrary.Zusi3;
 using ZusiCLIProject.Routegraph2;
-using ZusiKlassenLib.Buchfahrplan;
-using ZusiKlassenLib.Common;
+using ZusiKlassenLib2.Buchfahrplan;
+using ZusiKlassenLib2.Common;
 using ZusiStart.Data;
 using ZusiStart.ViewModels;
 

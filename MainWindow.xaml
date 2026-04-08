@@ -127,13 +127,13 @@
         <ContentControl Content="{Binding WebViewInstance}" Grid.Row="1"/>
       </Grid>
     </DataTemplate>
-    
+
     <!-- **** Tracking-Tab **** -->
     <DataTemplate x:Key="TrackingTemplate">
       <Grid Height="Auto">
         <Grid.RowDefinitions>
-          <RowDefinition Height="*">
-          </RowDefinition>
+          <RowDefinition Height="*"/>
+          <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="*"/>
@@ -141,12 +141,17 @@
         </Grid.ColumnDefinitions>
         <ContentControl Content="{Binding gmap}" Grid.Row="0" Grid.Column="0"/>
 
-        <ContentPresenter Content="{Binding RouteGraphContent}" IsHitTestVisible="False"/>
-
+        <!--<ContentPresenter Content="{Binding RouteGraphContent}" IsHitTestVisible="False"/>-->
+        <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center">
+    Map data from  
+    <Hyperlink NavigateUri="https://openstreetmap.org/copyright" RequestNavigate="Hyperlink_RequestNavigate">
+        OpenStreetMap
+    </Hyperlink>
+        </TextBlock>
         <zusiMeter:ZusiMeterControl Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right"/>
       </Grid>
     </DataTemplate>
-    
+
     <!-- **** RouteGraph-Tab **** -->
     <DataTemplate x:Key="RouteGraphTemplate">
       <Grid Height="Auto">
@@ -284,7 +289,7 @@
         <MenuItem x:Name="MenuItemShowAll" Command="{x:Static local:MainWindow.ResetViewCommand}" />
         <MenuItem x:Name="MenuItemQuit" Command="{x:Static local:MainWindow.CommandQuit}" />
       </MenuItem>
-      
+
       <MenuItem Header="_Zugtausch">
         <MenuItem Command="{x:Static local:MainWindow.UndoReplTrainCommand}"/>
         <MenuItem Command="{x:Static local:MainWindow.ManageReplTrainsCommand}"/>
@@ -719,8 +724,8 @@
       <StackPanel Orientation="Horizontal" Width="auto">
         <Border Background="#54000000" CornerRadius="6" Padding="3" HorizontalAlignment="Left">
           <Grid>
-            <TextBlock Text="{Binding LoadingStatus}" Padding="5,7,3,6" Foreground="{DynamicResource Generic.Dark.Foreground}" Background="{DynamicResource Blue.Transparent.Background}" Visibility="Visible" Width="400"/>
-            <TextBlock Background="{DynamicResource Blue.Transparent.Background}" Padding="5,7,3,6" Foreground="{DynamicResource Generic.Dark.Foreground}" Visibility="{Binding Path=CountWindowTrains,Converter={StaticResource CountToVisibilityConverter}, ConverterParameter=0}">
+            <TextBlock Text="{Binding LoadingStatus}" Padding="5,7,3,6" Foreground="{DynamicResource Generic.Dark.Foreground}" Background="{DynamicResource Blue.Transparent.Background}" Visibility="Visible" Width="800"/>
+            <TextBlock x:Name="Statuszeile_Fahrplaene" Background="{DynamicResource Blue.Transparent.Background}" Padding="5,7,3,6" Foreground="{DynamicResource Generic.Dark.Foreground}" Visibility="{Binding Path=CountWindowTrains,Converter={StaticResource CountToVisibilityConverter}, ConverterParameter=0}">
               <TextBlock.Text>
                 <MultiBinding Converter="{StaticResource StringFormatMultiConverterLng}" ConverterParameter=" {0} Personen-|_, {0} Güter[zug:züge]|_in {0} Fahr[plan:plänen]" Mode="OneWay">
                   <Binding Path="CountWindowTrains"/>
@@ -733,7 +738,7 @@
         </Border>
 
       </StackPanel>
-      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+      <StackPanel x:Name="Statuszeile_Buttons"  Orientation="Horizontal" HorizontalAlignment="Right">
         <!-- Fahrschule -->
         <Button x:Name="BtnStartFahrschule" VerticalAlignment="Center" Command="{x:Static local:MainWindow.StartFahrschuleCommand}" Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" Margin="6,0,100,0" Style="{DynamicResource ZusiStartButtonStyle}"/>
 
@@ -742,14 +747,14 @@
         <!-- Start-Einstellungen -->
         <Button x:Name="BtnTrainStartSettings" VerticalAlignment="Center" Command="{x:Static local:MainWindow.TrainStartSettingsCommand}" Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" Margin="24,0,0,0" Style="{DynamicResource ZusiStartButtonStyle}"/>
 
-          <ComboBox x:Name="ComboBox_TrainCategories" Margin="12,0,0,0" Width="150" Style="{DynamicResource ZusiStartComboBoxStyle}" HorizontalAlignment="Left">
-            <ComboBoxItem x:Name="ComboBoxItem_All" Tag="all">Alle Züge laden</ComboBoxItem>
-            <ComboBoxItem x:Name="ComboBoxItem_Many" Tag="many">Viele Züge laden</ComboBoxItem>
-            <ComboBoxItem x:Name="ComboBoxItem_Important" Tag="important">Wichtige Züge laden</ComboBoxItem>
-            <ComboBoxItem x:Name="ComboBoxItem_Minimal" Tag="minimal">Nur die wichtigsten Züge laden</ComboBoxItem>
-            <ComboBoxItem x:Name="ComboBoxItem_None" Tag="none">Keine weiteren Züge laden</ComboBoxItem>
-          </ComboBox>
-        
+        <ComboBox x:Name="ComboBox_TrainCategories" Margin="12,0,0,0" Width="150" Style="{DynamicResource ZusiStartComboBoxStyle}" HorizontalAlignment="Left">
+          <ComboBoxItem x:Name="ComboBoxItem_All" Tag="all">Alle Züge laden</ComboBoxItem>
+          <ComboBoxItem x:Name="ComboBoxItem_Many" Tag="many">Viele Züge laden</ComboBoxItem>
+          <ComboBoxItem x:Name="ComboBoxItem_Important" Tag="important">Wichtige Züge laden</ComboBoxItem>
+          <ComboBoxItem x:Name="ComboBoxItem_Minimal" Tag="minimal">Nur die wichtigsten Züge laden</ComboBoxItem>
+          <ComboBoxItem x:Name="ComboBoxItem_None" Tag="none">Keine weiteren Züge laden</ComboBoxItem>
+        </ComboBox>
+
         <!-- Start-Train -->
         <Button x:Name="BtnStartTrain" Command="{x:Static local:MainWindow.StartTrainCommand}" Height="34" Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" Style="{DynamicResource ZusiStartButtonStyle}" Margin="12,0,0,0"/>
       </StackPanel>

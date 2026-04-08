@@ -10,9 +10,9 @@ using System.Windows;
 using System.Windows.Media;
 using System.IO;
 using System.Windows.Controls;
-using ZusiKlassenLib.Buchfahrplan;
-using ZusiKlassenLib.Common;
-using ZusiKlassenLib.Vehicle;
+using ZusiKlassenLib2.Buchfahrplan;
+using ZusiKlassenLib2.Common;
+using ZusiKlassenLib2.Vehicle;
 //using ZusiPicLib;
 using ZusiStart.Miscellaneous;
 using ZusiPicLib;
@@ -133,7 +133,7 @@ namespace ZusiStart.Data
           }
           catch
           {
-            Log.Debug("ERROR: Cache Directory cannot be created:" + cachepath);
+            Log.Error("ERROR: Cache Directory cannot be created:" + cachepath);
           }
         }
         ClassFamily cf = ClassFamilies.Family(vgroup.VClass);
