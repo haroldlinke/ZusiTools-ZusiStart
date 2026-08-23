@@ -22,9 +22,9 @@ using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using ZusiKlassenLib.Common;
-using ZusiKlassenLib.Landscape;
-using ZusiKlassenLib.Vehicle;
+using ZusiKlassenLib2.Common;
+using ZusiKlassenLib2.Landscape;
+using ZusiKlassenLib2.Vehicle;
 
 namespace ZusiStart
 {

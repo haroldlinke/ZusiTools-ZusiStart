@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using AvalonDock.Layout;
+using log4net;
 using Microsoft.VisualBasic.Logging;
 using System;
 using System.Collections.Frozen;
@@ -38,6 +39,8 @@ namespace ZusiCLIProject.Routegraph2
   public partial class RouteGraph2Control : System.Windows.Controls.UserControl
   {
     private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+    private static bool routegraphinit = false;
 
     public RouteGraph2Control()
     {
@@ -103,9 +106,46 @@ namespace ZusiCLIProject.Routegraph2
     {
       try
       {
+        if (!routegraphinit)
+        {
+          var layout = DataManager.Instance.main_window.DockManager.Layout;
+
+          var routeGraphAnchorable =
+              layout.Descendents()
+                    .OfType<LayoutAnchorable>()
+                    .FirstOrDefault(a => a.Content == DataManager.Instance.main_window.RouteGraphControl);
+
+          if (routeGraphAnchorable != null)
+          {
+            routeGraphAnchorable.CanFloat = true;
+            routeGraphAnchorable.CanMove = true;
+            routeGraphAnchorable.CanAutoHide = true;
+            routeGraphAnchorable.CanClose = true;
+            routeGraphAnchorable.CanDockAsTabbedDocument = true;
+          }
+        }
+        
         if (DataManager.Instance.routeGraphOpenFile != "")
         {
+          routegraphinit = true;
           ModulOeffnen([DataManager.Instance.routeGraphOpenFile]);
+          
+          var layout = DataManager.Instance.main_window.DockManager.Layout;
+
+          var routeGraphAnchorable =
+              layout.Descendents()
+                    .OfType<LayoutAnchorable>()
+                    .FirstOrDefault(a => a.Content == DataManager.Instance.main_window.RouteGraphControl);
+
+          if (routeGraphAnchorable != null)
+          {
+            routeGraphAnchorable.CanFloat = false;
+            routeGraphAnchorable.CanMove = false;
+            routeGraphAnchorable.CanAutoHide = false;
+            routeGraphAnchorable.CanClose = false;
+            routeGraphAnchorable.CanDockAsTabbedDocument = false; 
+          }
+
           DataManager.Instance.routeGraphOpenFile = "";
         }
 
@@ -114,6 +154,11 @@ namespace ZusiCLIProject.Routegraph2
       {
         LogHelper.LogException(ex, "Something went wrong loading routegraph");
       }
+    }
+
+    private void OnGenerateRouteGraph(object sender, RoutedEventArgs e)
+    {
+      RouteGraph2Control_Loaded(sender, e);
     }
 
     private bool isInCtor = false;
@@ -160,9 +205,9 @@ namespace ZusiCLIProject.Routegraph2
       m_streckeView.SkaliereAufAnsicht(true);
     }
 
-    public void ZentriereView(double x,double y)
+    public void ZentriereView(double x, double y)
     {
-      m_streckeView.Zentrieren(x,y);
+      m_streckeView.Zentrieren(x, y);
     }
 
     public void SetzeTransform(System.Windows.Media.Matrix matrix)
@@ -226,7 +271,7 @@ namespace ZusiCLIProject.Routegraph2
           string executablePath = System.IO.Path.GetDirectoryName(executableFilenamePath);
           if (executablePath != null)
             message = message.Replace(executablePath, "");
-          
+
           messages.Add("Fehler beim Laden von " + dat.Dateiname + " (" + message + ")");
           hasErrors = true;
         }
@@ -310,7 +355,7 @@ namespace ZusiCLIProject.Routegraph2
       {
         //WPF bekommt es offenbar nicht hin, die MessageBox mit Visuellen Stilen zu zeichnen...
         System.Windows.Forms.MessageBox.Show((hasErrors ? "Fehler beim Laden:" : "Hinweis:") + "\r\n" + string.Join("\r\n", messages.ToArray()), hasErrors ? "Fehler beim Laden:" : "Hinweis:");
-        Log.Debug((hasErrors ? "Fehler beim Laden:" : "Hinweis:") + "\r\n" + string.Join("\r\n", messages.ToArray()));
+        Log.Error((hasErrors ? "Fehler beim Laden:" : "Hinweis:") + "\r\n" + string.Join("\r\n", messages.ToArray()));
       }
 
       m_streckennetz.AddByBuffer((streckenMitUtmPunkt.Count > 0) ? streckenMitUtmPunkt : buf);
@@ -323,6 +368,7 @@ namespace ZusiCLIProject.Routegraph2
     private void AktualisiereDarstellung()
     {
       Visualisierung? visualisierung;
+      DataManager.Instance.RO_show_optimised_Streckenmodule = false;
       if (KeineMenuItem.IsChecked)
         visualisierung = null;
       else if (KruemmungMenuItem.IsChecked)
@@ -339,6 +385,20 @@ namespace ZusiCLIProject.Routegraph2
         visualisierung = new FahrleitungVisualisierung();
       else if (ETCSTrustedAreasMenuItem.IsChecked)
         visualisierung = new EtcsTrustedAreaVisualisierung();
+      else if (AlterMenuItem.IsChecked)
+        visualisierung = new AlterVisualisierung();
+      else if (StreckenModulMenuItem.IsChecked)
+      {
+        DataManager.Instance.RO_show_optimised_Streckenmodule = true;
+        if (DataManager.Instance.used_streckenmodule.Count() == 0)
+        {
+          visualisierung = null;
+        }
+        else
+        {
+          visualisierung = new StreckenmodulVisualisierung();
+        }
+      }
       else
         visualisierung = null;
 
@@ -358,7 +418,7 @@ namespace ZusiCLIProject.Routegraph2
       //DataManager.Instance.utmBounds = new UtmBounds(m_streckeScene.minUtmX, m_streckeScene.minUtmY, m_streckeScene.maxUtmX, m_streckeScene.maxUtmY);
       //DataManager.Instance.canvasBounds = new CanvasBounds(m_streckeScene.minCanvasX, m_streckeScene.minCanvasY, m_streckeScene.maxCanvasX, m_streckeScene.maxCanvasY);
 
-      DataManager.Instance.utmBounds = new UtmBounds(m_streckeScene.m_utmRefPunkt.WE*1000, m_streckeScene.m_utmRefPunkt.NS*1000, m_streckeScene.m_utmRefPunkt.WE*1000+m_streckeScene.maxCanvasX, m_streckeScene.m_utmRefPunkt.NS * 1000 +m_streckeScene.maxCanvasY);
+      DataManager.Instance.utmBounds = new UtmBounds(m_streckeScene.m_utmRefPunkt.WE * 1000, m_streckeScene.m_utmRefPunkt.NS * 1000, m_streckeScene.m_utmRefPunkt.WE * 1000 + m_streckeScene.maxCanvasX, m_streckeScene.m_utmRefPunkt.NS * 1000 + m_streckeScene.maxCanvasY);
       DataManager.Instance.canvasBounds = new CanvasBounds(0, 0, m_streckeScene.maxCanvasX, m_streckeScene.maxCanvasY);
 
       m_legendeView.Children.Clear();
@@ -370,7 +430,7 @@ namespace ZusiCLIProject.Routegraph2
         if (visualisierung?.LegendeWidth != null)
           legende.RenderTransform = new TranslateTransform(-visualisierung.LegendeWidth.Value / 2.0f, 0);
       }
-      
+
     }
 
     public void set_canvas_min_max()
@@ -505,6 +565,8 @@ namespace ZusiCLIProject.Routegraph2
       OberbauMenuItem.IsChecked = OberbauMenuItem == sender;
       FahrleitungMenuItem.IsChecked = FahrleitungMenuItem == sender;
       ETCSTrustedAreasMenuItem.IsChecked = ETCSTrustedAreasMenuItem == sender;
+      AlterMenuItem.IsChecked = AlterMenuItem == sender;
+      StreckenModulMenuItem.IsChecked = StreckenModulMenuItem == sender;
 
       // Transformation und Scroll-Position speichern und wiederherstellen
       var tranfsorm = m_streckeView.RenderTransform;
@@ -585,5 +647,5 @@ namespace ZusiCLIProject.Routegraph2
     }
 
   }
-    
+
 }

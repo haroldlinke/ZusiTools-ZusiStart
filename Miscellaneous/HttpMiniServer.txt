@@ -11,7 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
-using ZusiKlassenLib;
+using ZusiKlassenLib2;
 using ZusiStart.Data;
 
 namespace ZusiStart.Miscellaneous

@@ -128,6 +128,7 @@
           <MenuItem Header="{Binding Source='Zu Favoriten hinzufügen', Converter={StaticResource Loc}}" Command="{Binding MarkAsFavoriteCommand}" CommandParameter="{Binding}"/>
           <MenuItem Header="{Binding Source='Aus Favoriten entfernen', Converter={StaticResource Loc}}" Command="{Binding UnmarkFavoriteCommand}" CommandParameter="{Binding}"/>
           <MenuItem Header="{Binding Source='Zu Austauschzugliste hinzufügen', Converter={StaticResource Loc}}" Command="{Binding MarkAsRepTrainCommand}" CommandParameter="{Binding}"/>
+          <MenuItem Header="{Binding Source='Pfad kopieren', Converter={StaticResource Loc}}" Command="{Binding TVcopyPathCommand}" CommandParameter="{Binding}"/>
         </ContextMenu>
       </Setter.Value>
     </Setter>

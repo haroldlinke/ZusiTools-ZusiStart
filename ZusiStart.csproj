@@ -14,7 +14,7 @@
     <Description>ZusiStart</Description>
     <Copyright>Harold Linke</Copyright>
     <Authors>Harold Linke</Authors>
-    <Version>8.6.14</Version>
+    <Version>8.8.01</Version>
     <Title>ZusiStart</Title>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Platforms>AnyCPU;x64</Platforms>
@@ -36,11 +36,13 @@
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
     <PackageReference Include="System.Drawing.Common" Version="10.0.1" />
     <PackageReference Include="ZusiDisplayLib" Version="8.0.2" />
-    <PackageReference Include="ZusiFahrpultLib" Version="8.0.1" />
+    <PackageReference Include="ZusiFahrpultLib" Version="8.0.2" />
     <PackageReference Include="ZusiKlassenLib" Version="8.0.16" />
     <PackageReference Include="ZusiMeterGaugesLib" Version="8.0.2" />
     <PackageReference Include="ZusiPicLib" Version="8.0.1" />
     <PackageReference Include="Zusisuplib" Version="8.0.1" />
+    <PackageReference Include="Dirkster.AvalonDock" Version="4.72.1" />
+    <PackageReference Include="Dirkster.AvalonDock.Themes.VS2013" Version="4.72.1" />
   </ItemGroup>
   <ItemGroup>
       
@@ -169,6 +171,9 @@
     <None Update="history_of_change.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="log4net.release.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="ReplacementLoco.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -256,6 +261,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="ZusiMeter\ZusiMeterLayouts\Example03.zmlf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ZUSIStart_Installation.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

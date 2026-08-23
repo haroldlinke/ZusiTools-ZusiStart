@@ -52,20 +52,28 @@ namespace ZusiStart.Data
 
     public static string Translate(string germanText)
     {
-      germanText = germanText.Trim();
-      if (_translations.TryGetValue(germanText, out var dict))
+      _log.Debug($"Translating: {germanText} to {DataManager.CurrentLanguage.ToString()}");
+      try
       {
-        if (dict.TryGetValue(DataManager.CurrentLanguage, out var result))
-          return result;
+        germanText = germanText.Trim();
+        if (_translations.TryGetValue(germanText, out var dict))
+        {
+          if (dict.TryGetValue(DataManager.CurrentLanguage, out var result))
+            return result;
+        }
+        else
+        {
+          // If the text is not found in the dictionary, you might want to log this or handle it accordingly.
+          // For now, we'll just return the original German text.
+          _log.Debug($"Translation not found for: {germanText}");
+        }
+        return germanText;
       }
-      else
+      catch (Exception ex)
       {
-        // If the text is not found in the dictionary, you might want to log this or handle it accordingly.
-        // For now, we'll just return the original German text.
-        _log.Debug($"Translation not found for: {germanText}");
+        _log.Error($"Error during translation of '{germanText}': {ex.Message}");
+        return germanText; // Return the original text in case of an error
       }
-
-      return germanText;
     }
   }
 }

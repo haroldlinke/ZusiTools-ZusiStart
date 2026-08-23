@@ -1,0 +1,27 @@
+
+
+Sonstige Ideen:
+* Schnapsidee: Zusi-2-Strecken auch zulassen. ;) Ist vermutlich aber recht aufwendig, ich könnte meine Uralt-Spiel-DLL reanimieren damit du da irgendwie sinnvoll anknüpfen kannst. Ich habe auch eine UI-Automatisierung, die Dinge erledigen könnte. Wäre aber vermutlich eher was, für wenn man ganz viel Lust hat.
+
+Neue Ideen:
+Fahrzeugsuche: Direkte Eingabe der Baureihe ohne vorher die Bilder zu suchen
+ 
+Könnte man bei Rechtsklick auf den Zug und den Fahrplan noch je eine Option "Pfad kopieren" einbauen?
+
+
+Die Fahrplanoptimierung übernimmt nur die Züge in den optimierten Fahrplan, die auch während der Fahrzeit des ausgewählten Zuges fahren.
+Diskutierte Problempunkte:
+- Was passiert, wenn der Zug eine grössere Verspätung hat. Dann besteht die Möglichkeit, daß der Zug alleine durch die Gegend fährt.
+Löungsmöglichkeit: Es wird ein einstellbarer Puffer eingeführt, mit dem der Anwender festlegen kann, wieviele Minuten nach fahrplanmässiger Beendigung der Ausgewählten Zugfahrt, noch Züge gestartet werden sollen.
+- Nach Beendigung einer über ZusiStart gestarteten Zugfahrt sollte die Möglichkeit bestehen einen anderen Zug zu übernehmen und weiter zu fahren. Dies wird durch die jetzige Implementierung der Optimierung verhindert, da die späteren Züge aus dem Fahrplan gelöscht werden. Im Extremfall würde der neue Zug dann auch wieder alleine durch die Gegend fahren.
+1. Lösungsmöglichkeit: Wie oben: Wenn man den Puffer groß genug wählt würden auch die späteren Züge im Fahrplan verbleiben.
+2. Lösungsmöglichkeit: Eine neue Programmoption: Bei der Optimierung werden NUR die Züge vor dem Start der ausgewählten Zugfahrt aus dem Fahrplan genommen. Die nachfolgenden Züge bleiben alle im Fahrplan.
+
+- Für Fahrplanbauer wäre eine Reload-Funktion für alle Fahrpläne oder nur eine bestimmten Fahrplan sehr hilfreich, damit Änderungen am Fahrplan sofort übernommen werden können.
+Anzeige von Beschreibungen zu dem Führerstand des ausgewählten Zuges. Problem: Bis jetzt gibt es das anscheinend nur für die Einheitsführerstände. Dies könnte Anfängers dabei helfen, den Zug zu starten (Diese Frage kommt immer wieder im Forum)
+
+- Routegraph: Bahnsteiganzeige
+
+- Bildfahrplan integrieren
+
+- Fensterpositionen etc extern speichern in Optionen und nicht in MS properties ...

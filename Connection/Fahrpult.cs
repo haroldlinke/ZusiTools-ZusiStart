@@ -14,11 +14,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using ZusiFahrpultLib;
-using ZusiKlassenLib;
-using ZusiKlassenLib.Common;
+using ZusiKlassenLib2;
+using ZusiKlassenLib2.Common;
 using ZusiStart.Data;
 using static ZusiCLIProject.FileLibrary.Zusi3.Strecke;
-using static ZusiKlassenLib.Zusi;
+using static ZusiKlassenLib2.Zusi;
 
 namespace ZusiStart.Connection
 {

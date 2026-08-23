@@ -26,7 +26,7 @@ using System.Windows.Markup;
 using System.Windows.Threading;
 using System.Xml.Linq;
 using ZusiFahrpultLib;
-//using ZusiKlassenLib;
+//using ZusiKlassenLib2;
 using ZusiMeter.Miscellaneous;
 using ZusiMeter.Properties;
 using ZusiMeter.About;
@@ -325,25 +325,39 @@ namespace ZusiMeter
     {
       if (string.IsNullOrEmpty(_currentexamplelayoutfolder))
       {
-        string? executablePath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName);
-
-        if (executablePath != null)
+        try
         {
-          string folderpath = Path.Combine(executablePath, "ZusiMeterExampleLayouts");
-          if (!Directory.Exists(folderpath))
-          {
-            Directory.CreateDirectory(folderpath);
+          string? executablePath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName);
 
+          if (executablePath != null)
+          {
+            string folderpath = Path.Combine(executablePath, "ZusiMeterExampleLayouts");
+            if (!Directory.Exists(folderpath))
+            {
+              try
+              {
+                Directory.CreateDirectory(folderpath);
+              }
+              catch
+              {
+                _currentexamplelayoutfolder = "";
+              }
+
+            }
+            _currentexamplelayoutfolder = folderpath;
           }
-          _currentexamplelayoutfolder = folderpath;
+          else
+          {
+            _currentexamplelayoutfolder = "";
+          }
         }
-        else
+        catch
         {
           _currentexamplelayoutfolder = "";
         }
-
       }
       return _currentexamplelayoutfolder;
+
     }
 
     private static readonly string _defaultSavePrompt = "Soll das aktuelle Layout schnell noch gespeichert werden?";
@@ -385,63 +399,66 @@ namespace ZusiMeter
     public ZusiMeterControl()
     {
 
-      this.DataContext = this;
+      if (ZusiStart.Data.DataManager.Instance.options.Show_ZusiMeter_Data)
+      {
+        this.DataContext = this;
 
-      //OptionItems = new ObservableCollection<string> { "First", "Second", "Third" };
-      //if (Settings.Default.VintageBackground) // **HLI
-      //  BackgroundSettings.SetVintageBackground(); // **HLI
-      this._background = new LayoutBackground();
-      this.OptionItems = new ObservableCollection<OptionItem>()
+        //OptionItems = new ObservableCollection<string> { "First", "Second", "Third" };
+        //if (Settings.Default.VintageBackground) // **HLI
+        //  BackgroundSettings.SetVintageBackground(); // **HLI
+        this._background = new LayoutBackground();
+        this.OptionItems = new ObservableCollection<OptionItem>()
       {
         new OptionItem() { Key = "DoNotShowExamples", Text = "Zeige Beispiellayouts nicht an" },
         new OptionItem() { Key = "Modeframeless", Text = "Layoutanzeige immer ohne Rahmen/Kopfzeile, mit transparentem Hintergrund" },
         new OptionItem() { Key = "ShowNoMoveCloseIcons", Text = "Layoutanzeige ohne Rahmen: Verstecke Verschiebe- und Schließenicon" },
         new OptionItem() { Key = "EditorExtendedMode", Text = "Layouteditor: Erweiterungsmodus einschalten" },
       };
-      this.ReadOptions();
+        this.ReadOptions();
 
-      this.ObtainLayoutFiles();
-      this.InitializeComponent();
+        this.ObtainLayoutFiles();
+        this.InitializeComponent();
 
-      this._initialized = true;
-      this._timerZusiMelderConf.AutoReset = false;
-      this._timerZusiMelderConf.Elapsed += new ElapsedEventHandler(this.TimerZusiMelderConf_Elapsed);
-      this._timerGracePeriod.AutoReset = false;
-      this._timerGracePeriod.Elapsed += new ElapsedEventHandler(this.TimerGracePeriod_Elapsed);
+        this._initialized = true;
+        this._timerZusiMelderConf.AutoReset = false;
+        this._timerZusiMelderConf.Elapsed += new ElapsedEventHandler(this.TimerZusiMelderConf_Elapsed);
+        this._timerGracePeriod.AutoReset = false;
+        this._timerGracePeriod.Elapsed += new ElapsedEventHandler(this.TimerGracePeriod_Elapsed);
 
-      this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandNewGraphicLayout, new ExecutedRoutedEventHandler(this.OnNewGraphicLayout)));
-      this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandNewTextLayout, new ExecutedRoutedEventHandler(this.OnNewTextLayout)));
-      this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandLoadLayoutEdit, new ExecutedRoutedEventHandler(this.OnLoadLayoutEdit), new CanExecuteRoutedEventHandler(this.OnCanLoadLayout)));
-      this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandOpenLayout, new ExecutedRoutedEventHandler(this.OnOpenLayout)));
-      this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandLoadLayout, new ExecutedRoutedEventHandler(this.OnLoadLayout), new CanExecuteRoutedEventHandler(this.OnCanLoadLayout)));
-      this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandLoadOtherLayout, new ExecutedRoutedEventHandler(this.OnLoadOtherLayout)));
-      this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandAppHelper, new ExecutedRoutedEventHandler(this.OnAppHelper)));
-      //this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandPause, new ExecutedRoutedEventHandler(this.OnPause), (CanExecuteRoutedEventHandler)((s, e) => e.CanExecute = this.ZusiConnectionState == 2)));
-      //this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandTimejump, new ExecutedRoutedEventHandler(this.OnTimejump), (CanExecuteRoutedEventHandler)((s, e) => e.CanExecute = this.ZusiConnectionState == 2)));
-      //this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandTimelapse, new ExecutedRoutedEventHandler(this.OnTimelapse), (CanExecuteRoutedEventHandler)((s, e) => e.CanExecute = this.ZusiConnectionState == 2)));
-      this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandBack, new ExecutedRoutedEventHandler(this.OnBack), (CanExecuteRoutedEventHandler)((s, e) => e.CanExecute = !this.SelectLayout)));
-      //this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandExitApp, (ExecutedRoutedEventHandler)((s, e) => this.Close())));
-      this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandMinimizeApp, new ExecutedRoutedEventHandler(this.OnMinimize), new CanExecuteRoutedEventHandler(this.OnCanMinimize)));
-      this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandSendToAutoStart, new ExecutedRoutedEventHandler(this.OnSendToAutoStart), new CanExecuteRoutedEventHandler(this.OnCanLoadLayout)));
-      this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandFullScreen, new ExecutedRoutedEventHandler(this.OnFullScreen)));
-      this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandOpenIPConnConf, new ExecutedRoutedEventHandler(this.OnOpenIPConnConf)));
-      this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandEditFullScreen, new ExecutedRoutedEventHandler(this.OnEditFullScreen)));
-      //this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandQuit, (ExecutedRoutedEventHandler)((s, e) => this.Close())));
-      this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandAbout, new ExecutedRoutedEventHandler(this.OnAbout)));
-      this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandHelp, new ExecutedRoutedEventHandler(this.OnHelp)));
-      this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandExtDocu, new ExecutedRoutedEventHandler(this.OnExtDocu)));
-      this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandOptions, new ExecutedRoutedEventHandler(this.OnOptions)));
-      this.AddHandler(GaugeEventsManager.RegisterGaugeEvent, (Delegate)new RoutedEventHandler(this.ZusiMeterControl_RegisterGauge));
-      this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandPause, new ExecutedRoutedEventHandler(this.OnPause)));
-      this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandTimejump, new ExecutedRoutedEventHandler(this.OnTimejump)));
-      this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandTimelapse, new ExecutedRoutedEventHandler(this.OnTimelapse)));
+        this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandNewGraphicLayout, new ExecutedRoutedEventHandler(this.OnNewGraphicLayout)));
+        this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandNewTextLayout, new ExecutedRoutedEventHandler(this.OnNewTextLayout)));
+        this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandLoadLayoutEdit, new ExecutedRoutedEventHandler(this.OnLoadLayoutEdit), new CanExecuteRoutedEventHandler(this.OnCanLoadLayout)));
+        this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandOpenLayout, new ExecutedRoutedEventHandler(this.OnOpenLayout)));
+        this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandLoadLayout, new ExecutedRoutedEventHandler(this.OnLoadLayout), new CanExecuteRoutedEventHandler(this.OnCanLoadLayout)));
+        this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandLoadOtherLayout, new ExecutedRoutedEventHandler(this.OnLoadOtherLayout)));
+        this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandAppHelper, new ExecutedRoutedEventHandler(this.OnAppHelper)));
+        //this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandPause, new ExecutedRoutedEventHandler(this.OnPause), (CanExecuteRoutedEventHandler)((s, e) => e.CanExecute = this.ZusiConnectionState == 2)));
+        //this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandTimejump, new ExecutedRoutedEventHandler(this.OnTimejump), (CanExecuteRoutedEventHandler)((s, e) => e.CanExecute = this.ZusiConnectionState == 2)));
+        //this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandTimelapse, new ExecutedRoutedEventHandler(this.OnTimelapse), (CanExecuteRoutedEventHandler)((s, e) => e.CanExecute = this.ZusiConnectionState == 2)));
+        this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandBack, new ExecutedRoutedEventHandler(this.OnBack), (CanExecuteRoutedEventHandler)((s, e) => e.CanExecute = !this.SelectLayout)));
+        //this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandExitApp, (ExecutedRoutedEventHandler)((s, e) => this.Close())));
+        this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandMinimizeApp, new ExecutedRoutedEventHandler(this.OnMinimize), new CanExecuteRoutedEventHandler(this.OnCanMinimize)));
+        this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandSendToAutoStart, new ExecutedRoutedEventHandler(this.OnSendToAutoStart), new CanExecuteRoutedEventHandler(this.OnCanLoadLayout)));
+        this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandFullScreen, new ExecutedRoutedEventHandler(this.OnFullScreen)));
+        this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandOpenIPConnConf, new ExecutedRoutedEventHandler(this.OnOpenIPConnConf)));
+        this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandEditFullScreen, new ExecutedRoutedEventHandler(this.OnEditFullScreen)));
+        //this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandQuit, (ExecutedRoutedEventHandler)((s, e) => this.Close())));
+        this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandAbout, new ExecutedRoutedEventHandler(this.OnAbout)));
+        this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandHelp, new ExecutedRoutedEventHandler(this.OnHelp)));
+        this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandExtDocu, new ExecutedRoutedEventHandler(this.OnExtDocu)));
+        this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandOptions, new ExecutedRoutedEventHandler(this.OnOptions)));
+        this.AddHandler(GaugeEventsManager.RegisterGaugeEvent, (Delegate)new RoutedEventHandler(this.ZusiMeterControl_RegisterGauge));
+        this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandPause, new ExecutedRoutedEventHandler(this.OnPause)));
+        this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandTimejump, new ExecutedRoutedEventHandler(this.OnTimejump)));
+        this.CommandBindings.Add(new CommandBinding((ICommand)ZusiMeterControl.CommandTimelapse, new ExecutedRoutedEventHandler(this.OnTimelapse)));
 
 
-      //this.Closing += new CancelEventHandler(this.ZusiMeterControl_Closing);
-      this.Loaded += new RoutedEventHandler(this.ZusiMeterControl_Loaded);
-      this._beaconReceiver.BeaconSignalReceived += new BeaconSignalReceivedEventHandler(this.BeaconReceiver_BeaconSignalReceived);
-      this.IsIPBoardSwitchVisible = this.ZusiConfiguration == ZusiConfigurationMode.Manual;
-      this._willIPBoardSwitchVisible = this.IsIPBoardSwitchVisible;
+        //this.Closing += new CancelEventHandler(this.ZusiMeterControl_Closing);
+        this.Loaded += new RoutedEventHandler(this.ZusiMeterControl_Loaded);
+        this._beaconReceiver.BeaconSignalReceived += new BeaconSignalReceivedEventHandler(this.BeaconReceiver_BeaconSignalReceived);
+        this.IsIPBoardSwitchVisible = this.ZusiConfiguration == ZusiConfigurationMode.Manual;
+        this._willIPBoardSwitchVisible = this.IsIPBoardSwitchVisible;
+      }
     }
 
     private void ZusiMeterControl_Closing(object sender, CancelEventArgs e)
@@ -470,7 +487,7 @@ namespace ZusiMeter
           executablepath = System.IO.Path.GetDirectoryName(executableFilePath);
         if (string.IsNullOrEmpty(ZusiStart.Data.DataManager.Instance.options.ZusiMeter_Standard_Layoutfile))
         {
-          Standard_Layoutfilename = executablepath+ "\\ZusiMeter\\ZusiMeterLayouts\\Zusimeter_Standard_Layout.zmlf";
+          Standard_Layoutfilename = executablepath + "\\ZusiMeter\\ZusiMeterLayouts\\Zusimeter_Standard_Layout.zmlf";
           //Standard_Layoutfilename = "D:\\Development\\ZUSI-Tools\\_updated_sources\\_net8\\ZusiStart\\ZusiStart\\bin\\Debug\\net8.0-windows\\win-x64\\ZusiMeterLayouts\\Zusimeter_Standard_Layout.zmlf";
         }
         else

@@ -4,10 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ZusiCLIProject.Routegraph2"
-        Background="Transparent"
+        Background="White"
         mc:Ignorable="d">
   <Grid>
-    <Menu Background="Transparent" Visibility="Visible">
+    <Menu Background="Transparent" Visibility="Visible" Grid.Column="0" Grid.Row="0">
+      <MenuItem Header="Generate RouteGraph" Click="OnGenerateRouteGraph"/>
       <MenuItem Header="Datei" x:Name="MenuDatei" Visibility="Collapsed" Background="AntiqueWhite">
         <MenuItem Header="Strecke/Fahrplan öffnen..." Click="ModulOeffnen_Click"/>
         <MenuItem x:Name="ActionModulAnfuegen" Header="Strecke/Fahrplan anfügen..." Click="ModulAnfuegen_Click"/>
@@ -28,6 +29,8 @@
         <MenuItem Header="Oberbau" IsCheckable="True" Name="OberbauMenuItem" Checked="VisualisierungTriggered" Unchecked="VisualisierungUnchecked"/>
         <MenuItem Header="Fahrleitung" IsCheckable="True" Name="FahrleitungMenuItem" Checked="VisualisierungTriggered" Unchecked="VisualisierungUnchecked"/>
         <MenuItem Header="ETCS Trusted Areas" IsCheckable="True" Name="ETCSTrustedAreasMenuItem" Checked="VisualisierungTriggered" Unchecked="VisualisierungUnchecked"/>
+        <MenuItem Header="Streckenmodulalter" IsCheckable="True" Name="AlterMenuItem" Checked="VisualisierungTriggered" Unchecked="VisualisierungUnchecked"/>
+        <MenuItem Header="optimierte Streckenmodule" IsCheckable="True" Name="StreckenModulMenuItem" Checked="VisualisierungTriggered" Unchecked="VisualisierungUnchecked" Visibility="Visible"/>
       </MenuItem>
       <MenuItem Header="Ansicht">
         <MenuItem Header="Vergrößeren" Click="VergroessernMenuItem_Click"/>

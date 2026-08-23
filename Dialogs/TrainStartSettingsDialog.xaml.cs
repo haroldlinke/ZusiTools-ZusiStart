@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using ZusiMeter;
+using log4net;
 
 namespace ZusiStart.Dialogs
 {
@@ -8,6 +10,7 @@ namespace ZusiStart.Dialogs
   /// </summary>
   public partial class TrainStartSettingsDialog : Window
   {
+    private static readonly ILog _log = LogManager.GetLogger(typeof(TrainStartSettingsDialog));
     //---------------------------------------------------------------------
     public static readonly DependencyProperty ForbidAlternativePicLibSourcesProperty = DependencyProperty.Register(
         "ForbidAlternativePicLibSources",
@@ -120,14 +123,22 @@ namespace ZusiStart.Dialogs
     //---------------------------------------------------------------------
     private void TrainStartSettingsDialog_Loaded(object sender, RoutedEventArgs e)
     {
-      ForbidAlternativePicLibSources = Properties.Settings.Default.ForbidAlternativePicLibSources;
-      StartViaThrottle = Properties.Settings.Default.TrainStartMode == 0;
-      OptimiseSchedule = Properties.Settings.Default.OptimiseSchedule == 0;
-      Use_LS3_Renderer_DLL = Properties.Settings.Default.Use_LS3_Renderer_DLL == 0;
-      StartBildfahrplan = Properties.Settings.Default.StartBildfahrplan == 0;
-      StartFIS = Properties.Settings.Default.StartFIS == 0;
-      StartZusiMeter = Properties.Settings.Default.StartZusiMeter == 0;
-      StartimStillstand = Properties.Settings.Default.StartimStillstand == 0;
+      try
+      {
+        ForbidAlternativePicLibSources = Properties.Settings.Default.ForbidAlternativePicLibSources;
+        StartViaThrottle = Properties.Settings.Default.TrainStartMode == 0;
+        OptimiseSchedule = Properties.Settings.Default.OptimiseSchedule == 0;
+        Use_LS3_Renderer_DLL = Properties.Settings.Default.Use_LS3_Renderer_DLL == 0;
+        StartBildfahrplan = Properties.Settings.Default.StartBildfahrplan == 0;
+        StartFIS = Properties.Settings.Default.StartFIS == 0;
+        StartZusiMeter = Properties.Settings.Default.StartZusiMeter == 0;
+      
+        StartimStillstand = Properties.Settings.Default.StartimStillstand == 0;
+      }
+      catch(Exception ex)
+                {
+        _log.Error(ex.ToString());
+      }
     }
   }
 }

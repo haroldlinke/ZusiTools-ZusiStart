@@ -8,10 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
-using ZusiKlassenLib;
-using ZusiKlassenLib.Common;
-using ZusiKlassenLib.Fahrplan;
-using ZusiKlassenLib.TimeTable;
+using ZusiKlassenLib2;
+using ZusiKlassenLib2.Common;
+using ZusiKlassenLib2.Fahrplan;
+using ZusiKlassenLib2.TimeTable;
 using ZusiStart.Miscellaneous;
 using static System.Net.WebRequestMethods;
 
@@ -92,7 +92,12 @@ namespace ZusiStart.Data
           if (doc.Filename.StartsWith(Zusi.DataPath[DataPathType.OfficialProf]))
             TimeTableName = System.IO.Path.GetFileNameWithoutExtension(doc.Filename) + " (professional)";
           else
-            TimeTableName = System.IO.Path.GetFileNameWithoutExtension(doc.Filename) + " (professional-private)";
+          {
+            if (doc.Filename.StartsWith(Zusi.DataPath[DataPathType.TempDir]))
+              TimeTableName = System.IO.Path.GetFileNameWithoutExtension(doc.Filename) + " (temp)";
+            else
+              TimeTableName = System.IO.Path.GetFileNameWithoutExtension(doc.Filename) + " (professional-private)";
+          }
         }
       }
       else

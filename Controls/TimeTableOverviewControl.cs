@@ -14,13 +14,13 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ZusiKlassenLib.TimeTable;
+using ZusiKlassenLib2.TimeTable;
 using ZusiStart.Data;
 using System.Globalization;
 using System.Collections.ObjectModel;
 using Sovoma.WPF;
-using ZusiKlassenLib.Common;
-using ZusiKlassenLib;
+using ZusiKlassenLib2.Common;
+using ZusiKlassenLib2;
 
 namespace ZusiStart.Controls
 {
@@ -83,7 +83,7 @@ namespace ZusiStart.Controls
   {
     #region private fields
 
-    private List<ZusiKlassenLib.Fahrplan.Zug> _trains;
+    private List<ZusiKlassenLib2.Fahrplan.Zug> _trains;
     private readonly ObservableCollection<DateTime> _dates = new();
     private readonly ObservableCollection<TimeTableInfo> _infos = new();
     private int _preferredSelection;
@@ -352,7 +352,7 @@ namespace ZusiStart.Controls
 #endif
 
         int n = _trains.Count;
-        int p = _trains.FindAll(t => t.Type == ZusiKlassenLib.Fahrplan.TrainType.Passenger).Count;
+        int p = _trains.FindAll(t => t.Type == ZusiKlassenLib2.Fahrplan.TrainType.Passenger).Count;
         nf += (n - p);
         np += p;
       });

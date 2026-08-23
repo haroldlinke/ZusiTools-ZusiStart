@@ -1,7 +1,13 @@
 ﻿#define NO_CACHE
 
 //using CefSharp.DevTools.Page;
+//using ZusiCLIProject.FileLibrary.Zusi3;
+using AvalonDock.Layout.Serialization;
+using CommunityToolkit.Mvvm.Input;
+using GMap.NET.MapProviders;
+using GMap.NET.WindowsPresentation;
 using log4net;
+using Makaretu.Dns;
 using Microsoft.VisualBasic.Logging;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
@@ -14,11 +20,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics.Arm;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -31,29 +40,38 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using Xceed.Wpf.Toolkit.Primitives;
+using ZusiCLIProject.FileLibrary.Zusi3.ZusiFdl;
+using ZusiCLIProject.Routegraph2;
 using ZusiDisplayLib;
-using ZusiKlassenLib;
-using ZusiKlassenLib.Cab;
-using ZusiKlassenLib.Common;
-using ZusiKlassenLib.Fahrplan;
-using ZusiKlassenLib.TimeTable;
-using ZusiKlassenLib.Vehicle;
+
+//using ZusiKlassenLib.TimeTable;
+using ZusiKlassenLib2;
+using ZusiKlassenLib2.Cab;
+using ZusiKlassenLib2.Common;
+using ZusiKlassenLib2.Fahrplan;
+using ZusiKlassenLib2.TimeTable;
+using ZusiKlassenLib2.Vehicle;
 using ZusiMeterGaugesLib.Gauges;
 using ZusiStart.Classes;
 using ZusiStart.Dialogs;
+using ZusiStart.Gleisbelegung;
+using ZusiStart.KI;
+using ZusiStart.KlLib2;
 //using ZusiPicLib;
 using ZusiStart.Miscellaneous;
 using ZusiStart.ViewModels;
 using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 using static System.Net.WebRequestMethods;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using ZusiCLIProject.Routegraph2;
+using static ZusiStart.Data.DataManager;
 
 namespace ZusiStart.Data
 {
@@ -135,6 +153,14 @@ namespace ZusiStart.Data
     public bool IsDecoTrainsAllowed { get; set; }
     public bool IsPersonTrainsAllowed { get; set; }
     public bool IsFreightTrainsAllowed { get; set; }
+    public bool RO_starttime_no_decotrains { get; set; }
+    public bool RO_trainselectioncriteria_Stations { get; set; }
+    public bool RO_trainselection_Streckenmodule { get; set; }
+    public bool RO_use_vorlaufzeit { get; set; }
+    public int RO_vorlaufzeit { get; set; } = 0;
+    public bool RO_use_nachlaufzeit { get; set; }
+    public int RO_nachlaufzeit { get; set; } = 0;
+    public string Buchfahrplanlayout { get; set; }
 
     public Options()
     {
@@ -165,11 +191,15 @@ namespace ZusiStart.Data
       IsDecoTrainsAllowed = true;
       IsFreightTrainsAllowed = true;
       IsPersonTrainsAllowed = true;
+      RO_starttime_no_decotrains = false;
+      RO_trainselectioncriteria_Stations = false;
+      RO_trainselection_Streckenmodule = false;
+      Buchfahrplanlayout = "Automatisch aus TRN-Datei";
     }
   }
 
   //=========================================================================
-  public class DataManager : DependencyObject, IDisposable
+  public class DataManager : DependencyObject, IDisposable, INotifyPropertyChanged
   {
 #if false
         //---------------------------------------------------------------------
@@ -196,11 +226,19 @@ namespace ZusiStart.Data
       public IEnumerable<VehicleContainer> FilteredVehicles { get; set; }
     }
 
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected void OnPropertyChanged(string propertyName)
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+
     private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
     private static DataManager? __instance = null;
     //private static readonly TrainGroupConverter _trainGroupConverter = new TrainGroupConverter();
     public DataLoaderWindow dataLoaderWindow { get; set; }
     public ZusiMeter.ZusiMeterControl zusiMeterControl;
+    private readonly ZusiLocalKiEngine _ki = new ZusiLocalKiEngine();
+
     //public WebView_Window webViewWindow_ZDB { get; set; }
     //public WebView_Window webViewWindow_ZSK { get; set; }
     //public Microsoft.Web.WebView2.Wpf.WebView2 webview { get; set; }
@@ -287,6 +325,7 @@ namespace ZusiStart.Data
     public string ZusiDisplayStartParam = "";
     public string ZusiMeterStartCmd = "";
     public string ZusiMeterStartParam = "";
+    public bool RO_show_optimised_Streckenmodule = false;
 
     // routegraph related
     public int utm_dx = 0;
@@ -306,22 +345,27 @@ namespace ZusiStart.Data
 
     public static VehicleGroup? SearchVehicleGroupValue = null;
     public static string? SearchTrainValue = null;
+    public static IEnumerable<string> FoundTimeTableIds  = null;
 
     public MainWindow main_window;
     public OptionsDlg optionsDlg_window;
 
     public RouteGraph2Control routeGraph2Control;
+    //public GMapControl gmap { get; set; }
+    public Controls.OSMGmapControl osmGmapControl;
 
     private readonly string[] _foldersToExclude = Array.Empty<string>();
     private string[] _blackListedClasses = Array.Empty<string>();
-    private readonly ObservableCollection<TimeTable> _allTimeTables = new();
+    public readonly ObservableCollection<TimeTable> _allTimeTables = new();
+
+    public List<string> usedStreckenElemente = new List<string>();
     private readonly ObservableCollection<TimeTableGroup> _groupedTimeTables = new();
 
 
 #if SEQ
         private readonly ObservableCollection<Zug> _allTrains = new();
 #else
-    private readonly ConcurrentBag<Zug> _allTrains = new();
+    public readonly ConcurrentBag<Zug> _allTrains = new();
 #endif
     private readonly ConcurrentBag<Zug> _allTimeTableTrains = new();
 
@@ -334,7 +378,7 @@ namespace ZusiStart.Data
             new Notch() { Label = "Lok" },
             new Notch() { Label = "Triebwagen" }
         };
-    private readonly ObservableCollection<FoundTimeTableViewModel> _foundTimeTables = new();
+    public readonly ObservableCollection<FoundTimeTableViewModel> _foundTimeTables = new();
     private readonly ObservableCollection<TrainsViewModel> _foundTrains = new();
     private List<VehicleGroup> _allVehicles = new();
     private readonly List<FahrzeugVariante> _allVariants = new();
@@ -346,6 +390,13 @@ namespace ZusiStart.Data
     private AutoResetEvent _waitVehicleFilter = new(false);
 
     private int _nQueuedItems;
+
+    public int original_traincount = 0;
+    public int optimised_traincount = 0;
+    public DateTime? original_starttime = DateTime.MinValue;
+    public DateTime? optimized_starttime = DateTime.MinValue;
+    public int original_modulecount = 0;
+    public int optimized_modulecount = 0;
 
     //---------------------------------------------------------------------
     public static readonly DependencyProperty FrictionPresetProperty = DependencyProperty.Register(
@@ -494,6 +545,18 @@ namespace ZusiStart.Data
     {
       get { return (Zug)GetValue(CurrentTrainProperty); }
       set { SetValue(CurrentTrainProperty, value); }
+    }
+
+    //---------------------------------------------------------------------
+    public static readonly DependencyProperty SelectedZugProperty = DependencyProperty.Register(
+        "SelectedZug",
+        typeof(Zug),
+        typeof(DataManager),
+        new PropertyMetadata(null));
+    public Zug? SelectedZug
+    {
+      get { return (Zug)GetValue(SelectedZugProperty); }
+      set { SetValue(SelectedZugProperty, value); }
     }
 
     //---------------------------------------------------------------------
@@ -647,16 +710,30 @@ namespace ZusiStart.Data
       set { SetValue(SearchResultTitleProperty, value); }
     }
 
-    //---------------------------------------------------------------------
-    public static readonly DependencyProperty LoadingStatusProperty = DependencyProperty.Register(
-        "LoadingStatus",
-        typeof(string),
-        typeof(DataManager),
-        new PropertyMetadata(null));
+    ////---------------------------------------------------------------------
+    //public static readonly DependencyProperty LoadingStatusProperty = DependencyProperty.Register(
+    //    "LoadingStatus",
+    //    typeof(string),
+    //    typeof(DataManager),
+    //    new PropertyMetadata(null));
+    //public string LoadingStatus
+    //{
+    //  get { return (string)GetValue(LoadingStatusProperty); }
+    //  set { SetValue(LoadingStatusProperty, value); }
+    //}
+    private string _loadingStatus;
+
     public string LoadingStatus
     {
-      get { return (string)GetValue(LoadingStatusProperty); }
-      set { SetValue(LoadingStatusProperty, value); }
+      get => _loadingStatus;
+      set
+      {
+        if (_loadingStatus != value)
+        {
+          _loadingStatus = value;
+          OnPropertyChanged(nameof(LoadingStatus));
+        }
+      }
     }
 
     //---------------------------------------------------------------------
@@ -766,6 +843,9 @@ namespace ZusiStart.Data
     public Dictionary<string, string> Fpn2zsklinkDictionary { get; private set; }
     public bool FIS_available { get; set; }
     public string OptionsFilePath = "";
+    public string AvalonDockLayoutFilePath = "";
+    public string AvalonDockLayoutStandardFilePath = "";
+
     public string VehiclesFilePath = "";
     public string Fpn2zsklinkFilePath = "";
 
@@ -782,6 +862,7 @@ namespace ZusiStart.Data
 
     public string tab_title_tracking = LocalizationManager.Translate("Tracking-OSM");
     public string tab_title_routegraph = LocalizationManager.Translate("Streckenplan");
+    public string tab_title_bildfahrplan = LocalizationManager.Translate("Bildfahrplan");
     public string tab_title_docu = LocalizationManager.Translate("FPL-Docu");
     public string tab_title_Streckenkarte = LocalizationManager.Translate("Streckenkarte");
     public string tab_title_Zusi_DB = LocalizationManager.Translate("Zusi-DB");
@@ -797,10 +878,13 @@ namespace ZusiStart.Data
     public string LODZugList = "0123";
 
     public TrackingItem rg_trackingItem = null;
+    public ICommand TTcopyPathCommand { get; }
+
 
     //---------------------------------------------------------------------
     public static void UpdateTimeTableRelations(List<TimeTable> timeTables, int preferredSelection)
     {
+      _log.Debug("UpdateTimeTableRelations called with " + timeTables.Count + " timeTables and preferredSelection=" + preferredSelection);
       Instance?.UpdateTimeTableRelations_impl(timeTables, preferredSelection);
     }
 
@@ -816,10 +900,12 @@ namespace ZusiStart.Data
     //-----------------------------------------------------------
     // Tabs List
     public ObservableCollection<TabViewModel> Tabs { get; set; }
+    public List<string> used_streckenmodule { get; set; }
 
     //---------------------------------------------------------------------
     private DataManager()
     {
+      _log.Debug("DataManager constructor called");
       double friction = ZusiSettings.Friction;
       if (friction >= 0.4)
       {
@@ -861,21 +947,31 @@ namespace ZusiStart.Data
           new TabViewModel(tab_title_StreBu, @"Timetables\Deutschland\Infrastrukturdaten\Zusi_Oeril.pdf", true, tooltip:LocalizationManager.Translate("Örtliche Richtlinien / Angaben für das Streckenbuch für Zusi 3")),
           //new TabViewModel(tab_title_OeRilSK, @"Timetables\Deutschland\Infrastrukturdaten\Oeril_Sk-Signale.pdf", true),
           new TabViewModel(tab_title_ZusiStartHdb, zusistartdoc_absolutePath, true, tooltip:LocalizationManager.Translate("Das Zusi-Start Handbuch")),
-          new TabViewModel(tab_title_favorites, "", tooltip:LocalizationManager.Translate("Liste der Favoriten zum direkten Start in Zusi")),
+          //new TabViewModel(tab_title_favorites, "", tooltip:LocalizationManager.Translate("Liste der Favoriten zum direkten Start in Zusi")),
           //new TabViewModel(tab_title_tracking, "", isIntro: true),
+          //new TabViewModel(tab_title_tracking, "", isIntro: true, isroutegraph: false, isgmap: true),
+          //new TabViewModel(tab_title_routegraph, "", isroutegraph: true),
+          //new TabViewModel(tab_title_bildfahrplan, "", isbildfahrplan: true)
       };
-      if (FeatureManager.feature_enabled(FeatureManager.Features.Tracking))
-      {
-        Tabs.Add(new TabViewModel(tab_title_tracking, "", isIntro: true, isroutegraph: false, isgmap: true));
-      }
-      if (FeatureManager.feature_enabled(FeatureManager.Features.RouteGraph))
-      {
-        Tabs.Add(new TabViewModel(tab_title_routegraph, "", isroutegraph: true));
-      }
+
+      TTcopyPathCommand = new RelayCommand<TimeTableRelation>(TTcopyPath);
+
+      //gmap = new GMapControl();
+
+
+    }
+
+    private void TTcopyPath(TimeTableRelation rel)
+    {
+      TimeTableFile timeTableFile = rel.TimeTable.Parent as TimeTableFile;
+      string filename = timeTableFile.Filename;
+      //Debug.WriteLine("CALLED: " + rel);
+      AddToClipBoard(filename);
     }
 
     public async void set_websource(string tabtitle, string url)
     {
+      _log.Debug($"set_websource called with tabtitle='{tabtitle}' and url='{url}'");
       // adapted to new concept
       var zdbTab = DataManager.Instance.Tabs.FirstOrDefault(t => t.Title == tabtitle);
       if (zdbTab?.WebViewInstance?.CoreWebView2 != null)
@@ -888,6 +984,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     public void AcceptNewLoco()
     {
+      _log.Debug("AcceptNewLoco called with SelectedLoco=" + (SelectedLoco != null ? SelectedLoco.Name : "null"));
       _replacementLocos.Add(SelectedLoco);
       SelectedReplacementLoco = SelectedLoco;
     }
@@ -895,6 +992,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     public void ApplyChangesLoco()
     {
+      _log.Debug("ApplyChangesLoco called with SelectedLoco=" + (SelectedLoco != null ? SelectedLoco.Name : "null") + " and SelectedReplacementLoco=" + (SelectedReplacementLoco != null ? SelectedReplacementLoco.Name : "null"));
       int ix = _replacementLocos.IndexOf(SelectedReplacementLoco);
       ReplacementLoco rl = new(SelectedLoco);
       _replacementLocos.RemoveAt(ix);
@@ -905,6 +1003,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     public void AcceptNewTrain()
     {
+      _log.Debug("AcceptNewTrain called with SelectedTrainR=" + (SelectedTrainR != null ? SelectedTrainR.Name : "null"));
       _replacementTrains.Add(SelectedTrainR);
       SelectedReplacementTrain = SelectedTrainR;
     }
@@ -912,6 +1011,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     public void ApplyChangesTrain()
     {
+      _log.Debug("ApplyChangesTrain called with SelectedTrainR=" + (SelectedTrainR != null ? SelectedTrainR.Name : "null") + " and SelectedReplacementTrain=" + (SelectedReplacementTrain != null ? SelectedReplacementTrain.Name : "null"));
       int ix = _replacementTrains.IndexOf(SelectedReplacementTrain);
       ReplacementTrain rt = new(SelectedTrainR);
       _replacementTrains.RemoveAt(ix);
@@ -922,6 +1022,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     public void RemoveSelectedLoco()
     {
+      _log.Debug("RemoveSelectedLoco called with SelectedReplacementLoco=" + (SelectedReplacementLoco != null ? SelectedReplacementLoco.Name : "null"));
       if (SelectedReplacementLoco != null)
       {
         _replacementLocos.Remove(SelectedReplacementLoco);
@@ -931,6 +1032,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     private void ReadReplacementLocos()
     {
+      _log.Debug("ReadReplacementLocos called with _locosPath='" + _locosPath + "'");
       if (System.IO.File.Exists(_locosPath))
       {
         try
@@ -949,6 +1051,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     public void SaveReplacementLocos()
     {
+      _log.Debug("SaveReplacementLocos called with _locosPath='" + _locosPath + "'");
       ReplacementLocoFile file = new(_locosPath);
       file.SaveDocument += File_SaveDocument;
       file.Save();
@@ -959,6 +1062,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     public void RemoveSelectedTrain()
     {
+      _log.Debug("RemoveSelectedTrain called with SelectedReplacementTrain=" + (SelectedReplacementTrain != null ? SelectedReplacementTrain.Name : "null"));
       if (SelectedReplacementTrain != null)
       {
         _replacementTrains.Remove(SelectedReplacementTrain);
@@ -968,6 +1072,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     public void SaveReplacementTrains()
     {
+      _log.Debug("SaveReplacementTrains called with _trainsPath='" + _trainsPath + "'");
       ReplacementTrainFile file = new(_trainsPath);
       file.SaveDocument += File_SaveDocument_Train;
       file.Save();
@@ -978,6 +1083,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     private void ReadReplacementTrains()
     {
+      _log.Debug("ReadReplacementTrains called with _trainsPath='" + _trainsPath + "'");
       if (System.IO.File.Exists(_trainsPath))
       {
         try
@@ -993,9 +1099,46 @@ namespace ZusiStart.Data
       }
     }
 
+    public void SaveReplacedTrain()
+    {
+      _log.Debug("SaveReplacedTrain called with _trainsPath='" + _trainsPath + "'");
+      Zug zug = DataManager.Instance.CurrentTrain;
+      TimeTable timeTable = DataManager.Instance.GetTimeTableOfTrain(zug);
+      if (timeTable == null)
+      {
+        TimeTableFile timetablefile = new TimeTableFile(zug.FahrplanDatei.FullPath);
+        timetablefile.Parse();
+        timeTable = timetablefile.Root;
+      }
+
+      ZusiDocumentBase? doc = timeTable?.GetDocument();
+      BuildTempTimeTable3(zug, timeTable);
+    }
+
+    public void UndoReplacedTrain()
+    {
+      _log.Debug("UndoReplacedTrain called with _trainsPath='" + _trainsPath + "'");
+      Zug zug = DataManager.Instance.CurrentTrain;
+      TimeTable timeTable = DataManager.Instance.GetTimeTableOfTrain(zug);
+      if (timeTable != null)
+      {
+        //TimeTableFile timetablefile = new TimeTableFile(zug.FahrplanDatei.FullPath);
+        ZugDatei zd = zug.Parent as ZugDatei;
+        string filename = zd.Filename;
+        if (filename.StartsWith(Zusi.DataPath[4]))
+        {
+          if (System.IO.File.Exists(filename))
+          {
+            System.IO.File.Delete(filename);
+          }
+        }
+      }
+    }
+
     //---------------------------------------------------------------------
     private void UpdateContextMenu()
     {
+      _log.Debug("UpdateContextMenu called");
       //_replacementLocoMenus.Clear();
 
       //List<object> mm = _replacementLocos.Select(rl => new MenuItem
@@ -1056,6 +1199,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     private void File_ParseDocument(object sender, ReadLocoFileEventArgs e)
     {
+      _log.Debug("File_ParseDocument called");
       foreach (XElement x in e.Locos.Elements("loco"))
       {
         try
@@ -1076,12 +1220,14 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     private void File_SaveDocument(object sender, SaveLocoFileEventArgs e)
     {
+      _log.Debug("File_SaveDocument called with " + _replacementLocos.Count + " replacement locos to save");
       _replacementLocos.ForEach(l => l.Save(e.Writer));
     }
 
     //---------------------------------------------------------------------
     private void File_ParseDocument_Train(object sender, ReadTrainFileEventArgs e)
     {
+      _log.Debug("File_ParseDocument_Train called");
       foreach (XElement x in e.Trains.Elements("train"))
       {
         try
@@ -1102,6 +1248,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     private void File_SaveDocument_Train(object sender, SaveTrainFileEventArgs e)
     {
+      _log.Debug("File_SaveDocument_Train called with " + _replacementTrains.Count + " replacement trains to save");
       _replacementTrains.ForEach(t => t.Save(e.Writer));
     }
 
@@ -1110,12 +1257,14 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     private static void OnSelectedReplacementTrainChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
+      _log.Debug("OnSelectedReplacementTrainChanged called with new value=" + (e.NewValue != null ? ((ReplacementTrain)e.NewValue).Name : "null"));
       (d as DataManager)?.OnSelectedReplacementTrainChanged((ReplacementTrain)e.NewValue);
     }
 
     //---------------------------------------------------------------------
     private void OnSelectedReplacementTrainChanged(ReplacementTrain value)
     {
+      _log.Debug("OnSelectedReplacementTrainChanged instance method called with value=" + (value != null ? value.Name : "null"));
       SelectedTrainR = value != null ? new ReplacementTrain(value) : null;
     }
 
@@ -1147,12 +1296,14 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     private static void OnSelectedReplacementLocoChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
+      _log.Debug("OnSelectedReplacementLocoChanged called with new value=" + (e.NewValue != null ? ((ReplacementLoco)e.NewValue).Name : "null"));
       (d as DataManager)?.OnSelectedReplacementLocoChanged((ReplacementLoco)e.NewValue);
     }
 
     //---------------------------------------------------------------------
     private void OnSelectedReplacementLocoChanged(ReplacementLoco value)
     {
+      _log.Debug("OnSelectedReplacementLocoChanged instance method called with value=" + (value != null ? value.Name : "null"));
       SelectedLoco = value != null ? new ReplacementLoco(value) : null;
     }
 
@@ -1160,12 +1311,14 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     private static void OnCurrentTrainItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
+      _log.Debug("OnCurrentTrainItemChanged called with new value=" + (e.NewValue != null ? (((TrainItem)e.NewValue).Zug.Gattung + ((TrainItem)e.NewValue).Zug.Nummer) : "null"));
       (d as DataManager)?.OnCurrentTrainItemChanged((TrainItem)e.NewValue);
     }
 
     //---------------------------------------------------------------------
     private void OnCurrentTrainItemChanged(TrainItem value)
     {
+      _log.Debug("OnCurrentTrainItemChanged instance method called with value=" + (value != null ? (value.Zug.Gattung + value.Zug.Nummer) : "null"));
       int saving = 0;
 
       if (value != null)
@@ -1191,6 +1344,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     public void Dispose()
     {
+      _log.Debug("Dispose called");
       Dispose(true);
       GC.SuppressFinalize(this);
     }
@@ -1199,10 +1353,19 @@ namespace ZusiStart.Data
     public void InitializeData()
     {
 #if true || !DEBUG
+      _log.Debug("InitializeData called - starting data loading sequence");
+      _allTimeTables.Clear();
+      _allTrains.Clear();
+      _allTimeTableTrains.Clear();
+      _allVariants.Clear();
+      _allVehicles.Clear();
+
+
       LoadTimeTableDataAsync();
       LoadVehicleDataAsync();
       FinishLoadingAsync();
       LoadGeneralOptions();
+      LoadAvalonDockOptions();
 
 
 #else
@@ -1210,13 +1373,71 @@ namespace ZusiStart.Data
 #endif
     }
 
+    public void LoadAvalonDockOptions()
+    {
+      _log.Debug("LoadAvalonDockOptions called with AvalonDockOptionsFilePath='" + AvalonDockLayoutFilePath + "'");
+      if (string.IsNullOrEmpty(AvalonDockLayoutFilePath))
+      {
+        //OptionsFilePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\ZusiStart\\config.json";
+        AvalonDockLayoutFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), DataManager.localfoldername, "AvalonDockLayout");
+      }
+      if (string.IsNullOrEmpty(AvalonDockLayoutStandardFilePath))
+      {
+        string zusistart_language_AvalonDockLayoutStandard_relativePath = "Assets/AvalonDockLayout_Std";
+        AvalonDockLayoutStandardFilePath = Path.GetFullPath(zusistart_language_AvalonDockLayoutStandard_relativePath);
+      }
+      LoadDockLayout("A");
+    }
+
+    public void SaveDockLayout(string layouttype)
+    {
+      string filename = AvalonDockLayoutFilePath + "_" + layouttype + ".xml";
+
+      var serializer = new XmlLayoutSerializer(DataManager.Instance.main_window.DockManager);
+      serializer.Serialize(filename);
+    }
+
+    public void LoadDockLayout(string layouttype)
+    {
+      if (layouttype.StartsWith("Std_"))
+      {
+        LoadDockStandardLayout(layouttype);
+
+      }
+      else
+      {
+        string filename = AvalonDockLayoutFilePath + "_" + layouttype + ".xml";
+
+        if (System.IO.File.Exists(filename))
+        {
+          var serializer = new XmlLayoutSerializer(DataManager.Instance.main_window.DockManager);
+          serializer.Deserialize(filename);
+        }
+        else
+        {
+          LoadDockStandardLayout("Std_" + layouttype);
+        }
+      }
+    }
+
+    public void LoadDockStandardLayout(string layouttype)
+    {
+      layouttype = layouttype.Substring(4);
+      string filename = AvalonDockLayoutStandardFilePath + "_" + layouttype + ".xml";
+      if (System.IO.File.Exists(filename))
+      {
+        var serializer = new XmlLayoutSerializer(DataManager.Instance.main_window.DockManager);
+        serializer.Deserialize(filename);
+      }
+    }
+
     public void LoadGeneralOptions()
     {
+      _log.Debug("LoadGeneralOptions called with OptionsFilePath='" + OptionsFilePath + "'");
       if (string.IsNullOrEmpty(OptionsFilePath))
       {
         //OptionsFilePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\ZusiStart\\config.json";
         OptionsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), DataManager.localfoldername, "config.json");
-
       }
 
       if (System.IO.File.Exists(OptionsFilePath))
@@ -1259,8 +1480,9 @@ namespace ZusiStart.Data
 
     public void SaveGeneralOptions()
     {
-      optionsDlg_window.SaveOptions();
-      
+      _log.Debug("SaveGeneralOptions called with OptionsFilePath='" + OptionsFilePath + "'");
+      optionsDlg_window.SaveOptions(programoptions: false);
+
       if (options != null)
       {
         options.CurrentTrainCat = main_window.GetCurrentTrainCat();
@@ -1275,6 +1497,7 @@ namespace ZusiStart.Data
 
     public void Loadfpn2zsk_link_json()
     {
+      _log.Debug("Loadfpn2zsk_link_json called with Fpn2zsklinkFilePath='" + Fpn2zsklinkFilePath + "'");
       if (string.IsNullOrEmpty(Fpn2zsklinkFilePath))
       {
         Fpn2zsklinkFilePath = "ZusiStart_fpn2zsklink.json";
@@ -1295,6 +1518,7 @@ namespace ZusiStart.Data
 
     public void Savefpn2zsk_link_json()
     {
+      _log.Debug("Savefpn2zsk_link_json called with Fpn2zsklinkFilePath='" + Fpn2zsklinkFilePath + "'");
       if (options != null)
       {
         var json = JsonSerializer.Serialize(Fpn2zsklinkDictionary);
@@ -1305,12 +1529,14 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     public void ClearRecentTrains()
     {
+      _log.Debug("ClearRecentTrains called");
       _recentTrains.Clear();
     }
 
     //---------------------------------------------------------------------
     public void SetFoundTimeTable(FoundTimeTable? value)
     {
+      _log.Debug("SetFoundTimeTable called with value=" + (value != null ? value.TimeTable.Name : "null"));
       _foundTrains.Clear();
       if (value != null)
       {
@@ -1392,6 +1618,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     public bool SearchBetriebsstelleTrain(string number)
     {
+      _log.Debug("SearchBetriebsstelleTrain called with number='" + number + "'");
       List<TimeTable> foundTimeTables = new();
 
 
@@ -1434,6 +1661,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     public bool SearchTrain(string number)
     {
+      _log.Debug("SearchTrain called with number='" + number + "'");
       _foundTimeTables.Clear();
       CurrentTrain = null;
       CurrentTrainItem = null;
@@ -1444,14 +1672,14 @@ namespace ZusiStart.Data
 
       bool show_decotrains = true; // IsDecoTrainsAllowed;
 
-      if (true)  // suche Zugnummer
+      if (number.StartsWith("BR") && number.Length > 3) // Suche nach Baureihe
       {
+        number = number.Substring(2);
 
-        string n = number.Replace(" ", "").Trim().ToLower();
+        string n = number.Replace(" ", "").Trim(); //.ToLower();
         var trains = _allTrains.Where(z =>
         {
-          return (string.Compare(n, (z.Nummer).Replace(" ", "").Trim(), true) == 0 ||
-                    string.Compare(n, (z.Gattung + z.Nummer).Replace(" ", "").Trim(), true) == 0);
+          return (z.Fahrzeuge.ContainsVehicle(n));
         })
         .GroupBy(g => g.BelongsToTimeTable)
         .Select(g => new FoundTimeTable()
@@ -1479,68 +1707,116 @@ namespace ZusiStart.Data
           }
         }
       }
-
-      if (vm == null || vm.Children.Count == 0) // Keine Zugnummer gefunden, dann suche Betriebsstelle
+      else
       {
 
-        string n = number.Replace(" ", "").Trim().ToLower();
-        var trains = _allTrains.Where(z =>
+        if (vm == null || vm.Children.Count == 0)  // suche Zugnummer
         {
-          //return z.FahrplanEintraege.Any(f => f.Bestrst != null && string.Compare(n, f.Bestrst.Replace(" ", "").Trim(), true) == 0);
-          return z.FahrplanEintraege.Any(f => f.Bestrst != null && DataManager.IsValidName(f.Bestrst) && f.Bestrst.Replace(" ", "").Trim().Contains(n, StringComparison.OrdinalIgnoreCase));
-        })
-        .GroupBy(g => g.BelongsToTimeTable)
-        .Select(g => new FoundTimeTable()
-        {
-          TimeTable = _allTimeTables.First(tt => tt.ID == g.Key),
-          Trains = g.ToList()
-        });
-
-        vm = FoundTimeTableViewModel.BuildViewModel(trains);
-        vm.Children.ForEach(c => _foundTimeTables.Add(c));
-
-        if (vm.Children.Count == 1)
-        {
-          if (vm.Children[0].Children.Count == 1)
+          string n = number.Replace(" ", "").Trim().ToLower();
+          var trains = _allTrains.Where(z =>
           {
-            FoundTimeTableViewModel sttvm = vm.Children[0].Children[0];
-            FoundTimeTable tt = sttvm.Object;
-            if (tt.Trains.Count == 1)
-            {
-              sttvm.IsSelected = true;
-              SetFoundTimeTable(tt);
-              CurrentTrain = tt.Trains[0];
-            }
-          }
-        }
-
-      }
-
-      if (vm == null || vm.Children.Count == 0) // Keine Zugnummer/Bestriebsstelle gefunden, dann suche Modulnamen
-      {
-        string n = number.Replace(" ", "_").Trim().ToLower();
-        if (n.EndsWith(".st3")) // search for module
-        {
-          n = n.Replace(".st3", "");
-          var timetables = _allTimeTables.Where(z =>
+            //return (string.Compare(n, (z.Nummer).Replace(" ", "").Trim(), true) == 0 ||
+            //          string.Compare(n, (z.Gattung + z.Nummer).Replace(" ", "").Trim(), true) == 0 ||
+            //          string.Compare(n, (z.Gattung).Replace(" ", "").Trim(), true) == 0
+            //          );
+            return (string.Equals(n, (z.Nummer).Replace(" ", "").Trim(), StringComparison.OrdinalIgnoreCase) ||
+                      string.Equals(n, (z.Gattung + z.Nummer).Replace(" ", "").Trim(), StringComparison.OrdinalIgnoreCase) ||
+                      string.Equals(n, (z.Gattung).Replace(" ", "").Trim(), StringComparison.OrdinalIgnoreCase)
+                      );
+            //return (
+            //          (z.Gattung + z.Nummer).Replace(" ", "").Trim().Contains(n, StringComparison.OrdinalIgnoreCase)
+            //          );
+          })
+          .GroupBy(g => g.BelongsToTimeTable)
+          .Select(g => new FoundTimeTable()
           {
-            return z.StrModules.Any(f => f.Datei != null && f.Datei.Dateiname.Replace(" ", "").Trim().Contains(n, StringComparison.OrdinalIgnoreCase));
+            TimeTable = _allTimeTables.First(tt => tt.ID == g.Key),
+            Trains = g.ToList()
           });
 
-          var timetableIds = timetables.Select(t => t.ID).ToList();
-
-          var trains = _allTrains.Where(t => timetableIds.Contains(t.BelongsToTimeTable)).ToList()
-            .GroupBy(g => g.BelongsToTimeTable)
-            .Select(g => new FoundTimeTable()
-            {
-              TimeTable = _allTimeTables.First(tt => tt.ID == g.Key),
-              Trains = g.ToList()
-            });
 
           vm = FoundTimeTableViewModel.BuildViewModel(trains);
           vm.Children.ForEach(c => _foundTimeTables.Add(c));
+
+          if (vm.Children.Count == 1)
+          {
+            if (vm.Children[0].Children.Count == 1)
+            {
+              FoundTimeTableViewModel sttvm = vm.Children[0].Children[0];
+              FoundTimeTable tt = sttvm.Object;
+              if (tt.Trains.Count == 1)
+              {
+                sttvm.IsSelected = true;
+                SetFoundTimeTable(tt);
+                CurrentTrain = tt.Trains[0];
+              }
+            }
+          }
+        }
+
+        if (vm == null || vm.Children.Count == 0) // Keine Zugnummer gefunden, dann suche Betriebsstelle
+        {
+
+          string n = number.Replace(" ", "").Trim().ToLower();
+          var trains = _allTrains.Where(z =>
+          {
+            //return z.FahrplanEintraege.Any(f => f.Bestrst != null && string.Compare(n, f.Bestrst.Replace(" ", "").Trim(), true) == 0);
+            return z.FahrplanEintraege.Any(f => f.Bestrst != null && DataManager.IsValidName(f.Bestrst) && f.Bestrst.Replace(" ", "").Trim().Contains(n, StringComparison.OrdinalIgnoreCase));
+          })
+          .GroupBy(g => g.BelongsToTimeTable)
+          .Select(g => new FoundTimeTable()
+          {
+            TimeTable = _allTimeTables.First(tt => tt.ID == g.Key),
+            Trains = g.ToList()
+          });
+
+          vm = FoundTimeTableViewModel.BuildViewModel(trains);
+          vm.Children.ForEach(c => _foundTimeTables.Add(c));
+
+          if (vm.Children.Count == 1)
+          {
+            if (vm.Children[0].Children.Count == 1)
+            {
+              FoundTimeTableViewModel sttvm = vm.Children[0].Children[0];
+              FoundTimeTable tt = sttvm.Object;
+              if (tt.Trains.Count == 1)
+              {
+                sttvm.IsSelected = true;
+                SetFoundTimeTable(tt);
+                CurrentTrain = tt.Trains[0];
+              }
+            }
+          }
+
+        }
+
+        if (vm == null || vm.Children.Count == 0) // Keine Zugnummer/Bestriebsstelle gefunden, dann suche Modulnamen
+        {
+          string n = number.Replace(" ", "_").Trim().ToLower();
+          if (n.EndsWith(".st3")) // search for module
+          {
+            n = n.Replace(".st3", "");
+            var timetables = _allTimeTables.Where(z =>
+            {
+              return z.StrModules.Any(f => f.Datei != null && f.Datei.Dateiname.Replace(" ", "").Trim().Contains(n, StringComparison.OrdinalIgnoreCase));
+            });
+
+            var timetableIds = timetables.Select(t => t.ID).ToList();
+
+            var trains = _allTrains.Where(t => timetableIds.Contains(t.BelongsToTimeTable)).ToList()
+              .GroupBy(g => g.BelongsToTimeTable)
+              .Select(g => new FoundTimeTable()
+              {
+                TimeTable = _allTimeTables.First(tt => tt.ID == g.Key),
+                Trains = g.ToList()
+              });
+
+            vm = FoundTimeTableViewModel.BuildViewModel(trains);
+            vm.Children.ForEach(c => _foundTimeTables.Add(c));
+          }
         }
       }
+
 
       if (_foundTimeTables.Count == 0)
       {
@@ -1555,9 +1831,57 @@ namespace ZusiStart.Data
       return _foundTimeTables.Count > 0;
     }
 
+    public void UpdateFoundTimetables(IEnumerable<ZusiStart.Data.FoundTimeTable>? trains)
+    {
+      FoundTimeTableViewModel vm = null;
+      
+      _foundTimeTables.Clear();
+      vm = FoundTimeTableViewModel.BuildViewModel(trains);
+      vm.Children.ForEach(c => _foundTimeTables.Add(c));
+
+      if (vm.Children.Count == 1)
+      {
+        if (vm.Children[0].Children.Count == 1)
+        {
+          FoundTimeTableViewModel sttvm = vm.Children[0].Children[0];
+          FoundTimeTable tt = sttvm.Object;
+          if (tt.Trains.Count == 1)
+          {
+            sttvm.IsSelected = true;
+            SetFoundTimeTable(tt);
+            CurrentTrain = tt.Trains[0];
+          }
+        }
+      }
+      // FoundTimeTables nach Relations kopieren
+      DataManager.Instance.Relations.Clear();
+      int i = 1;
+      foreach (var fts in DataManager.Instance.FoundTimeTables)
+      {
+        if (fts.Children.Count > 0)
+        {
+          foreach (FoundTimeTableViewModel ftm in fts.Children)
+          {
+            FoundTimeTable ft = ftm.Object;
+            if (ft != null)
+            {
+              DataManager.Instance.Relations.Add(new TimeTableRelation(i++, ft.TimeTable));
+            }
+          }
+        }
+      }
+
+      object sender = null;
+      EventArgs e = null;
+      main_window.DataManager_RefreshFilter(sender, e);
+
+      //setgroupboxcolor("ExpFpl", "GrpFpl", System.Windows.Media.Brushes.Red, newtitle: DataManager.SearchTrainValue);
+    }
+
     //---------------------------------------------------------------------
     private void Dispose(bool disposing)
     {
+      _log.Debug("Dispose called with disposing=" + disposing);
       if (disposing)
       {
         Disposable.Dispose(ref _queueFinished);
@@ -1569,6 +1893,420 @@ namespace ZusiStart.Data
       }
     }
 
+    /**************************/
+    /* Search with KI support */
+    /**************************/
+
+    public class DataRoot
+    {
+      public List<FahrplanData> Fahrplaene { get; set; } = new();
+      //public List<StreckenData> Strecken { get; set; } = new();
+      //public List<FahrzeugData> Fahrzeuge { get; set; } = new();
+    }
+
+    public class FahrplanData
+    {
+      public string FahrplanName { get; set; }
+      public string FahrplanDatei { get; set; }
+      public List<ZugData> Zuege { get; set; } = new();
+    }
+
+    public class ZugData
+    {
+      public string Name { get; set; }
+      public string Id { get; set; }
+      public string FahrzeugDatei { get; set; }
+      public List<string> Strecke { get; set; } = new();
+    }
+
+    public class StreckenData
+    {
+      public string StreckenName { get; set; }
+      public string StreckenDatei { get; set; }
+      public List<BetriebsstelleData> Betriebsstellen { get; set; } = new();
+    }
+
+    public class BetriebsstelleData
+    {
+      public string Name { get; set; }
+      public double Km { get; set; }
+      public string Stellwerk { get; set; }
+    }
+
+    public class FahrzeugData
+    {
+      public string FahrzeugDatei { get; set; }
+      public string Baureihe { get; set; }
+      public string Typ { get; set; }
+      public int Vmax { get; set; }
+      public int LeistungKW { get; set; }
+      public string Bremse { get; set; }
+    }
+
+    public class KIRequest
+    {
+      public string Query { get; set; }
+    }
+
+    public class StellwerkInfo
+    {
+      public string Name { get; set; }
+      public string Typ { get; set; }
+    }
+
+
+    public class Zusatzinfo
+    {
+      public List<StellwerkInfo> Stellwerke { get; set; } = new();
+    }
+
+
+    //public class KIResult
+    //{
+    //  public string Fahrplan_Name { get; set; }
+    //  public string Fahrplan_Datei { get; set; }
+    //  public string Zug_Name { get; set; }
+    //  public string Zug_Id { get; set; }
+    //  public string Fahrzeug_Baureihe { get; set; }
+    //  public string? Fahrzeug_Datei { get; set; }
+    //  public List<string> Strecke { get; set; } = new();
+    //  public Zusatzinfo Zusatzinfo { get; set; } = new();
+    //}
+
+
+    public class KIResponse
+    {
+      public string Query { get; set; }
+      public List<KIResult> Results { get; set; } = new();
+      public string Summary { get; set; }
+    }
+
+
+
+    //public static FahrplanData ExtractFahrplan(string dateiPfad)
+    //{
+    //  var doc = XDocument.Load(dateiPfad);
+
+    //  var fp = new FahrplanData
+    //  {
+    //    FahrplanName = Path.GetFileNameWithoutExtension(dateiPfad),
+    //    FahrplanDatei = dateiPfad
+    //  };
+
+    //  foreach (var zugElem in doc.Descendants("Zug"))
+    //  {
+    //    var zug = new ZugData
+    //    {
+    //      Name = (string)zugElem.Attribute("Name"),
+    //      Id = (string)zugElem.Attribute("ID"),
+    //      FahrzeugDatei = (string)zugElem.Element("Fahrzeug")?.Attribute("Datei")
+    //    };
+
+    //    foreach (var bst in zugElem.Descendants("Betriebsstelle"))
+    //    {
+    //      var name = (string)bst.Attribute("Name");
+    //      if (!string.IsNullOrEmpty(name))
+    //        zug.Strecke.Add(name);
+    //    }
+
+    //    fp.Zuege.Add(zug);
+    //  }
+
+    //  return fp;
+    //}
+
+    public static StreckenData ExtractStrecke(string dateiPfad)
+    {
+      var doc = XDocument.Load(dateiPfad);
+
+      var strecke = new StreckenData
+      {
+        StreckenName = Path.GetFileNameWithoutExtension(dateiPfad),
+        StreckenDatei = dateiPfad
+      };
+
+      foreach (var bst in doc.Descendants("Betriebsstelle"))
+      {
+        strecke.Betriebsstellen.Add(new BetriebsstelleData
+        {
+          Name = (string)bst.Attribute("Name"),
+          Km = double.TryParse((string)bst.Attribute("Km"), out var km) ? km : 0.0,
+          Stellwerk = (string)bst.Attribute("Stellwerk")
+        });
+      }
+
+      return strecke;
+    }
+
+    public static FahrzeugData ExtractFahrzeug(string dateiPfad)
+    {
+      var doc = XDocument.Load(dateiPfad);
+
+      return new FahrzeugData
+      {
+        FahrzeugDatei = dateiPfad,
+        Baureihe = (string)doc.Root.Attribute("Name"),
+        Typ = (string)doc.Root.Attribute("Typ"),
+        Vmax = int.TryParse((string)doc.Root.Attribute("Vmax"), out var vmax) ? vmax : 0,
+        LeistungKW = int.TryParse((string)doc.Root.Attribute("Leistung"), out var kw) ? kw : 0,
+        Bremse = (string)doc.Root.Attribute("Bremse")
+      };
+    }
+
+    public static void BuildDataJson(string zusiRoot, string outputFile)
+    {
+      var data = new DataRoot();
+
+      // Fahrpläne
+      //foreach (var file in Directory.GetFiles(zusiRoot, "*.fpn", SearchOption.AllDirectories))
+      //{
+      //  data.Fahrplaene.Add(ExtractFahrplan(file));
+      //}
+
+      foreach (var timetable in DataManager.Instance._allTimeTables)
+      {
+        try
+        {
+          var fp = new FahrplanData
+          {
+            FahrplanName = timetable.Name,
+            FahrplanDatei = timetable.FindParent<TimeTableFile>().Filename
+          };
+          foreach (var zug in timetable.Trains)
+          {
+            Zug train = zug.Train;
+
+            if (train == null)
+            {
+
+              _log.Warn($"Train is null in timetable {timetable.Name}");
+              continue;
+            }
+
+            var zugData = new ZugData
+            {
+              Name = train.Gattung + train.Nummer,
+              Id = train.Nummer,
+              //FahrzeugDatei = train.Fahrzeuge.Datei?.Dateiname
+            };
+            foreach (var bst in train.FahrplanEintraege)
+            {
+              if (!string.IsNullOrEmpty(bst.Bestrst))
+                zugData.Strecke.Add(bst.Bestrst);
+            }
+            fp.Zuege.Add(zugData);
+          }
+          data.Fahrplaene.Add(fp);
+        }
+        catch (Exception ex)
+        {
+          _log.Error("Error while building FahrplanData: " + ex.ToString());
+        }
+      }
+
+
+      //// Strecken
+      //foreach (var file in Directory.GetFiles(zusiRoot, "*.ls3", SearchOption.AllDirectories))
+      //{
+      //  data.Strecken.Add(ExtractStrecke(file));
+      //}
+      //foreach (var file in Directory.GetFiles(zusiRoot, "*.str", SearchOption.AllDirectories))
+      //{
+      //  data.Strecken.Add(ExtractStrecke(file));
+      //}
+
+      //// Fahrzeuge
+      //foreach (var file in Directory.GetFiles(zusiRoot, "*.fzp", SearchOption.AllDirectories))
+      //{
+      //  data.Fahrzeuge.Add(ExtractFahrzeug(file));
+      //}
+
+      // JSON schreiben
+      var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
+      System.IO.File.WriteAllText(outputFile, json);
+    }
+
+    public static void AnalyseZusiData4KI()
+    {
+      try
+      {
+        string zusiRoot = @"C:\Zusi3\KI";
+        string KIDataFile = @"C:\Zusi3\KI\ZusiData4KI.json";
+        BuildDataJson(zusiRoot, KIDataFile);
+      }
+      catch (Exception ex)
+      {
+        _log.Error("Error in AnalyseZusiData4KI: " + ex.ToString());
+      }
+    }
+
+    private string BuildPrompt(string userQuery, string dataJson)
+    {
+      return $@"
+Du bist eine Offline-KI für ZusiStart.
+Du bekommst eine JSON-Datenbasis mit Fahrplänen, Strecken und Fahrzeugen.
+Analysiere die Daten vollständig.
+Beantworte die Nutzerfrage ausschließlich basierend auf diesen Daten.
+
+Nutzerfrage:
+{userQuery}
+
+Datenbasis:
+{dataJson}
+
+Gib IMMER eine JSON-Antwort im Format:
+
+{{
+  ""query"": ""..."",
+  ""results"": [...],
+  ""summary"": ""...""
+}}
+
+Die results enthalten alle relevanten Treffer mit Quellenangaben.
+Die summary ist kurz und präzise.
+Keine Erklärungen außerhalb des JSON.
+";
+
+    }
+
+    public class OllamaResponse
+    {
+      public string model { get; set; }
+      public string created_at { get; set; }
+      public string response { get; set; }
+      public bool done { get; set; }
+    }
+
+
+    private KIResponse ParseLlmResponse(string llmOutput)
+    {
+      //int start = llmOutput.IndexOf("{");
+      //int end = llmOutput.LastIndexOf("}");
+      //string json = llmOutput.Substring(start, end - start + 1);
+      //var kiResponse = JsonSerializer.Deserialize<KIResponse>(json);
+      // 1. Ollama-Response parsen
+      var ollama = JsonSerializer.Deserialize<OllamaResponse>(llmOutput);
+
+      // 2. Der eigentliche KI-JSON-Block steckt HIER:
+      string json = ollama.response;
+
+      // 3. Jetzt erst KIResponse parsen
+      var kiResponse = JsonSerializer.Deserialize<KIResponse>(json);
+      return kiResponse;
+
+    }
+
+    public async System.Threading.Tasks.Task OnRequestReceived()
+    {
+      await ProcessKiRequest();
+    }
+
+    public async System.Threading.Tasks.Task ProcessKiRequest()
+    {
+      string KIDataFile = @"C:\Zusi3\KI\ZusiData4KI.json";
+      string dataJson = System.IO.File.ReadAllText(KIDataFile);
+
+      //string reqJson = System.IO.File.ReadAllText(@"C:\Zusi3\KI/request.json");
+      //var req = JsonSerializer.Deserialize<KIRequest>(reqJson);
+
+      KIRequest req = new KIRequest { Query = "Ich suche einen Zug, der nach Recklinghausen Hbf fährt" };
+
+      string prompt = BuildPrompt(req.Query, dataJson);
+
+      string llmOutput = await CallLlmAsync(prompt);
+
+      var response = ParseLlmResponse(llmOutput);
+
+      System.IO.File.WriteAllText(@"C:\Zusi3\KI/response.json",
+          JsonSerializer.Serialize(response, new JsonSerializerOptions { WriteIndented = true }));
+    }
+
+    private async Task<string> CallLlmAsync(string prompt)
+    {
+      using var client = new HttpClient();
+
+      var request = new
+      {
+        model = "llama3:8b",
+        prompt = prompt,
+        stream = false
+      };
+
+      var response = await client.PostAsync(
+          "http://localhost:11434/api/generate",
+          new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json")
+      );
+
+      return await response.Content.ReadAsStringAsync();
+    }
+
+    public class OllamaTool
+    {
+      public string name { get; set; }
+      public string description { get; set; }
+      public object parameters { get; set; }
+    }
+
+    public class ZusiToolResult
+    {
+      public string Query { get; set; }
+
+      // Liste der Treffer (Züge, Fahrzeuge, etc.)
+      public List<KIResult> Results { get; set; } = new();
+
+      // Zusammenfassung für die KI
+      public string Summary { get; set; }
+    }
+
+    public class KIResult
+    {
+      public string Fahrplan_Name { get; set; }
+      public string Fahrplan_Datei { get; set; }
+
+      public string Zug_Name { get; set; }
+      public string Zug_Id { get; set; }
+
+      public string Fahrzeug_Baureihe { get; set; }
+      public string Fahrzeug_Datei { get; set; }
+
+      public List<string> Strecke { get; set; } = new();
+    }
+
+    public void AddKIResultMessage(string message)
+    {
+      main_window.tbxKIResult.AppendText("\n" + message);
+    }
+
+    public async void OnSearchKI(object sender, ExecutedRoutedEventArgs e)
+    {
+      try
+      {
+        main_window.tbxKIResult.Text = "...Suche gestartet...";
+
+        string question = main_window.tbxKISearchText.Text;
+
+        if (string.IsNullOrWhiteSpace(question))
+        {
+          MessageBox.Show("Bitte eine Frage eingeben.");
+          return;
+        }
+
+        // KI starten
+        var answer = await _ki.ProcessQuestionAsync(question);
+
+        // Antwort anzeigen
+        //main_window.tbxKIResult.Text = answer;
+        AddKIResultMessage("\n\n****************\n"+answer);
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show("Fehler bei der KI-Abfrage: " + ex.Message);
+      }
+    }
+
+
+
+
     //---------------------------------------------------------------------
     private static void OnFrictionPresetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -1578,6 +2316,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     private void OnFrictionPresetChanged(FrictionPreset value)
     {
+      _log.Debug("OnFrictionPresetChanged called with value=" + value);
       ZusiSettings.SetFrictionPreset(value);
     }
 
@@ -1637,7 +2376,9 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     public void OnSelectedTimeTableChanged(TimeTableRelation value)
     {
+      _log.Debug("OnSelectedTimeTableChanged called with value=" + (value != null ? value.TimeTable.Name : "null"));
       _timeTableTrains.Clear();
+      SearchTrainValue = null;
 
       //_allTimeTableTrains.Clear();
       if (value != null)
@@ -1670,6 +2411,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     private static void OnSelectedLaNumberChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
+      _log.Debug("OnSelectedLaNumberChanged called with new value=" + (e.NewValue != null ? ((TimeTableRelation)e.NewValue).TimeTable.Name : "null"));
       DataManager dm = d as DataManager;
       dm?.OnSelectedLaNumberChanged((TimeTableRelation)e.NewValue);
     }
@@ -1698,12 +2440,14 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     private static void OnSelectedRecentTrainChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
+      _log.Debug("OnSelectedRecentTrainChanged called with new value=" + (e.NewValue != null ? ((RecentTrain)e.NewValue).TimeTableName : "null"));
       (d as DataManager)?.OnSelectedRecentTrainChanged((RecentTrain)e.NewValue);
     }
 
     //---------------------------------------------------------------------
     private void OnSelectedRecentTrainChanged(RecentTrain value)
     {
+      _log.Debug("OnSelectedRecentTrainChanged instance method called with value=" + (value != null ? value.TimeTableName : "null"));
       if (value != null)
       {
         foreach (RecentTrain rt in RecentTrains)
@@ -1716,6 +2460,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     public void OnNotifyDataLoadStarted(LoaderType loaderType)
     {
+      _log.Debug("OnNotifyDataLoadStarted called with loaderType=" + loaderType);
       Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action<LoaderType>((t) =>
       {
         NotifyDataLoadStarted?.Invoke(this, new NotifyDataLoadStartedEventArgs(t));
@@ -1725,12 +2470,14 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     public void OnNotifyDataLoadCompleted()
     {
+      _log.Debug("OnNotifyDataLoadCompleted called");
       NotifyDataLoadCompleted?.Invoke(this, EventArgs.Empty);
     }
 
     //---------------------------------------------------------------------
     private async void FinishLoadingAsync()
     {
+      _log.Debug("FinishLoadingAsync called - waiting for time tables and vehicle data to be loaded");
       DataLoaderResult result = await System.Threading.Tasks.Task.Run(() =>
       {
         return WaitHandle.WaitAll(new WaitHandle[] { _waitTimeTables, _waitVehicleData }) ? RebuildFilter() : null;
@@ -1738,8 +2485,8 @@ namespace ZusiStart.Data
 
       //DummyWindow dummywindow=new DummyWindow();
       //dummywindow.Show();
-      dataLoaderWindow.SetLoaderType(LoaderType.LoadVehicleGroups);
-      dataLoaderWindow.UpdateLayout();
+      //dataLoaderWindow.SetLoaderType(LoaderType.LoadVehicleGroups);
+      //dataLoaderWindow.UpdateLayout();
 
 
 
@@ -1765,7 +2512,7 @@ namespace ZusiStart.Data
 
       OnNotifyDataLoadCompleted();
 
-      _log.Debug("loading data completed");
+      //_log.Debug("loading data completed");
     }
 
 
@@ -1778,9 +2525,10 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     private async void LoadTimeTableDataAsync()
     {
+      _log.Debug("LoadTimeTableDataAsync called");
       await System.Threading.Tasks.Task.Run(() =>
       {
-        _log.Debug("load time tables");
+        _log.Debug("load time tables asynch 1");
 
         Application.Current.Dispatcher.Invoke(() =>
         {
@@ -1793,6 +2541,7 @@ namespace ZusiStart.Data
         OnNotifyDataLoadStarted(LoaderType.LoadComplete);
 
         using CancellationTokenSource cts = new();
+        TimeTables.init_timetabledata();
         TimeTables.EnumerateTimeTables(_foldersToExclude, cts.Token).ForEach(t => _allTimeTables.Add(t));
 
         //_allTimeTables.ForEach(tt =>
@@ -1846,7 +2595,7 @@ namespace ZusiStart.Data
 
         DateTime dtEnd = DateTime.Now;
         TimeSpan duration = dtEnd - dtStart;
-        _log.Debug($"loading time tables completed ({duration.TotalMilliseconds} ms)");
+        _log.Debug($"loading time tables asynch 1 completed ({duration.TotalMilliseconds} ms)");
       });
 
       _waitTimeTables.Set();
@@ -1868,10 +2617,11 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     private async void LoadTimeTableDataAsync2()
     {
+      _log.Debug("LoadTimeTableDataAsync2 called");
       await System.Threading.Tasks.Task.Run(() =>
       {
         DataLoaderResult result;
-        _log.Debug("load time tables");
+        _log.Debug("load time tables asynch 2");
 
         favorite_timetables = _recentTrains.LoadTimeTableListFromFile();
 
@@ -1882,6 +2632,7 @@ namespace ZusiStart.Data
 
         using CancellationTokenSource cts = new();
         //TimeTables.EnumerateTimeTables(_foldersToExclude, cts.Token).ForEach(t => _allTimeTables.Add(t));
+        _log.Debug("load time tables asynch 2: Load timetables");
         processed_tt_no = 0;
         for (int i = 1; i <= 2; i++)
         {
@@ -1898,6 +2649,7 @@ namespace ZusiStart.Data
 
                   if (tt != null)
                   {
+                    _log.Debug($"load time tables asynch 2: {tt.Name}");
                     if ((i == 2) ^ (isFavoriteTimetable(tt.Name) == true))
                     {
                       var q = from t in tt.Trains
@@ -2023,7 +2775,7 @@ namespace ZusiStart.Data
         DateTime dtEnd = DateTime.Now;
         TimeSpan duration = dtEnd - dtStart;
 
-        _log.Debug($"loading time tables completed ({duration.TotalMilliseconds} ms)");
+        _log.Debug($"loading time tables  asynch 2 completed ({duration.TotalMilliseconds} ms)");
       });
 
       // continue with vehicle data, if not switched off
@@ -2071,7 +2823,7 @@ namespace ZusiStart.Data
             }
             else
             {
-              _log.Error("tts.Reference.Link.Datei.FullPath is empty:"+tts.TimeTable.Name);
+              _log.Error("tts.Reference.Link.Datei.FullPath is empty:" + tts.TimeTable.Name);
             }
           }
           else
@@ -2101,9 +2853,10 @@ namespace ZusiStart.Data
     // progress 72%..96%
     private async void LoadVehicleDataAsync()
     {
+      _log.Debug("LoadVehicleDataAsync called");
       await System.Threading.Tasks.Task.Run(() =>
       {
-        _log.Debug("load vehicle data");
+        _log.Debug("load vehicle data 1");
 
         DateTime dtStart = DateTime.Now;
 
@@ -2143,7 +2896,7 @@ namespace ZusiStart.Data
 
         DateTime dtEnd = DateTime.Now;
         TimeSpan duration = dtEnd - dtStart;
-        _log.Debug($"loading completed ({duration.TotalMilliseconds} ms)");
+        _log.Debug($"loading vehicle data 1 completed ({duration.TotalMilliseconds} ms)");
       });
 
       _waitVehicleData.Set();
@@ -2151,10 +2904,11 @@ namespace ZusiStart.Data
 
     private async void LoadVehicleDataAsync2()
     {
+      _log.Debug("LoadVehicleDataAsync2 called");
       await System.Threading.Tasks.Task.Run(async () =>
       {
         Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
-        _log.Debug("load vehicle data");
+        _log.Debug("load vehicle data 2 asynch");
 
         DateTime dtStart = DateTime.Now;
 
@@ -2168,6 +2922,7 @@ namespace ZusiStart.Data
         //foreach (Fahrzeug f in vehicles
         //          .Where(v => (v.Kind & VehicleKind.IsPowered) != 0 && v.Name == "611" && !IsBlacklistedClass(v)))
         {
+          _log.Debug("load vehicle data 2 asynch - Vehicle:" + f.Name);
           f.Varianten.ForEach(fv =>
                 {
                   if (/*!fv.Dekozug &&*/ !fv.DateiFuehrerstand[0].IsEmpty)
@@ -2182,9 +2937,9 @@ namespace ZusiStart.Data
 
         //ProgressChanged?.Invoke(this, new ProgressChangedEventArgs(12));
 
-        //Log.DebugFormat("{0} vehicle variants loaded", AllVariants1.Count);
+        _log.DebugFormat("{0} vehicle variants loaded", AllVariants1.Count);
 
-        //Log.Debug("grouping vehicles by class");
+        _log.Debug("grouping vehicles by class");
 
         _allVehicles = variants.GroupBy(v =>
               {
@@ -2196,7 +2951,7 @@ namespace ZusiStart.Data
 
         DateTime dtEnd = DateTime.Now;
         TimeSpan duration = dtEnd - dtStart;
-        _log.Debug($"loading completed ({duration.TotalMilliseconds} ms)");
+        _log.Debug($"loading vehicle data 2 asynch completed ({duration.TotalMilliseconds} ms)");
       });
 
 
@@ -2255,6 +3010,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     private DataLoaderResult RebuildFilter()
     {
+      _log.Debug("RebuildFilter called");
       DataLoaderResult result = new();
       string path1 = Zusi.DataPath[DataPathType.Official] + @"Timetables\";
       string path2 = Zusi.DataPath[DataPathType.DataDir] + @"Timetables\";
@@ -2317,6 +3073,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     public void UpdateTimeTableRelations_impl(List<TimeTable> timeTables, int preferredSelection)
     {
+      _log.Debug("UpdateTimeTableRelations_impl called with " + (timeTables != null ? timeTables.Count.ToString() : "null") + " time tables and preferred selection=" + preferredSelection);
       SelectedTimeTableRelation = null;
 
       DataManager.Instance.main_window.setgroupboxcolor("ExpFpl", "GrpFpl", System.Windows.Media.Brushes.White);
@@ -2422,6 +3179,7 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     public IEnumerable<VehicleContainer> FilterVehicles()
     {
+      _log.Debug("FilterVehicles called");
       int Fahrzeug_num = 0;
       return _allVehicles.Where(vg =>
           {
@@ -2495,6 +3253,7 @@ namespace ZusiStart.Data
 
     private bool Save_allvehicles()
     {
+      _log.Debug("Save_allvehicles called");
       var json = JsonSerializer.Serialize(_allVehicles);
       System.IO.File.WriteAllText(VehiclesFilePath, json);
       return true;
@@ -2502,6 +3261,7 @@ namespace ZusiStart.Data
 
     public void Load_allVehicles()
     {
+      _log.Debug("Load_allVehicles called");
       if (string.IsNullOrEmpty(VehiclesFilePath))
       {
         //VehiclesFilePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\ZusiStart\\vehiclesdata.json";
@@ -2527,10 +3287,8 @@ namespace ZusiStart.Data
     //---------------------------------------------------------------------
     private void OnCurrentVehicleContainerChanged(VehicleContainer value)
     {
+      _log.Debug("OnCurrentVehicleContainerChanged called with value=" + (value != null ? value.DisplayName : "null"));
       _foundTimeTables.Clear();
-
-
-
 
       if (value != null)
       {
@@ -2572,8 +3330,54 @@ namespace ZusiStart.Data
       }
     }
 
+    //---------------------------------------------------------------------
+    public void SearchBR(string value)
+    {
+      _log.Debug("OnSearchBR called with value=" + value);
+      _foundTimeTables.Clear();
+
+      DataManager.SearchTrainValue = "br" + value;
+      main_window.setgroupboxcolor("ExpFpl", "GrpFpl", System.Windows.Media.Brushes.Red, newtitle: DataManager.SearchTrainValue);
+
+      if (value != "")
+      {
+        var trains = _allTrains.Where(z => z.Fahrzeuge.ContainsVehicle(value))
+            .GroupBy(g => g.BelongsToTimeTable)
+            .Select(g => new FoundTimeTable()
+            {
+              TimeTable = _allTimeTables.First(tt => tt.ID == g.Key),
+              Trains = g.ToList()
+            });
+
+        FoundTimeTableViewModel vm = FoundTimeTableViewModel.BuildViewModel(trains);
+        vm.Children.ForEach(c => _foundTimeTables.Add(c));
+
+        SearchResultTitle = value;
+
+        // FoundTimeTables nach Relations kopieren
+        DataManager.Instance.Relations.Clear();
+        int i = 1;
+        foreach (var fts in _foundTimeTables)
+        {
+          if (fts.Children.Count > 0)
+          {
+            foreach (FoundTimeTableViewModel ftm in fts.Children)
+            {
+              FoundTimeTable ft = ftm.Object;
+              if (ft != null)
+              {
+                DataManager.Instance.Relations.Add(new TimeTableRelation(i++, ft.TimeTable));
+              }
+            }
+          }
+        }
+
+      }
+    }
+
     public bool CheckImportance(Zug Selected_Train, Zug zug)
     {
+      _log.Debug("CheckImportance called for Selected_Train=" + (Selected_Train != null ? Selected_Train.Nummer : "null") + " and zug=" + (zug != null ? zug.Nummer : "null"));
       string LODZug;
       if (string.IsNullOrEmpty(zug.LODZug))
       {
@@ -2588,32 +3392,133 @@ namespace ZusiStart.Data
         return false;
       }
 
+      DateTime? zug_Aufgleiszeit = zug.Aufgleiszeit;
+      DateTime? zug_Abgleiszeit = zug.Abgleiszeit;
+      DateTime? Selected_Aufgleiszeit = Selected_Train.Aufgleiszeit.Value;
+      DateTime? Selected_Abgleiszeit = Selected_Train.Abgleiszeit.Value;
+
       bool IsImportant;
-      if (Selected_Train.Aufgleiszeit == null || Selected_Train.Abgleiszeit == null || zug.Aufgleiszeit == null || zug.Abgleiszeit == null)
+      if (Selected_Aufgleiszeit == null || Selected_Abgleiszeit == null || zug_Aufgleiszeit == null || zug_Abgleiszeit == null)
       {
         IsImportant = true;
-        //_log.Info("CheckImportance: One Time is NULL");
       }
       else
       {
-        IsImportant = !(Selected_Train.Aufgleiszeit.Value > zug.Abgleiszeit.Value || Selected_Train.Abgleiszeit.Value < zug.Aufgleiszeit.Value);
-        //if (IsImportant )
-        //    _log.Info("CheckImportance TRUE: "+ Zug.Nummer.ToString() + "-" +Zug.Aufgleiszeit.ToString()+ "-" + zug.Abgleiszeit.ToString() + " -- " + Zug.Abgleiszeit.ToString() + "-" + zug.Aufgleiszeit.ToString());
-        //else
-        //    _log.Info("CheckImportance FALSE: " + Zug.Nummer.ToString() + "-" + Zug.Aufgleiszeit.ToString() + "-" + zug.Abgleiszeit.ToString() + " -- " + Zug.Abgleiszeit.ToString() + "-" + zug.Aufgleiszeit.ToString());
+        //if (Selected_Aufgleiszeit < Selected_Abgleiszeit)
+        //// Zug fährt über Mitternacht, daher Zeiten vor der Aufgleiszeit um einen Tag erhöhen
+        //{
+        //  if (zug_Aufgleiszeit < Selected_Aufgleiszeit)
+        //  {
+        //    zug_Aufgleiszeit = zug_Aufgleiszeit.Value.AddDays(1);
+        //  }
+        //  if (zug_Abgleiszeit < Selected_Aufgleiszeit)
+        //  {
+        //    zug_Abgleiszeit = zug_Abgleiszeit.Value.AddDays(1);
+        //  }
+        //  Selected_Abgleiszeit = Selected_Abgleiszeit.Value.AddDays(1);
+        //}
+
+        IsImportant = !(Selected_Aufgleiszeit > zug_Abgleiszeit || Selected_Train.Abgleiszeit.Value < zug_Aufgleiszeit);
       }
+
+      //if (IsImportant && DataManager.Instance.options.RO_trainselectioncriteria_Stations)
+      //{
+      //  List<string> found_bs = zug.checkBetriebstellen(BetriebsstellenManager.Instance.Betriebsstellen.ToList());
+      //  if (found_bs.Count == 0)
+      //  {
+      //    IsImportant = false;
+      //  }
+      //}
       return IsImportant;
     }
 
-    public bool check_for_FIS(Zug zug)
+    public void add_used_streckenmodule(List<string> usedmodules)
     {
+      foreach (string m in usedmodules)
+      {
+        if (!DataManager.Instance.used_streckenmodule.Contains(m))
+        {
+          DataManager.Instance.used_streckenmodule.Add(m);
+        }
+      }
+    }
+
+    public bool CheckImportance2(ZusiCLIProject.FileLibrary.Zusi3.Zug Selected_Train, ZusiCLIProject.FileLibrary.Zusi3.Zug zug, ZusiFdl2 fdl2, List<string> seltrain_usedmodules)
+    {
+      _log.Debug("CheckImportance2 called for Selected_Train=" + (Selected_Train != null ? Selected_Train.Nummer : "null") + " and zug=" + (zug != null ? zug.Nummer : "null"));
+      string LODZug = "0";
+      try
+      {
+        LODZug = zug.LODzug.ToString();
+      }
+      catch (Exception ex)
+      {
+        _log.Error("Error accessing LODZug of Zug " + zug.Nummer.ToString() + ": " + ex.ToString());
+        LODZug = "0";
+      }
+
+      if (!DataManager.Instance.LODZugList.Contains(LODZug))
+      {
+        return false;
+      }
+
+      DateTime? zug_Aufgleiszeit = zug.GetAufgleiszeit();
+      DateTime? zug_Abgleiszeit = zug.GetAbgleiszeit();
+      DateTime? Selected_Aufgleiszeit = Selected_Train.GetAufgleiszeit();
+      DateTime? Selected_Abgleiszeit = Selected_Train.GetAbgleiszeit();
+      if (Selected_Aufgleiszeit != null)
+        Selected_Aufgleiszeit = Selected_Aufgleiszeit.Value.AddMinutes(-DataManager.Instance.options.RO_vorlaufzeit);
+      if (Selected_Abgleiszeit != null)
+        Selected_Abgleiszeit = Selected_Abgleiszeit.Value.AddMinutes(DataManager.Instance.options.RO_nachlaufzeit);
+
+      bool IsImportant = false;
+      if (Selected_Aufgleiszeit == null || Selected_Abgleiszeit == null || zug_Aufgleiszeit == null || zug_Abgleiszeit == null)
+      {
+        IsImportant = true;
+      }
+      else
+      {
+
+        IsImportant = !(Selected_Aufgleiszeit > zug_Abgleiszeit || Selected_Abgleiszeit < zug_Aufgleiszeit);
+      }
+
+      if (IsImportant && DataManager.Instance.options.RO_trainselectioncriteria_Stations)
+      {
+        //List<string> found_bs = zug.checkBetriebstellen(BetriebsstellenManager.Instance.Betriebsstellen.ToList());
+        //if (found_bs.Count == 0)
+        //{
+        //  IsImportant = false;
+        //}
+        if (seltrain_usedmodules.Count() > 0 && fdl2 != null)
+        {
+          List<string> all_used_modules;
+          List<string> usedmodules = zug.getusedmodules(fdl2, Selected_Aufgleiszeit, Selected_Abgleiszeit, out all_used_modules);
+          if (usedmodules.Intersect(seltrain_usedmodules).Count() == 0)
+          {
+            IsImportant = false;
+          }
+          else
+          {
+            add_used_streckenmodule(all_used_modules);
+            IsImportant = true;
+          }
+        }
+        else
+        {
+          IsImportant = true;
+        }
+      }
+
+      return IsImportant;
+    }
+
+    public bool check_for_FIS(ZusiKlassenLib2.Fahrplan.Zug zug)
+    {
+      _log.Debug("check_for_FIS called for zug=" + (zug != null ? zug.Nummer : "null"));
       FIS_available = false;
       try
       {
-        // ... via TCP interface
-        //TimeTable tt = DataManager.Instance.GetTimeTableOfTrain(zug);
-
-        ZugDatei? CurrentZugFile = zug.Parent as ZugDatei;
+        ZusiKlassenLib2.Fahrplan.ZugDatei? CurrentZugFile = zug.Parent as ZusiKlassenLib2.Fahrplan.ZugDatei;
 
         if (CurrentZugFile != null)
         {
@@ -2650,15 +3555,35 @@ namespace ZusiStart.Data
     }
 
     //---------------------------------------------------------------------
-    public string BuildTempTimeTable(Zug Selected_Train, TimeTable timeTable, out string tempTimeTableFilename)
+    public string BuildTempTimeTable(ZusiKlassenLib2.Fahrplan.Zug Selected_Train, TimeTable timeTable, out string tempTimeTableFilename)
     {
+      _log.Debug("BuildTempTimeTable called for Selected_Train=" + (Selected_Train != null ? Selected_Train.Nummer : "null") + " and timeTable=" + (timeTable != null ? timeTable.Name : "null"));
+      tempTimeTableFilename = "";
+      if ((Properties.Settings.Default.TrainStartMode == 0) && (CurrentTrainItem == null || (!CurrentTrainItem.IsLocoReplaced && !CurrentTrainItem.IsTrainReplaced)) && (DataManager.Instance.options.RO_trainselectioncriteria_Stations))
+      {
+
+        try
+        {
+          string tmpzugfilename = BuildTempTimeTable2(Selected_Train, timeTable, out tempTimeTableFilename);
+          if (!string.IsNullOrEmpty(tempTimeTableFilename))
+          {
+            return tmpzugfilename;
+          }
+        }
+        catch (Exception ex)
+        {
+          _log.Error("Error in BuildTempTimeTable2: " + ex.ToString());
+          _log.Error("Continue with BuildTempTimeTable");
+        }
+      }
+
       string result = null;
       DateTime? newStartTime = null;
-      _log.Info(string.Format("BuildTempTimeTable for Train: {0} getstartet", Selected_Train.ToString()));
+      _log.Debug(string.Format("BuildTempTimeTable for Train: {0} getstartet", Selected_Train.ToString()));
       // create temporary timetable folder
 
 
-      string tmpBaseFolder = Zusi.DataPath[2] + @"Temp\ZusiStart\TempTimetable\";
+      string tmpBaseFolder = ZusiKlassenLib2.Zusi.DataPath[2] + @"Temp\ZusiStart\TempTimetable\";
 
       TimeTableFile? CurrentTimeTableFile = timeTable.Parent as TimeTableFile;
 
@@ -2670,13 +3595,12 @@ namespace ZusiStart.Data
         string timetable_pathfilename = CurrentTimeTableFile.Filename;
         string timetable_filename = Path.GetFileNameWithoutExtension(timetable_pathfilename);
         DataPathType dtp1 = DataPathType.Unknown;
-        string zusi_timetablepathfilename = Zusi.GetRelativePathOf(timetable_pathfilename, ref dtp1);
+        string zusi_timetablepathfilename = ZusiKlassenLib2.Zusi.GetRelativePathOf(timetable_pathfilename, ref dtp1);
         string zusi_timetablepath = Path.GetDirectoryName(zusi_timetablepathfilename);
         string zusi_temp_timetablepath = zusi_timetablepath.Replace("Timetables", "Temp");
-        tmpBaseFolder = Zusi.DataPath[2] + zusi_temp_timetablepath+"\\";
+        tmpBaseFolder = ZusiKlassenLib2.Zusi.DataPath[2] + zusi_temp_timetablepath + "\\";
         tmpTimeTableName = timetable_filename;
       }
-
 
       if (Directory.Exists(tmpBaseFolder))
       {
@@ -2690,7 +3614,6 @@ namespace ZusiStart.Data
           _log.Error(ex.ToString());
         }
       }
-
 
       string tmpTrainsFolder = string.Format(@"{0}{1}\", tmpBaseFolder, tmpTimeTableName);
       try
@@ -2706,7 +3629,7 @@ namespace ZusiStart.Data
       // temporary timetable name
       DataPathType dtp = DataPathType.Unknown;
       tmpTimeTableName = string.Format("{0}{1}.fpn", tmpBaseFolder, tmpTimeTableName);
-      string tmpStrippedTimeTableName = Zusi.GetRelativePathOf(tmpTimeTableName, ref dtp);
+      string tmpStrippedTimeTableName = ZusiKlassenLib2.Zusi.GetRelativePathOf(tmpTimeTableName, ref dtp);
 
       // clone temporary timetable from source
       //TimeTable testTimeTable = new(null, CurrentTimeTableFile.Root, false);
@@ -2714,7 +3637,7 @@ namespace ZusiStart.Data
 
       // Fahrplandatei im Buchfahrplan
       dtp = DataPathType.Unknown;
-      string orgRelativeTimetableName = Zusi.GetRelativePathOf(selectedTimeTableFilename, ref dtp);
+      string orgRelativeTimetableName = ZusiKlassenLib2.Zusi.GetRelativePathOf(selectedTimeTableFilename, ref dtp);
 
       _allTimeTableTrains.Clear();
       //foreach (var g in AllTrains
@@ -2900,8 +3823,10 @@ namespace ZusiStart.Data
                     }
                   }
                 }
-
-                zd.Root.ReplaceTrain(ti.ReplaceReihung);
+                if (ti.ReplaceReihung != null) // Stored changed train composition, no need to change composition in the train file
+                {
+                  zd.Root.ReplaceTrain(ti.ReplaceReihung);
+                }
               }
 
               if (Properties.Settings.Default.StartimStillstand == 0)
@@ -2909,7 +3834,7 @@ namespace ZusiStart.Data
                 zd.Root.StartSpeed = 0;
               }
             }
-
+            _log.Debug(string.Format("BuildTempTimeTable: {0} wird gespeichert unter {1}", zug.Gattung + zug.Nummer, tmpTrainfileName));
             zd.SaveAs(tmpTrainfileName);
 
             //if (zug.BuchfahrplanRohDatei?.Dateiname == Selected_Train.BuchfahrplanRohDatei?.Dateiname)
@@ -2924,7 +3849,7 @@ namespace ZusiStart.Data
 
             if (tmpZug.StartTime is DateTime startTime)
             {
-              startTime -= TimeSpan.FromMinutes(10);
+              //startTime -= TimeSpan.FromMinutes(10);
 
               if (newStartTime == null)
               {
@@ -2935,7 +3860,12 @@ namespace ZusiStart.Data
                 newStartTime = startTime;
               }
             }
-            _log.Info(string.Format("BuildTempTimeTable: {0} erstellt ", zug.Gattung + zug.Nummer));
+
+            original_traincount = _allTimeTableTrains.Count;
+            optimised_traincount = tmpTimeTable.Trains.Count;
+            original_starttime = timeTable.StartTime;
+            optimized_starttime = newStartTime;
+            _log.Debug(string.Format("BuildTempTimeTable: {0} erstellt ", zug.Gattung + zug.Nummer));
 
           }
         }
@@ -2947,6 +3877,7 @@ namespace ZusiStart.Data
 
       }
       //ZusiDisplay anpassen
+      _log.Debug("BuildTempTimeTable: Anpassung ZusiDisplay wird gestartet");
       string zusiDisplayFolder = Path.Combine(CurrentTimeTableFile.Path, "ZusiDisplay");
       if (Directory.Exists(zusiDisplayFolder))
       {
@@ -3031,8 +3962,9 @@ namespace ZusiStart.Data
           }
         }
       }
-
+      _log.Debug("BuildTempTimeTable: Anpassung ZusiDisplay wurde abgeschlossen");
       //set new start time
+      _log.Debug(string.Format("BuildTempTimeTable: Set new start time {0} ", newStartTime.HasValue ? newStartTime.Value.ToString("yyyy-MM-dd HH:mm") : "null"));
       tmpTimeTable.StartTime = newStartTime;
 
       // save temporary timetable file
@@ -3048,7 +3980,7 @@ namespace ZusiStart.Data
       {
         _log.Error(ex.ToString());
         result = "";
-        Xceed.Wpf.Toolkit.MessageBox.Show(ex.Message, LocalizationManager.Translate("Die Timetable kann nicht gespeichert werden"), MessageBoxButton.OK, MessageBoxImage.Error);
+        MessageBox.Show(ex.Message, LocalizationManager.Translate("Die Timetable kann nicht gespeichert werden"), MessageBoxButton.OK, MessageBoxImage.Error);
       }
 
       // mit Fahrplan im Ganzen starten, wenn es sich um einen integrierten Fahrplan handelt
@@ -3062,5 +3994,1016 @@ namespace ZusiStart.Data
       return result;
     }
 
+
+    public string BuildTempTrain(ZusiCLIProject.FileLibrary.Zusi3.Zug Selected_Train, ZusiCLIProject.FileLibrary.Zusi3.Zug zug, string tmpStrippedTimeTableName, string tmpTrainsFolder, ZusiFdl2 fdl2, List<string> seltrain_usedmodules)
+    {
+      _log.Debug("BuildTempTrain called for Selected_Train=" + (Selected_Train != null ? Selected_Train.Nummer : "null") + " and zug=" + (zug != null ? zug.Nummer : "null"));
+      try
+      {
+        DataPathType dtp;
+        bool isImportant;
+        string tmpTrainfileName = "";
+
+        if (Selected_Train.Nummer == zug.Nummer)
+        {
+          isImportant = true;
+        }
+        else
+        {
+          if (DataManager.Instance.options.StartOnlySelectedTrain)
+          {
+            isImportant = false;
+          }
+          else
+          {
+            isImportant = CheckImportance2(Selected_Train, zug, fdl2, seltrain_usedmodules);
+          }
+        }
+
+        if (isImportant)
+        {
+          string destinationfilename;
+
+          zug.Datei.Dateiname = tmpStrippedTimeTableName; // Filename of fpn file the train file belongs to
+
+
+          /*********************************************************
+           * kopiere Buchfahrplandatei, wenn vorhanden
+           *********************************************************/
+
+          if (zug.BuchfahrplanRohDatei != null && zug.BuchfahrplanRohDatei.Exists())
+          {
+            dtp = ZusiKlassenLib2.DataPathType.Unknown;
+            string sourcefilename = ZusiKlassenLib2.Zusi.GetAbsolutePathOf(zug.BuchfahrplanRohDatei.Dateiname, ref dtp);
+            destinationfilename = tmpTrainsFolder + zug.BuchfahrplanRohDatei.NameOnly;
+
+            try
+            {
+              System.IO.File.Copy(sourcefilename, destinationfilename, true);
+            }
+            catch (Exception ex)
+            {
+              _log.Error(string.Format("Error copying BuchfahrplanRohDatei from {0} to {1}: {2}", sourcefilename, destinationfilename, ex.ToString()));
+            }
+
+            dtp = DataPathType.Unknown;
+            zug.BuchfahrplanRohDatei.Dateiname = Zusi.GetRelativePathOf(destinationfilename, ref dtp);
+          }
+
+          string s = zug.Gattung ?? "";
+          s += zug.Nummer ?? "";
+          if (string.IsNullOrEmpty(s))
+          {
+            s = Guid.NewGuid().ToString("N");
+          }
+          tmpTrainfileName = tmpTrainsFolder + s + ".trn";
+
+          /****************************************************************
+           *  Anpassungen am Zug, wenn es sich um den ausgewählten Zug handelt
+           *  (z.B. Ersatzlok, Ersatzzug, Start im Stillstand)
+           ****************************************************************/
+
+
+          if (Selected_Train.Nummer == zug.Nummer) // check if zd is selectedtrain
+          {
+            TrainItem ti = CurrentTrainItem;
+            if (ti != null && ti.IsLocoReplaced)
+            {
+              // search for FZGVerbandAktion in all Fahrplaneintrag and replace 2 with 1
+              foreach (ZusiCLIProject.FileLibrary.Zusi3.Zug.FahrplanEintrag fpe in zug.Eintraege)
+              {
+                if (fpe != null)
+                {
+                  int FZGVA = fpe.FzgVerbandAktion;
+                  if (FZGVA == 2 /*TrainSetActionType.CabChange*/ && ti.IsLocoInFront)
+                  {
+                    fpe.FzgVerbandAktion = 1; // TrainSetActionType.TurnTrain;
+                    FZGVA = 1; // TrainSetActionType.TurnTrain;
+                  }
+                }
+              }
+              _log.Debug(string.Format("BuildTempTrain: Train {0} is loco replaced. Replacing loco in train file.", zug.Gattung + zug.Nummer));
+              zug.ReplaceTrain(ti.Reihung);
+            }
+
+            if (ti != null && ti.IsTrainReplaced)
+            {
+              if (ti.IsTrainTurned)
+              {
+                //search for FZGVerbandAktion in all Fahrplaneintrag and replace 2 with 1
+                foreach (ZusiCLIProject.FileLibrary.Zusi3.Zug.FahrplanEintrag fpe in zug.Eintraege)
+                {
+                  if (fpe != null)
+                  {
+                    int FZGVA = fpe.FzgVerbandAktion;
+                    if (FZGVA == 2 /*TrainSetActionType.CabChange*/ && ti.IsTrainTurned)
+                    {
+                      fpe.FzgVerbandAktion = 1; // TrainSetActionType.TurnTrain;
+                      FZGVA = 1; // TrainSetActionType.TurnTrain;
+                    }
+                  }
+                }
+              }
+              _log.Debug(string.Format("BuildTempTrain: Train {0} is train replaced. Replacing train in train file.", zug.Gattung + zug.Nummer));
+              zug.ReplaceTrain(ti.ReplaceReihung);
+            }
+            if (Properties.Settings.Default.StartimStillstand == 0)
+            {
+              //zug.spAnfang = 0; //zd.Root.StartSpeed = 0;
+              //foreach (XmlAttribute xmlAttribute in zug.Attributes)
+              //{
+              //  if (xmlAttribute is XmlAttribute attr && attr.Name == "spAnfang")
+              //  {
+              //    xmlAttribute.Value = "0";
+              //  }
+              //}
+
+              var spAttr = zug.Attributes.OfType<XmlAttribute>().FirstOrDefault(a => a.Name == "spAnfang");
+              if (spAttr is not null)
+              {
+                spAttr.Value = "0";
+              }
+            }
+          }
+        }
+        return tmpTrainfileName;
+      }
+      catch (Exception ex)
+      {
+        _log.Error(string.Format("BuildTempTrain: {0} \nERROR {1} ", zug.Gattung + zug.Nummer, ex.ToString()));
+        return "";
+      }
+    }
+
+    public class LoadingFrameworkSystemWpfImpl : ILoadingFrameworkHelperMethods<int>
+    {
+      public int LinesTotal { get; set; }
+
+      public int ItemAdder(string s)
+      {
+        ++this.LinesTotal;
+        Console.WriteLine(s);
+        return this.LinesTotal - 1;
+      }
+
+      public int ItemUpdater(string nw, string ol, int oi)
+      {
+        //Console.CursorTop -= this.LinesTotal - oi;
+        //Console.CursorLeft = 0;
+        //while (nw.Length < ol.Length)
+        //  nw += " ";
+        //Console.Write(nw);
+        //Console.CursorLeft = 0;
+        //Console.CursorTop += this.LinesTotal - oi;
+        return oi;
+      }
+
+      public void ItemFinished(string nw, int oi)
+      {
+        //Console.CursorTop -= this.LinesTotal - oi;
+        //Console.CursorLeft = nw.Length;
+        //Console.Write(" OK");
+        //Console.CursorLeft = 0;
+        //Console.CursorTop += this.LinesTotal - oi;
+      }
+    }
+
+    //---------------------------------------------------------------------
+    // Version using the F.Schn. xml-parser
+    public string BuildTempTimeTable2(ZusiKlassenLib2.Fahrplan.Zug Selected_Train, TimeTable timeTable, out string tempTimeTableFilename)
+    {
+      _log.Debug("BuildTempTimeTable2 called for Selected_Train=" + (Selected_Train != null ? Selected_Train.Nummer : "null") + " and timeTable=" + (timeTable != null ? timeTable.Name : "null"));
+      string result = null;
+      DateTime? newStartTime = null;
+      _log.Debug(string.Format("BuildTempTimeTable for Train: {0} started", Selected_Train.ToString()));
+      // create temporary timetable folder
+
+      string tmpBaseFolder = Zusi.DataPath[2] + @"Temp\ZusiStart\TempTimetable\";
+
+      TimeTableFile? CurrentTimeTableFile = timeTable.Parent as TimeTableFile;
+      string timetable_pathfilename = CurrentTimeTableFile.Filename;
+      DataPathType dtp1 = DataPathType.Unknown;
+      string zusi_timetablepathfilename = Zusi.GetRelativePathOf(timetable_pathfilename, ref dtp1);
+
+      string selectedTrainFilename = Selected_Train.GetDocument().Filename;
+      string selectedTimeTableFilename = timeTable.GetDocument().Filename;
+      string tmpTimeTableName = "ZusiStartTempTimeTable";
+      if (DataManager.Instance.options.RemoteTrackingSupport)
+      {
+        string timetable_filename = Path.GetFileNameWithoutExtension(timetable_pathfilename);
+        string zusi_timetablepath = Path.GetDirectoryName(zusi_timetablepathfilename);
+        string zusi_temp_timetablepath = zusi_timetablepath.Replace("Timetables", "Temp");
+        tmpBaseFolder = Zusi.DataPath[2] + zusi_temp_timetablepath + "\\";
+        tmpTimeTableName = timetable_filename;
+      }
+
+      if (Directory.Exists(tmpBaseFolder))
+      {
+        try
+        {
+          DirectoryInfo di = new(tmpBaseFolder);
+          di.Clear();
+        }
+        catch (Exception ex)
+        {
+          _log.Error(ex.ToString());
+        }
+      }
+
+      string tmpTrainsFolder = string.Format(@"{0}{1}\", tmpBaseFolder, tmpTimeTableName);
+      try
+      {
+        Directory.CreateDirectory(tmpTrainsFolder);
+      }
+      catch (Exception ex)
+      {
+        _log.Error(ex.ToString());
+        throw;
+      }
+
+      // temporary timetable name
+      DataPathType dtp = DataPathType.Unknown;
+      tmpTimeTableName = string.Format("{0}{1}.fpn", tmpBaseFolder, tmpTimeTableName);
+      string tmpStrippedTimeTableName = Zusi.GetRelativePathOf(tmpTimeTableName, ref dtp);
+
+      /***************************************************
+       * Test Loading Framework
+       * ************************************************/
+      _log.Debug("BuildTempTimeTable2: Test Loading Framework");
+      string relPfad = zusi_timetablepathfilename;
+      var lFr = new ZusiCLIProject.FileLibrary.Zusi3.ZusiFdl.LoadingFramework<int>();
+      lFr.DataDirs = ZusiCLIProject.FileLibrary.Zusi3.Datei.GetZusiDataDirs();
+      //lFr.FahrplanPfade = new string[] { relPfad };
+      lFr.FahrplanPfade = [relPfad];
+      var intHelper = new LoadingFrameworkSystemWpfImpl();
+      ZusiCLIProject.FileLibrary.Zusi3.ZusiFdl.ZusiFdl2 fdl2 = null;
+      try
+      {
+        lFr.InitItems(intHelper.ItemAdder);
+        lFr.StartLoading(intHelper.ItemUpdater, intHelper.ItemFinished);
+        fdl2 = lFr.Fdl2;
+        _log.Debug(string.Format("BuildTempTimeTable2: Test Loading Framework finished. Loaded {0} lines.", intHelper.LinesTotal));
+      }
+      catch (Exception ex)
+      {
+        fdl2 = null;
+        _log.Error("BuildTempTimeTable2: Test Loading Framework failed." + ex.ToString());
+        if (ex.InnerException != null)
+        {
+          _log.Fatal("Inner Exception:");
+          _log.Fatal(ex.InnerException.ToString);
+          _log.Fatal(ex.InnerException.StackTrace);
+        }
+      }
+
+
+      // clone temporary timetable from source
+      //TimeTable testTimeTable = new(null, CurrentTimeTableFile.Root, false);
+      //TimeTable tmpTimeTable = new(null, timeTable, false);
+      var buffer = new Dictionary<string, ZusiCLIProject.FileLibrary.Zusi3.Zusi>(System.StringComparer.InvariantCulture);
+      var fpnDatei = ZusiCLIProject.FileLibrary.Zusi3.Datei.CreateAndLoad(selectedTimeTableFilename, ZusiCLIProject.FileLibrary.Zusi3.Datei.GetZusiDataDirs(), buffer);
+      var fpnDateiContent = fpnDatei.Content;
+
+      // Fahrplandatei im Buchfahrplan
+      dtp = DataPathType.Unknown;
+      string orgRelativeTimetableName = Zusi.GetRelativePathOf(selectedTimeTableFilename, ref dtp);
+
+
+      //****************************************
+      // get all trains that are included in the timetable: selectedTimeTableFilename
+      //****************************************
+
+      ZusiCLIProject.FileLibrary.Zusi3.Fahrplan selectedtimetable = fpnDatei.Content.Fahrplaene.FirstOrDefault();
+      ZusiCLIProject.FileLibrary.Zusi3.Fahrplan.Zugdateieintrag[] train_list = selectedtimetable.Zugdateien;
+      ZusiCLIProject.FileLibrary.Zusi3.Zug[] zug_list = fpnDateiContent.Fahrplaene.FirstOrDefault()?.ZugdateienDirekt;
+
+      var new_traineintrag_list = new List<ZusiCLIProject.FileLibrary.Zusi3.Fahrplan.Zugdateieintrag>();
+      var new_zug_list = new List<ZusiCLIProject.FileLibrary.Zusi3.Zug>();
+
+      /****************************************
+       * loop through all trains of the timetable and check importance
+       * if important: create temp train file and add to temp timetable
+       * if not important: remove from timetable
+       *****************************************/
+      _log.Debug("BuildTempTimeTable2: Loop through all trains of the timetable and check importance");
+      string selectedTrainfile = Selected_Train.GetDocument().Filename;
+      ZusiCLIProject.FileLibrary.Zusi3.Datei selectedzugDatei = ZusiCLIProject.FileLibrary.Zusi3.Datei.CreateAndLoad(selectedTrainfile, ZusiCLIProject.FileLibrary.Zusi3.Datei.GetZusiDataDirs(), buffer);
+      ZusiCLIProject.FileLibrary.Zusi3.Zug selectedzug = selectedzugDatei.Content.Zuege.FirstOrDefault();
+
+      if (selectedzug == null)
+      {
+        // Selected train not found - integrated timetable
+        // search train in zug_list
+        foreach (ZusiCLIProject.FileLibrary.Zusi3.Zug zug in zug_list)
+        {
+          if (zug.Nummer == Selected_Train.Nummer)
+          {
+            selectedzug = zug;
+            break;
+          }
+        }
+      }
+      //DateTime? selectedzug_starttime = selectedzug.GetStartTime();
+      //DateTime? selectedzug_endtime = selectedzug.GetEndTime();
+
+      DateTime? Selected_Aufgleiszeit = selectedzug.GetAufgleiszeit();
+      DateTime? Selected_Abgleiszeit = selectedzug.GetAbgleiszeit();
+      if (Selected_Aufgleiszeit != null)
+        Selected_Aufgleiszeit = Selected_Aufgleiszeit.Value.AddMinutes(-DataManager.Instance.options.RO_vorlaufzeit);
+      if (Selected_Abgleiszeit != null)
+        Selected_Abgleiszeit = Selected_Abgleiszeit.Value.AddMinutes(DataManager.Instance.options.RO_nachlaufzeit);
+
+
+      DateTime? Selected_StartTime = selectedzug.GetStartTime();
+      List<string> all_used_modules;
+      List<string> seltrain_usedmodules = selectedzug.getusedmodules(fdl2, Selected_Aufgleiszeit, Selected_Abgleiszeit, out all_used_modules, includeneigboringmodules: true);
+
+      used_streckenmodule = seltrain_usedmodules; // all_used_modules;
+
+      foreach (ZusiCLIProject.FileLibrary.Zusi3.Fahrplan.Zugdateieintrag train in train_list)
+      {
+        string trainfile = train.Datei.Dateiname;
+
+        ZusiCLIProject.FileLibrary.Zusi3.Datei zugDatei = ZusiCLIProject.FileLibrary.Zusi3.Datei.CreateAndLoad(trainfile, ZusiCLIProject.FileLibrary.Zusi3.Datei.GetZusiDataDirs(), buffer);
+        //var z = zugDatei.Content;
+        ZusiCLIProject.FileLibrary.Zusi3.Zug zug = zugDatei.Content.Zuege.FirstOrDefault();
+
+        try
+        {
+          string tmpTrainfileName = BuildTempTrain(selectedzug, zug, tmpStrippedTimeTableName, tmpTrainsFolder, fdl2, seltrain_usedmodules);
+          if (!string.IsNullOrEmpty(tmpTrainfileName))
+          {
+            train.Datei.Dateiname = tmpTrainfileName;
+
+            if (zug.Nummer == Selected_Train.Nummer)
+            {
+              result = tmpTrainfileName;
+            }
+
+            if (!zug.IsDecoTrain() || !DataManager.Instance.options.RO_starttime_no_decotrains)
+            {
+              if (zug.GetStartTime() is DateTime startTime)
+              {
+                //startTime -= TimeSpan.FromMinutes(10);
+
+                if (newStartTime == null)
+                {
+                  newStartTime = startTime;
+                }
+                else if (startTime < newStartTime)
+                {
+                  newStartTime = startTime;
+                }
+              }
+            }
+            new_zug_list.Add(zug);
+
+            _log.Debug(string.Format("BuildTempTimeTable: {0} erstellt ", zug.Gattung + zug.Nummer));
+
+          }
+        }
+        catch (Exception ex)
+        {
+          _log.Error(string.Format("BuildTempTimeTable: {0} \nERROR {1} ", zug.Gattung + zug.Nummer, ex.ToString()));
+        }
+      }
+
+      /****************************************
+     * loop through all integrated trains of the timetable and check importance
+     * if important: update train data and add to temp timetable
+     * if not important: remove from timetable
+     *****************************************/
+      _log.Debug("BuildTempTimeTable2: Loop through all integrated trains of the timetable and check importance");
+
+
+      foreach (ZusiCLIProject.FileLibrary.Zusi3.Zug zug in zug_list)
+      {
+        try
+        {
+          string tmpTrainfileName = BuildTempTrain(selectedzug, zug, tmpStrippedTimeTableName, tmpTrainsFolder, lFr.Fdl2, seltrain_usedmodules);
+          if (!string.IsNullOrEmpty(tmpTrainfileName))
+          {
+            if (zug.Nummer == Selected_Train.Nummer)
+            {
+              result = tmpTrainfileName;
+            }
+            if (!zug.IsDecoTrain() || !DataManager.Instance.options.RO_starttime_no_decotrains)
+            {
+              if (zug.GetStartTime() is DateTime startTime)
+              {
+                //startTime -= TimeSpan.FromMinutes(10);
+
+                if (newStartTime == null)
+                {
+                  newStartTime = startTime;
+                }
+                else if (startTime < newStartTime)
+                {
+                  newStartTime = startTime;
+                }
+              }
+            }
+            _log.Debug(string.Format("BuildTempTimeTable: {0} erstellt ", zug.Gattung + zug.Nummer));
+            new_zug_list.Add(zug);
+          }
+        }
+        catch (Exception ex)
+        {
+          _log.Error(string.Format("BuildTempTimeTable: {0} \nERROR {1} ", zug.Gattung + zug.Nummer, ex.ToString()));
+        }
+      }
+
+      original_traincount = train_list.Length + zug_list.Length;
+      optimised_traincount = new_zug_list.Count;
+      original_starttime = timeTable.StartTime;
+      optimized_starttime = newStartTime;
+
+      // Delete all zugdatei entries. The temp train files will be added as new ZugdateiDirekt entries, because the Zugdatei entries would point to the original train files which is not wanted.
+      _log.Debug("BuildTempTimeTable2: Update timetable with new train files");
+      selectedtimetable.Zugdateien = Array.Empty<ZusiCLIProject.FileLibrary.Zusi3.Fahrplan.Zugdateieintrag>();
+      selectedtimetable.ZugdateienDirekt = new_zug_list.ToArray();
+
+      /****************************************
+       * loop through all streckendateien of the timetable and check if they are used by the important trains
+       * if used: keep in timetable
+       * if not used: remove from timetable
+       *****************************************/
+      _log.Debug("BuildTempTimeTable2: Loop through all streckendateien of the timetable and check if they are used by the important trains");
+      original_modulecount = selectedtimetable.Streckendateien.Count();
+
+      if (DataManager.Instance.options.RO_trainselectioncriteria_Stations && DataManager.Instance.options.RO_trainselection_Streckenmodule)
+      {
+        if (used_streckenmodule.Count() > 0)
+        {
+          List<ZusiCLIProject.FileLibrary.Zusi3.Fahrplan.Streckendateieintrag> new_streckendatei_list = [];
+          foreach (ZusiCLIProject.FileLibrary.Zusi3.Fahrplan.Streckendateieintrag sde in selectedtimetable.Streckendateien)
+          {
+            if (used_streckenmodule.Contains(sde.Datei.NameOnly))
+            {
+              new_streckendatei_list.Add(sde);
+            }
+          }
+          selectedtimetable.Streckendateien = new_streckendatei_list.ToArray();
+        }
+      }
+      optimized_modulecount = selectedtimetable.Streckendateien.Count();
+
+      //ZusiDisplay anpassen
+      _log.Debug("BuildTempTimeTable2: Anpassung ZusiDisplay wird gestartet");
+      string zusiDisplayFolder = Path.Combine(CurrentTimeTableFile.Path, "ZusiDisplay");
+      if (Directory.Exists(zusiDisplayFolder))
+      {
+        string newZusiDisplayFolder = Path.Combine(tmpBaseFolder, "ZusiDisplay");
+
+        dtp = DataPathType.Unknown;
+        string currentRelativeTimetableName = Zusi.GetRelativePathOf(CurrentTimeTableFile.Filename, ref dtp).EnsureLeadingBackslash();
+        dtp = DataPathType.Unknown;
+        string tmpRelativeTimetableName = Zusi.GetRelativePathOf(tmpTimeTableName, ref dtp).EnsureLeadingBackslash();
+
+        bool needsOtherFiles = false;
+        foreach (string zda in Directory.EnumerateFiles(zusiDisplayFolder, "*.zda", SearchOption.AllDirectories))
+        {
+          try
+          {
+            ZusiDisplayFile zdaFile = new(zda);
+            zdaFile.Parse(true);
+            ZDLine line = zdaFile.Root;
+            string infrastructurdaten_str = @"..\..\Infrastrukturdaten";
+            string replace_str = @"\Timetables\Deutschland\Infrastrukturdaten";
+
+            bool dirty = false;
+
+            line.AnnounceBasicData = line.AnnounceBasicData?.Replace(infrastructurdaten_str, replace_str);
+            line.AnnounceGenericGreetingsFile = line.AnnounceGenericGreetingsFile?.Replace(infrastructurdaten_str, replace_str);
+            foreach (ZDTrack track in line.Tracks)
+            {
+              foreach (ZDTrains trains in track.Trains)
+              {
+                foreach (ZDTrain train1 in trains.Trains)
+                {
+                  train1.IsNeeded = true; //_trains.Find(ti => ti.IsImportant && ti.Zug.Gattung == train.Type && ti.Zug.Nummer == train.Number) != null;
+                  string train_type = train1.Type.Replace(" ", "_");
+                  if (Selected_Train.Gattung.Contains(train_type) && Selected_Train.Nummer.Contains(train1.Number))
+                    FIS_available = true;
+                }
+
+                if (trains.Timetable == currentRelativeTimetableName)
+                {
+                  trains.Timetable = tmpRelativeTimetableName;
+
+                  dirty = true;
+                }
+                trains.AnnounceGreetings = trains.AnnounceGreetings?.Replace(infrastructurdaten_str, replace_str);
+                trains.AnnounceNextStopFile = trains.AnnounceNextStopFile?.Replace(infrastructurdaten_str, replace_str);
+                trains.AnnounceTrainType = trains.AnnounceTrainType?.Replace(infrastructurdaten_str, replace_str);
+              }
+
+              if (dirty)
+              {
+                if (!Directory.Exists(newZusiDisplayFolder))
+                {
+                  Directory.CreateDirectory(newZusiDisplayFolder);
+                }
+
+                string newZdaName = $"{newZusiDisplayFolder.EnsureTrailingBackslash()}{Path.GetFileNameWithoutExtension(tmpTimeTableName)}.zda";
+                zdaFile.SaveAs(newZdaName);
+
+                needsOtherFiles = true;
+              }
+            }
+          }
+          catch (Exception ex)
+          {
+            _log.Error(ex.ToString());
+          }
+        }
+
+        if (needsOtherFiles)
+        {
+          DirectoryInfo dir = new(zusiDisplayFolder);
+          FileInfo[] files = dir.GetFiles();
+          foreach (FileInfo file in files)
+          {
+            if (file.Extension.ToLower() == ".zda")
+            {
+              continue;
+            }
+
+            string target = Path.Combine(newZusiDisplayFolder, file.Name);
+            file.CopyTo(target, false);
+          }
+        }
+      }
+
+      //set new start time
+      //var attributes = selectedtimetable.Attributes;
+      _log.Debug(string.Format("BuildTempTimeTable2: Set new start time {0} ", newStartTime.HasValue ? newStartTime.Value.ToString("yyyy-MM-dd HH:mm") : "null"));
+      var Attr_AnfangsZeit = selectedtimetable.Attributes.OfType<XmlAttribute>().FirstOrDefault(a => a.Name == "AnfangsZeit");
+      if (Attr_AnfangsZeit is not null)
+      {
+        Attr_AnfangsZeit.Value = newStartTime?.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+      }
+
+      fpnDatei.SaveAs(tmpTimeTableName);
+
+      // mit Fahrplan im Ganzen starten, wenn es sich um einen integrierten Fahrplan handelt
+      if (result == null)
+      {
+        result = tmpTimeTableName;
+      }
+
+      //TransferServer.Instance.TransferDirectory(tmpBaseFolder, ZDStartParameter);
+      tempTimeTableFilename = tmpTimeTableName;
+      return result;
+    }
+
+    //---------------------------------------------------------------------
+    // used to create and save optimised timetable (e.g. if train or loco is replaced)
+
+    public void BuildTempTimeTable3(ZusiKlassenLib2.Fahrplan.Zug Selected_Train, TimeTable timeTable)
+    {
+      _log.Debug("BuildTempTimeTable3 called for Selected_Train=" + (Selected_Train != null ? Selected_Train.Nummer : "null") + " and timeTable=" + (timeTable != null ? timeTable.Name : "null"));
+
+      string result = null;
+      DateTime? newStartTime = null;
+      _log.Debug(string.Format("BuildTempTimeTable3 for Train: {0} gestartet", Selected_Train.ToString()));
+      // create temporary timetable folder
+      string tmpBaseFolder = "";
+      string tmpTrainsFolder = "";
+
+      string[] array2 = Selected_Train.FahrplanDatei.Dateiname.Split('\\');
+      if (array2.Length >= 2)
+      {
+        tmpBaseFolder = ZusiKlassenLib2.Zusi.DataPath[4] + array2[0] + @"\" + array2[1] + @"\" + array2[2] + @"\";
+        //tmpBaseFolder = Zusi.DataPath[2] + @"Temp\ZusiStart\Replacementrains\";
+        tmpTrainsFolder = tmpBaseFolder + array2[3].Remove(array2[3].Length - 4) + @"\";
+      }
+
+
+
+      //string tmpBaseFolder = ZusiKlassenLib2.Zusi.DataPath[2] + Selected_Train.FahrplanDatei.Dateiname.Remove(Selected_Train.FahrplanDatei.Dateiname.Length - 4) + @"\"; // @"Timetables\myTimeTables\"+ timeTable.Name + @"\";
+
+      TimeTableFile? CurrentTimeTableFile = timeTable.Parent as TimeTableFile;
+
+      string selectedTrainFilename = Selected_Train.GetDocument().Filename;
+      string selectedTimeTableFilename = timeTable.GetDocument().Filename;
+      string tmpTimeTableName = timeTable.Name;
+
+
+      //if (Directory.Exists(tmpBaseFolder))
+      //{
+      //  try
+      //  {
+      //    DirectoryInfo di = new(tmpBaseFolder);
+      //    di.Clear();
+      //  }
+      //  catch (Exception ex)
+      //  {
+      //    _log.Error(ex.ToString());
+      //  }
+      //}
+
+      //string tmpTrainsFolder = string.Format(@"{0}{1}\", tmpBaseFolder, tmpTimeTableName);
+      try
+      {
+        Directory.CreateDirectory(tmpTrainsFolder);
+      }
+      catch (Exception ex)
+      {
+        _log.Error(ex.ToString());
+        throw;
+      }
+
+      // temporary timetable name
+      DataPathType dtp = DataPathType.Unknown;
+      tmpTimeTableName = string.Format("{0}{1}.fpn", tmpBaseFolder, tmpTimeTableName);
+      string tmpStrippedTimeTableName = ZusiKlassenLib2.Zusi.GetRelativePathOf(tmpTimeTableName, ref dtp);
+
+      // clone temporary timetable from source
+      //TimeTable testTimeTable = new(null, CurrentTimeTableFile.Root, false);
+      TimeTable tmpTimeTable = new(null, timeTable, false);
+
+      // Fahrplandatei im Buchfahrplan
+      dtp = DataPathType.Unknown;
+      string orgRelativeTimetableName = ZusiKlassenLib2.Zusi.GetRelativePathOf(selectedTimeTableFilename, ref dtp);
+
+      _allTimeTableTrains.Clear();
+      //foreach (var g in AllTrains
+      //        .Where(z => z.BelongsToTimeTable == Selected_Train.BelongsToTimeTable))
+      //{
+      //  _allTimeTableTrains.Add(g);
+      //}
+      var q = from t in timeTable.Trains
+              where t.Link != null | t.Train != null
+              select t;
+
+      foreach (var train in q)
+      {
+        TimeTableState tts = new TimeTableState() { TimeTable = timeTable, Reference = train };
+
+        if (tts.Reference.Link != null)
+        {
+          ZugDatei zd = new(tts.Reference.Link, tts.Reference.Link.Datei.FullPath);
+          zd.Parse();
+          Zug z = zd.Root;
+          if (zd.Root != null)
+          {
+            z.BelongsToTimeTable = tts.TimeTable.ID;
+            _allTimeTableTrains.Add(z);
+          }
+        }
+        else
+        {
+          Zug z = tts.Reference.Train;
+          if (z != null)
+          {
+            z.BelongsToTimeTable = tts.TimeTable.ID;
+            _allTimeTableTrains.Add(z);
+          }
+        }
+      }
+
+      //foreach (Zug zug in _timeTableTrains)
+      foreach (Zug zug in _allTimeTableTrains)
+      {
+        try
+        {
+          bool isImportant;
+
+          if (Selected_Train.Nummer == zug.Nummer)
+          {
+            isImportant = true;
+          }
+          else
+          {
+            isImportant = false;
+          }
+
+          if (isImportant)
+          {
+            ZugDatei zd;
+            string p;
+
+            Zug tmpZug = new(null, zug);
+
+            Datei d = tmpZug.FahrplanDatei;
+            d.Dateiname = tmpStrippedTimeTableName;
+            string zugFilename = zug.GetDocument().Filename;
+
+            if (tmpZug.BuchfahrplanBMPDatei != null && zug.BuchfahrplanBMPDatei.Exists)
+            {
+              string s = System.IO.Path.GetFileName(tmpZug.BuchfahrplanBMPDatei.Dateiname);
+              p = tmpTrainsFolder + s;
+              dtp = DataPathType.Unknown;
+              tmpZug.BuchfahrplanBMPDatei.Dateiname = Zusi.GetRelativePathOf(p, ref dtp);
+              if (!System.IO.File.Exists(p))
+              {
+                System.IO.File.Copy(zug.BuchfahrplanBMPDatei.FullPath, p);
+              }
+            }
+
+            string tmpTrainfileName;
+            ZugDatei zugDatei = timeTable.GetDocument() as ZugDatei;
+            if (zugDatei == null)
+            {
+              string s = tmpZug.Gattung ?? "";
+              s += tmpZug.Nummer ?? "";
+              if (string.IsNullOrEmpty(s))
+              {
+                s = Guid.NewGuid().ToString("N");
+              }
+              tmpTrainfileName = tmpTrainsFolder + s + ".trn";
+              zd = new ZugDatei(tmpTrainfileName, tmpZug);
+              tmpZug.NodeName = "Zug";
+            }
+            else
+            {
+              zd = new ZugDatei(zugDatei, tmpZug);
+              string s = System.IO.Path.GetFileName(zugDatei.Filename);
+              tmpTrainfileName = tmpTrainsFolder + s;
+            }
+            dtp = DataPathType.Unknown;
+            string tmpRelativeTrainfileName = Zusi.GetRelativePathOf(tmpTrainfileName, ref dtp);
+
+            if (tmpZug.BuchfahrplanRohDatei != null && zug.BuchfahrplanRohDatei.Exists)
+            {
+              string s = System.IO.Path.GetFileName(tmpZug.BuchfahrplanRohDatei.Dateiname);
+              p = tmpTrainsFolder + s;
+              dtp = DataPathType.Unknown;
+              tmpZug.BuchfahrplanRohDatei.Dateiname = Zusi.GetRelativePathOf(p, ref dtp);
+
+
+              //System.IO.File.Copy(zug.BuchfahrplanRohDatei.FullPath, p, true);
+            }
+
+            if (Selected_Train.Nummer == zd.Root.Nummer) // check if zd is selectedtrain
+            {
+              TrainItem ti = CurrentTrainItem;
+              if (ti != null && ti.IsLocoReplaced)
+              {
+                // search for FZGVerbandAktion in all Fahrplaneintrag and replace 2 with 1
+                foreach (FahrplanEintrag fpe in zd.Root.FahrplanEintraege)
+                {
+                  if (fpe != null)
+                  {
+                    TrainSetActionType FZGVA = fpe.FzgVerbandAktion;
+                    if (FZGVA == TrainSetActionType.CabChange && ti.IsLocoInFront)
+                    {
+                      fpe.FzgVerbandAktion = TrainSetActionType.TurnTrain;
+                      FZGVA = TrainSetActionType.TurnTrain;
+                    }
+                  }
+                }
+                zd.Root.ReplaceTrain(ti.Reihung);
+              }
+
+              if (ti != null && ti.IsTrainReplaced)
+              {
+                if (ti.IsTrainTurned)
+                {
+                  //search for FZGVerbandAktion in all Fahrplaneintrag and replace 2 with 1
+                  foreach (FahrplanEintrag fpe in zd.Root.FahrplanEintraege)
+                  {
+                    if (fpe != null)
+                    {
+                      TrainSetActionType FZGVA = fpe.FzgVerbandAktion;
+                      if (FZGVA == TrainSetActionType.CabChange && ti.IsTrainTurned)
+                      {
+                        fpe.FzgVerbandAktion = TrainSetActionType.TurnTrain;
+                        FZGVA = TrainSetActionType.TurnTrain;
+                      }
+                    }
+                  }
+                }
+
+                zd.Root.ReplaceTrain(ti.ReplaceReihung);
+              }
+
+              if (Properties.Settings.Default.StartimStillstand == 0)
+              {
+                zd.Root.StartSpeed = 0;
+              }
+            }
+            _log.Debug(string.Format("BuildTempTimeTable: {0} wird gespeichert unter {1}", zug.Gattung + zug.Nummer, tmpTrainfileName));
+            zd.SaveAs(tmpTrainfileName);
+
+            //if (zug.BuchfahrplanRohDatei?.Dateiname == Selected_Train.BuchfahrplanRohDatei?.Dateiname)
+            if (zug.Nummer == Selected_Train.Nummer)
+            {
+              result = tmpTrainfileName;
+            }
+
+          }
+        }
+        catch (Exception ex)
+        {
+          _log.Error(string.Format("BuildTempTimeTable: {0} \nERROR {1} ", zug.Gattung + zug.Nummer, ex.ToString()));
+
+        }
+
+      }
+
+    }
+
+
+    public void AddToClipBoard(string text)
+    {
+      try
+      {
+        System.Windows.Forms.Clipboard.SetText(text);
+      }
+      catch (Exception ex)
+      {
+        _log.Error("Error copying to clipboard: " + ex.ToString());
+        //Clipboard.SetText(text, System.Windows.TextDataFormat.Text);
+      }
+
+    }
+
+    public void show_gleisbelegung(string station)
+    {
+      try
+      {
+        if (true)
+        {
+          show_gleisbelegung2(station);
+          return;
+        }
+
+        //int num = (int)System.Windows.MessageBox.Show("Gleisbelegung: " + station, "Not implemented yet", MessageBoxButton.OK);
+
+        /***************************************************
+        * Test Loading Framework
+        * ************************************************/
+        //Zug zug = DataManager.Instance.CurrentTrain;
+        TimeTableRelation timetablerelation = DataManager.Instance.SelectedTimeTableRelation;
+        TimeTable timeTable = timetablerelation?.TimeTable;
+        TimeTableFile? CurrentTimeTableFile = timeTable.Parent as TimeTableFile;
+        string timetable_pathfilename = CurrentTimeTableFile.Filename;
+        DataPathType dtp1 = DataPathType.Unknown;
+        string zusi_timetablepathfilename = Zusi.GetRelativePathOf(timetable_pathfilename, ref dtp1);
+        string selectedTimeTableFilename = timeTable.GetDocument().Filename;
+
+        _log.Debug("BuildTempTimeTable2: Test Loading Framework");
+        string relPfad = zusi_timetablepathfilename;
+        var lFr = new ZusiCLIProject.FileLibrary.Zusi3.ZusiFdl.LoadingFramework<int>();
+        lFr.DataDirs = ZusiCLIProject.FileLibrary.Zusi3.Datei.GetZusiDataDirs();
+        //lFr.FahrplanPfade = new string[] { relPfad };
+        lFr.FahrplanPfade = [relPfad];
+        var intHelper = new LoadingFrameworkSystemWpfImpl();
+        ZusiCLIProject.FileLibrary.Zusi3.ZusiFdl.ZusiFdl2 fdl2 = null;
+        try
+        {
+          lFr.InitItems(intHelper.ItemAdder);
+          lFr.StartLoading(intHelper.ItemUpdater, intHelper.ItemFinished);
+          fdl2 = lFr.Fdl2;
+          _log.Debug(string.Format("BuildTempTimeTable2: Test Loading Framework finished. Loaded {0} lines.", intHelper.LinesTotal));
+        }
+        catch (Exception ex)
+        {
+          fdl2 = null;
+          _log.Error("BuildTempTimeTable2: Test Loading Framework failed." + ex.ToString());
+          if (ex.InnerException != null)
+          {
+            _log.Fatal("Inner Exception:");
+            _log.Fatal(ex.InnerException.ToString);
+            _log.Fatal(ex.InnerException.StackTrace);
+          }
+        }
+
+
+        // clone temporary timetable from source
+        //TimeTable testTimeTable = new(null, CurrentTimeTableFile.Root, false);
+        //TimeTable tmpTimeTable = new(null, timeTable, false);
+        var buffer = new Dictionary<string, ZusiCLIProject.FileLibrary.Zusi3.Zusi>(System.StringComparer.InvariantCulture);
+        var fpnDatei = ZusiCLIProject.FileLibrary.Zusi3.Datei.CreateAndLoad(selectedTimeTableFilename, ZusiCLIProject.FileLibrary.Zusi3.Datei.GetZusiDataDirs(), buffer);
+        var fpnDateiContent = fpnDatei.Content;
+
+        // Fahrplandatei im Buchfahrplan
+        DataPathType dtp;
+        dtp = DataPathType.Unknown;
+        string orgRelativeTimetableName = Zusi.GetRelativePathOf(selectedTimeTableFilename, ref dtp);
+
+
+        //****************************************
+        // get all trains that are included in the timetable: selectedTimeTableFilename
+        //****************************************
+
+        ZusiCLIProject.FileLibrary.Zusi3.Fahrplan Fahrplan = fpnDatei.Content.Fahrplaene.FirstOrDefault();
+        ZusiCLIProject.FileLibrary.Zusi3.Fahrplan.Zugdateieintrag[] train_list = Fahrplan.Zugdateien;
+        ZusiCLIProject.FileLibrary.Zusi3.Zug[] zug_list = fpnDateiContent.Fahrplaene.FirstOrDefault()?.ZugdateienDirekt;
+
+        var new_traineintrag_list = new List<ZusiCLIProject.FileLibrary.Zusi3.Fahrplan.Zugdateieintrag>();
+        var new_zug_list = new List<ZusiCLIProject.FileLibrary.Zusi3.Zug>();
+
+        foreach (ZusiCLIProject.FileLibrary.Zusi3.Fahrplan.Zugdateieintrag train in train_list)
+        {
+          string trainfile = train.Datei.Dateiname;
+
+          ZusiCLIProject.FileLibrary.Zusi3.Datei zugDatei = ZusiCLIProject.FileLibrary.Zusi3.Datei.CreateAndLoad(trainfile, ZusiCLIProject.FileLibrary.Zusi3.Datei.GetZusiDataDirs(), buffer);
+          //var z = zugDatei.Content;
+          ZusiCLIProject.FileLibrary.Zusi3.Zug zug1 = zugDatei.Content.Zuege.FirstOrDefault();
+
+          try
+          {
+            new_zug_list.Add(zug1);
+          }
+          catch (Exception ex)
+          {
+            _log.Error(string.Format("BuildTempTimeTable: \nERROR {0} ", ex.ToString()));
+          }
+        }
+        foreach (ZusiCLIProject.FileLibrary.Zusi3.Zug zug1 in zug_list)
+        {
+          try
+          {
+            new_zug_list.Add(zug1);
+          }
+          catch (Exception ex)
+          {
+            _log.Error(string.Format("BuildTempTimeTable: \nERROR {0} ", ex.ToString()));
+          }
+        }
+
+        /****************************************
+       * loop through all integrated trains of the timetable and check importance
+       * if important: update train data and add to temp timetable
+       * if not important: remove from timetable
+       *****************************************/
+        _log.Debug("BuildTempTimeTable2: Loop through all integrated trains of the timetable and check importance");
+        new GleisbelegungWindow(new_zug_list.ToArray(), station).Show();
+
+
+
+
+      }
+      catch (Exception ex)
+      {
+        _log.Error(string.Format("BuildTempTimeTable: \nERROR {0} ", ex.ToString()));
+      }
+    }
+
+    public void show_gleisbelegung2(string station)
+    {
+      try
+      {
+        //int num = (int)System.Windows.MessageBox.Show("Gleisbelegung: " + station, "Not implemented yet", MessageBoxButton.OK);
+
+        /***************************************************
+        * Test Loading Framework
+        * ************************************************/
+
+        TimeTableRelation timetablerelation = DataManager.Instance.SelectedTimeTableRelation;
+        TimeTable timeTable = timetablerelation?.TimeTable;
+        TimeTableFile? CurrentTimeTableFile = timeTable.Parent as TimeTableFile;
+        string timetable_pathfilename = CurrentTimeTableFile.Filename;
+        DataPathType dtp1 = DataPathType.Unknown;
+        string zusi_timetablepathfilename = Zusi.GetRelativePathOf(timetable_pathfilename, ref dtp1);
+        string selectedTimeTableFilename = timeTable.GetDocument().Filename;
+
+        var new_zug_list = new List<Zug>();
+
+        foreach (var train in timeTable.Trains)
+        {
+
+
+          try
+          {
+            if (train.Train != null)
+            {
+              new_zug_list.Add(train.Train);
+            }
+
+
+            if (train.Link != null)
+            {
+              ZugDatei zd = train.Link.ZugDatei;
+              zd.Parse();
+              Zug zug = zd.Root;
+              if (zd.Root != null)
+              {
+                new_zug_list.Add(zug);
+              }
+            }
+
+          }
+
+          catch (Exception ex)
+          {
+            _log.Error(string.Format("show_gleisbelegung2: \nERROR {0} ", ex.ToString()));
+          }
+        }
+
+        new GleisbelegungWindow(new_zug_list.ToArray(), station).Show();
+
+      }
+      catch (Exception ex)
+      {
+        _log.Error(string.Format("BuildTempTimeTable: \nERROR {0} ", ex.ToString()));
+      }
+    }
+
   }
+
 }
+

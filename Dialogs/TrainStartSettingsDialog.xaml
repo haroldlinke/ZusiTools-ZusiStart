@@ -54,27 +54,30 @@
       <TextBlock Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10" Text="{Binding Source='Zum Starten eines Zuges wird die integrierte TCP/IP Fahrpult-Schnittstelle des Zusi verwendet (Hp1). Die Alternative ist der Start eines Zuges über die Kommandozeile (Hp0).', Converter={StaticResource Loc}}"/>
 
 
-
       <ToggleButton Grid.Row="3" Margin="0,0,12,0" Grid.RowSpan="2" IsChecked="{Binding OptimiseSchedule, Mode=TwoWay}" VerticalAlignment="Bottom" Style="{StaticResource SemaphoreToggleButtonStyle}"/>
       <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Source='Fahrplan Optimierung', Converter={StaticResource Loc}}" Margin="0,12,0,0"/>
       <TextBlock Grid.Row="4" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10" Text="{Binding Source='Es wird ein temporärer Fahrplan mit den Zügen erstellt, die während der Fahrzeit des ausgewählten Zuges fahren. Alle anderen Züge werden aus dem Fahrplan gelöscht.', Converter={StaticResource Loc}}"/>
 
-      <ToggleButton Grid.Row="5" Margin="0,0,12,0" Grid.RowSpan="2" IsChecked="{Binding StartBildfahrplan, Mode=TwoWay}" VerticalAlignment="Bottom" Style="{StaticResource SemaphoreToggleButtonStyle}"/>
-      <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Source='Bildfahrplan starten', Converter={StaticResource Loc}}" Margin="0,12,0,0"/>
-      <TextBlock Grid.Row="6" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10" Text="{Binding Source='(Hp1) Das Programm Bildfahrplan wird mit dem Bildfahrplan des ausgewählten Zuges gestartet, wenn der Zu gestartet wird. Das Zusi Bildfahrplan Programm kann von hier heruntergeladen werden. https://zusi-tools.de/downloads.html', Converter={StaticResource Loc}}"/>
 
-      <ToggleButton Grid.Row="7" Margin="0,0,12,0" Grid.RowSpan="2" IsChecked="{Binding StartFIS, Mode=TwoWay}" VerticalAlignment="Bottom" Style="{StaticResource SemaphoreToggleButtonStyle}"/>
-      <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Source='Fahrgast Informationssystem starten', Converter={StaticResource Loc}}" Margin="0,12,0,0"/>
-      <TextBlock Grid.Row="8" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10" Text="{Binding Source='(Hp1) Zusi Display als Fahrgast Informationssystem wird mit dem Zug gestartet, wenn der Zug ein FIS hat.', Converter={StaticResource Loc}}"/>
+      <ToggleButton Grid.Row="5" Margin="0,0,12,0" Grid.RowSpan="2" IsChecked="{Binding StartimStillstand, Mode=TwoWay}" VerticalAlignment="Bottom" Style="{StaticResource SemaphoreToggleButtonStyle}" Visibility="{Binding OptimiseSchedule, Converter={StaticResource BoolToVisibilityConverter}}"/>
+      <!--<ToggleButton Grid.Row="5" Margin="25,14,14,0" Grid.RowSpan="2" IsChecked="{Binding StartimStillstand, Mode=TwoWay}" VerticalAlignment="Top" Visibility="{Binding OptimiseSchedule, Converter={StaticResource BoolToVisibilityConverter}}" Height="24"/>-->
+      <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Source='Zug immer im Stillstand starten (Nur bei eingeschalteter Fahrplan Optimierung )', Converter={StaticResource Loc}}" Margin="0,12,0,0" Visibility="{Binding OptimiseSchedule, Converter={StaticResource BoolToVisibilityConverter}}"/>
+      <TextBlock Grid.Row="6" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10" Text="{Binding Source='(Hp1) Züge werden immer im Stillstand gestartet, auch wenn der Fahrplan etwas anderes vorsieht', Converter={StaticResource Loc}}" Visibility="{Binding OptimiseSchedule, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
-      <ToggleButton Grid.Row="9" Margin="0,0,12,0" Grid.RowSpan="2" IsChecked="{Binding StartZusiMeter, Mode=TwoWay}" VerticalAlignment="Bottom" Style="{StaticResource SemaphoreToggleButtonStyle}"/>
-      <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding Source='ZusiMeter starten (Beta Test)', Converter={StaticResource Loc}}" Margin="0,12,0,0"/>
-      <TextBlock Grid.Row="10" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10" Text="{Binding Source='(Hp1) ZusiMeter wird mit dem Zug gestartet (wenn ZusiMeter installiert ist. Das ZusiMeter Programm kann von hier heruntergeladen werden: https://zusi-tools.de/downloads.html', Converter={StaticResource Loc}}"/>
 
-      <ToggleButton Grid.Row="11" Margin="0,0,12,0" Grid.RowSpan="2" IsChecked="{Binding StartimStillstand, Mode=TwoWay}" VerticalAlignment="Bottom" Style="{StaticResource SemaphoreToggleButtonStyle}"/>
-      <TextBlock Grid.Row="11" Grid.Column="1" Text="{Binding Source='Zug immer im Stillstand starten', Converter={StaticResource Loc}}" Margin="0,12,0,0"/>
-      <TextBlock Grid.Row="12" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10" Text="{Binding Source='(Hp1) Züge werden immer im Stillstand gestartet, auch wenn der Fahrplan etwas anderes vorsieht', Converter={StaticResource Loc}}"/>
+      <ToggleButton Grid.Row="7" Margin="0,0,12,0" Grid.RowSpan="2" IsChecked="{Binding StartBildfahrplan, Mode=TwoWay}" VerticalAlignment="Bottom" Style="{StaticResource SemaphoreToggleButtonStyle}"/>
+      <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Source='Bildfahrplan starten', Converter={StaticResource Loc}}" Margin="0,12,0,0"/>
+      <TextBlock Grid.Row="8" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10" Text="{Binding Source='(Hp1) Das Programm Bildfahrplan wird mit dem Bildfahrplan des ausgewählten Zuges gestartet, wenn der Zu gestartet wird. Das Zusi Bildfahrplan Programm kann von hier heruntergeladen werden. https://zusi-tools.de/downloads.html', Converter={StaticResource Loc}}"/>
 
+      <ToggleButton Grid.Row="9" Margin="0,0,12,0" Grid.RowSpan="2" IsChecked="{Binding StartFIS, Mode=TwoWay}" VerticalAlignment="Bottom" Style="{StaticResource SemaphoreToggleButtonStyle}"/>
+      <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding Source='Fahrgast Informationssystem starten', Converter={StaticResource Loc}}" Margin="0,12,0,0"/>
+      <TextBlock Grid.Row="10" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10" Text="{Binding Source='(Hp1) Zusi Display als Fahrgast Informationssystem wird mit dem Zug gestartet, wenn der Zug ein FIS hat.', Converter={StaticResource Loc}}"/>
+
+      <ToggleButton Grid.Row="11" Margin="0,0,12,0" Grid.RowSpan="2" IsChecked="{Binding StartZusiMeter, Mode=TwoWay}" VerticalAlignment="Bottom" Style="{StaticResource SemaphoreToggleButtonStyle}"/>
+      <TextBlock Grid.Row="11" Grid.Column="1" Text="{Binding Source='ZusiMeter starten (Beta Test)', Converter={StaticResource Loc}}" Margin="0,12,0,0"/>
+      <TextBlock Grid.Row="12" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10" Text="{Binding Source='(Hp1) ZusiMeter wird mit dem Zug gestartet (wenn ZusiMeter installiert ist. Das ZusiMeter Programm kann von hier heruntergeladen werden: https://zusi-tools.de/downloads.html', Converter={StaticResource Loc}}"/>
+
+      
       <StackPanel Orientation="Horizontal" Grid.Row="17" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0,12,0,0">
         <Button Command="{x:Static local:TrainStartSettingsDialog.OkCommand}" Content="{Binding Source='Übernehmen', Converter={StaticResource Loc}}" IsDefault="True" Style="{StaticResource ZusiStartGreenButtonStyle}" Margin="0,0,6,0"/>
         <Button Content="{Binding Source='Abbrechen', Converter={StaticResource Loc}}" IsCancel="True" Style="{StaticResource ZusiStartRedButtonStyle}"/>

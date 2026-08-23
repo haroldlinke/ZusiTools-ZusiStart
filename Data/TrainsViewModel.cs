@@ -8,13 +8,13 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
-using ZusiKlassenLib.Fahrplan;
-using ZusiKlassenLib.TimeTable;
+using ZusiKlassenLib2.Fahrplan;
+using ZusiKlassenLib2.TimeTable;
 using ZusiStart.Miscellaneous;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.Input;
 using System.Runtime.CompilerServices;
-using ZusiKlassenLib.Vehicle;
+using ZusiKlassenLib2.Vehicle;
 //using ZusiCLIProject.FileLibrary.Zusi3;
 //using ZusiCLIProject.FileLibrary.Zusi3;
 
@@ -78,6 +78,7 @@ namespace ZusiStart.Data
     public ICommand MarkAsFavoriteCommand { get; }
     public ICommand UnmarkFavoriteCommand { get; }
     public ICommand MarkAsRepTrainCommand { get; }
+    public ICommand TVcopyPathCommand { get; }
 
     //---------------------------------------------------------------------
     public static bool TrainFiltered_ok(Zug m)
@@ -337,6 +338,7 @@ namespace ZusiStart.Data
         if (!DataManager.Instance.RecentTrains.Any(f => f.Train.BelongsToTimeTable == train.BelongsToTimeTable && f.Train.Nummer == train.Nummer))
         {
           DataManager.Instance.RecentTrains.Add(rt);
+          DataManager.Instance.RecentTrains.Save();
           IsFavorite = true;
         }
 
@@ -358,6 +360,17 @@ namespace ZusiStart.Data
         {
           DataManager.Instance.RecentTrains.Remove(recentTrain);
           IsFavorite = false;
+        }
+      });
+
+      TVcopyPathCommand = new RelayCommand<TrainsViewModel>(tvm =>
+      {
+        Zug train = tvm.Object as Zug;
+        ZugDatei trainfile = train.Parent as ZugDatei;
+        if (trainfile != null)
+        {
+          string trainfilename = trainfile.Filename;
+          DataManager.Instance.AddToClipBoard(trainfilename);
         }
       });
 
@@ -627,22 +640,34 @@ namespace ZusiStart.Data
 
             if (DataManager.SearchTrainValue != null)
             {
-              n = DataManager.SearchTrainValue.Replace(" ", "").Trim().ToLower();
+              n = DataManager.SearchTrainValue;
               if (!string.IsNullOrEmpty(n))
               {
-                string zugnr = (z1.Gattung + z1.Nummer).Replace(" ", "").Trim().ToLower();
-                bool train_found2 = zugnr.Contains(n) == true;
-                bool train_found3 = false;
 
-                //return z.FahrplanEintraege.Any(f => f.Bestrst != null && string.Compare(n, f.Bestrst.Replace(" ", "").Trim(), true) == 0);
-
-                //check for Betriebsstelle
-
-                if (train_found2 == false)
+                if (n.ToLower().StartsWith("br") && n.Length > 2)
                 {
-                  train_found3 = z1.FahrplanEintraege.Any(f => f.Bestrst != null && DataManager.IsValidName(f.Bestrst) && f.Bestrst.Replace(" ", "").Trim().ToLower().Contains(n, StringComparison.OrdinalIgnoreCase));
+                  string br_to_search = n.Substring(2);
+                  bool br_found = z1.Fahrzeuge.ContainsVehicle(br_to_search);
+                  e.Accepted = e.Accepted && br_found;
+                  return;
                 }
-                e.Accepted = e.Accepted && (train_found3 || train_found2);
+                else
+                {
+                  n = DataManager.SearchTrainValue.Replace(" ", "").Trim().ToLower();
+                  string zugnr = (z1.Gattung + z1.Nummer).Replace(" ", "").Trim().ToLower();
+                  bool train_found2 = zugnr.Contains(n) == true;
+                  bool train_found3 = false;
+
+                  //return z.FahrplanEintraege.Any(f => f.Bestrst != null && string.Compare(n, f.Bestrst.Replace(" ", "").Trim(), true) == 0);
+
+                  //check for Betriebsstelle
+
+                  if (train_found2 == false)
+                  {
+                    train_found3 = z1.FahrplanEintraege.Any(f => f.Bestrst != null && DataManager.IsValidName(f.Bestrst) && f.Bestrst.Replace(" ", "").Trim().ToLower().Contains(n, StringComparison.OrdinalIgnoreCase));
+                  }
+                  e.Accepted = e.Accepted && (train_found3 || train_found2);
+                }
               }
             }
           }
@@ -654,6 +679,14 @@ namespace ZusiStart.Data
           {
             bool vehiclegroup_found = z3.Fahrzeuge.ContainsVehicle(DataManager.SearchVehicleGroupValue.AllVariants) == true;
             e.Accepted = e.Accepted && vehiclegroup_found;
+          }
+        }
+        if (DataManager.FoundTimeTableIds != null)
+        {
+          if (tvm.Object is Zug z4)
+          {
+            string zugID = z4.ID.ToString();
+            e.Accepted = e.Accepted && DataManager.FoundTimeTableIds.Any(p => zugID == p);
           }
         }
       }

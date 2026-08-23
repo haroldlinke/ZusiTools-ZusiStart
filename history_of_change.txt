@@ -1,4 +1,76 @@
-﻿8.6.13 - 03-02-2026
+﻿
+8.7.15 - 07.06.2026
+- trains with replace locos will now be saved in temp\trn folder, to avoid issues when starting the train
+
+8.7.14 - 05.06.2026
+- trains with replace locos will now be saved in temp folder
+- Fahrpläne mit externen Zugreihungsdateien werden jetzt unterstützt
+
+8.7.13 - 17.05.2026
+- new: save of train with replaced loco
+- Programmeinstellung konnten zurückgesetzt werden, wenn das Programmeinstellungenfenster nicht geöffnet wurde
+
+8.7.12 - 09.05.2026
+- Crash when ZusiMeter example layouts folder not found fixed
+- "Train Search" search for Baureihe did not work correctly
+- Corrected title in timetable list for Baureihe search
+
+8.7.11 - 07.05.2026
+- Error message "Zusi not installed" extended for Steam-Users
+- Added Refresh-Option to reload all timetables and trains, for timetable editors to check their changes without restarting the program
+- Added "Copy Path" option to context menu of timetables and trains, to copy the path of the selected timetable or train to the clipboard for easier access
+- added posibility to search for Baureihen in the train list - in Zugsuche add "BR" in front of the Baureihen number, e.g. "BR 101" to search for all trains with Baureihe 101". 
+  In Locomotive search there is a new text field to enter the Baureihe (without "BR")
+
+
+8.7.9 - 08.04.2026
+- Option "Zug im Stillstand starten" nicht gut erkennbar. Neue Lösung für Semaphordefinition implementiert, die Ausblenden ohne Absturz des Programms erlaubt.
+
+
+8.7.8 - 08.04.2026
+- Absturz, wenn die Option "Zug im Stillstand starten" eingeschaltet wurde. Behoben.
+- Im Fahrplan Erfurt-Theuern_2025_10-14Uhr_Fiktiver-D-Takt die Züge 53214/53218/53219/53223 bleibt "Erzeuge Fahrzeugbilder..." stehen und es wird kein Zug angezeigt. Behoben.
+- Fehler im Fahrplan Mannheim-Stuttgart Nordbaden_1999_13-18Uhr verhindern den Start von Zügen, wenn die Optimierung eingeschaltet ist. Behoben.
+
+8.7.7 - 24-03-2026
+Corrections:
+- Crash when starting ZusiStart with Steamversion of Zusi. Buchfahrplanlayout selector was not initialized correctly. 
+- The file NativeStandards.csv was notfound when starting ZusiStart with Steamversion of Zusi. Wrong directory was used.
+- Favorites were not saved when added via the context menu.
+- Added detailed debug messages
+- release version does not log debug messages anymore
+- result of routeoptimisation is reported in the status line.
+
+8.7.6 - 13-03-2026
+- by Routeoptimisation: in the option to limit the trains in the optimized timetable to trains that are running through streckenmodule visited by the selected train, the final destination streckenmodule was missing. This could lead to the issue that trains running through the final destination streckenmodule were not included in the optimized timetable, even if they were running through streckenmodule visited by the selected train. This issue is now fixed and the final destination streckenmodule is included in the optimization.
+- Routeoptimisation: Train S85458 was runing alone in the silmulation: calculation of "Abgleiszeit" was wrong - corrected
+- Routeoptimisation: new option to limit the loaded Streckenmodule to the Streckenmodule used by the trains in the optimized schedule.
+- Routeoptimisation: the routeoptimisation is now including the neighboring streckenmodule of the selected train, to include trains or landscapes that are on a different Streckenmodul but are still visible from the selected train
+
+8.7.5 - 13-03-2026
+- Message:blocked for violating OpenStreetMap's tile usage policy. Added  visible licence attribution, following the Attribution Guidelines. Added a valid HTTP User-Agent that clearly identifies ZusioStart and provides means of contacting the developer in case of problems. 
+- Added a link to the Tracking Page for more information about its use of OpenStreetMap data.
+- Cache tiles locally according to HTTP caching headers to reduce the number of requests to OpenStreetMap servers and improve performance for users.
+- Routeoptimisation:the updated the new option for routeoptmisation  to limit the trains in the optimized timetable to trains that are running through streckenmodule visited by the selected train, this can be used to exclude trains that are only running on a different part of the route and therefore do not have an influence on the selected train.
+- Updated the documentation to reflect the changes in the routeoptimisation and user interface
+
+8.7.4 - 03-03-2026
+- additional visualisation for the routegraph: age of the streckenmodul. The age is calculated based on the date of the last modification of the streckenmodul and is visualized by a color code.
+
+8.7.3 - 02-03-2026
+- BuchfahrplanLayout FahrzeitenheftGeschwindigkeitsheft_DB_1988 zeigt nur die 2.Seite, korrigiert. Seite 1 wird jetzt auch angezeigt.
+
+8.7.2 - 01-03-2026
+- updated Buchfahrplanlayout to the new layout of the Buchfahrplan in Zusi
+- added program option to select the layout of the Buchfahrplan manually, otherwise the layout is automatically taken from the trn-file
+
+8.7.1 - 19-02-2026
+- additional optimisation parameters:
+  - starttime: decotrains starting at the timetable start could prevent the correct calculation of the optimised starttime. The new option allows to ignore deco trains when determining the starttime of the schedule.
+  - stations: the new option allows to limit the trains in the optimized timetable to trains that are running through stations visited by the selected train, this can be used to exclude trains that are only running on a different part of the route and therefore do not have an influence on the selected train.
+  - internal: the optimisation is now using the class library of F.Schn. avoiding the issue of new attributes or elements in the xml-files are not transferred to the optmised schedules. The new class library creates intergareted schedules and is therefore only used when trains are started via TCP/IP
+
+8.6.13 - 03-02-2026
 - when a train was started via the direct Zusi call and no timetable.xml files are available, a wrong train could be started
 
 8.6.12 - 02-02-2026

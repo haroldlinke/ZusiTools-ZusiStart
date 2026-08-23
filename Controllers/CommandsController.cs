@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using ZusiKlassenLib;
-using ZusiKlassenLib.Fahrplan;
+using ZusiKlassenLib2;
+using ZusiKlassenLib2.Fahrplan;
 using ZusiStart.Data;
 using System.Windows;
 using System.Windows.Input;
-using ZusiKlassenLib.Cab;
+using ZusiKlassenLib2.Cab;
 
 
 [ApiController]

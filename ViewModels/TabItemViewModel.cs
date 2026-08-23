@@ -10,9 +10,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using ZusiCLIProject.Routegraph2;
-using ZusiKlassenLib;
-using ZusiKlassenLib.Buchfahrplan;
-using ZusiKlassenLib.Cab;
+using ZusiKlassenLib2;
+using ZusiKlassenLib2.Buchfahrplan;
+using ZusiKlassenLib2.Cab;
+using ZusiStart.Controls;
 using ZusiStart.Data;
 using ZusiStart.Miscellaneous;
 using ZusiStart.ViewModels;
@@ -37,6 +38,7 @@ namespace ZusiStart.ViewModels
     // Cache the control instance here
     //public object RouteGraphContent { get; }
     public RouteGraph2Control RouteGraphContent { get; }
+    public BildfahrplanControl BildfahrplanContent { get; }
 
     private ImageSource _imageSource;
     public ImageSource ImageSource
@@ -63,7 +65,7 @@ namespace ZusiStart.ViewModels
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    public TabViewModel(string title, string url = null, bool isPdf = false, bool isIntro = false, bool isImageTab = false, bool isroutegraph = false, bool isgmap = false, string? tooltip = null)
+    public TabViewModel(string title, string url = null, bool isPdf = false, bool isIntro = false, bool isImageTab = false, bool isroutegraph = false, bool isgmap = false, bool isbildfahrplan = false, string? tooltip = null)
     {
       Title = title;
       Tooltip = tooltip;
@@ -74,18 +76,19 @@ namespace ZusiStart.ViewModels
       IsImageTab = isImageTab;
       WebViewInstance = new WebView2();
       PDFViewerUrl = null;
-      if (isgmap == true)
-      {
-        gmap = new GMapControl();
-      }
-      if (isroutegraph == true)
-      {
-        RouteGraphContent = new RouteGraph2Control();
-      }
+      //if (isgmap == true)
+      //{
+      //  gmap = new GMapControl();
+      //}
+      //if (isroutegraph == true)
+      //{
+      //  RouteGraphContent = new RouteGraph2Control();
+      //}
+      //if (isbildfahrplan == true)
+      //{
+      //  BildfahrplanContent = new BildfahrplanControl();
+      //}
       
-      // Assuming vm is your TrackingViewModel and RouteVisual already set
-      //gmap.OnMapZoomChanged += () => UpdateRouteTransform(gmap, utmBounds, canvasBounds, zone: 32, northHemisphere: true);
-      //gmap.OnMapDrag += () => UpdateRouteTransform(gmap, utmBounds, canvasBounds, zone: 32, northHemisphere: true);
     }
 
     private Matrix _routeTransformMatrix = Matrix.Identity;

@@ -4,12 +4,13 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.VisualBasic.Logging;
 using Sovoma;
 using System;
 using System.Globalization;
 using System.IO;
 using System.Windows;
-using ZusiKlassenLib;
+using ZusiKlassenLib2;
 using ZusiStart.Data;
 
 namespace ZusiStart
@@ -26,16 +27,6 @@ namespace ZusiStart
     public App()
     {
       AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-#if WIN32
-#if false
-            AppDomain.CurrentDomain.AssemblyResolve += Resolver;
-            InitializeCefSharp();
-#else
-            CefSettings settings = new CefSettings();
-            settings.BrowserSubprocessPath = @"x86\BrowserSubprocess.exe";
-            Cef.Initialize(settings, false, null);
-#endif
-#endif
       // setup log4net
       //GlobalContext.Properties["LogPath"] = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
       //log4net.Config.XmlConfigurator.Configure();
@@ -53,46 +44,48 @@ namespace ZusiStart
     {
       if (!Zusi.IsInstalled)
       {
-        throw new InvalidOperationException("Dieses Programm kann nicht ausgeführt werden, da die Vollversion des Zusi nicht installiert ist.");
+        throw new InvalidOperationException("Dieses Programm kann nicht ausgeführt werden, da die Vollversion des Zusi nicht installiert ist.\nFür Steam-Anwender: Zusi Dateiverwaltung als Administrator öffnen -> Verwaltung -> Generelle Zusi-Einstellungen öffnen und mit OK Abspeichern.");
       }
       string tmpBaseFolder = Zusi.DataPath[2] + @"Temp\";
       GlobalContext.Properties["LogPath"] = tmpBaseFolder;
+#if DEBUG
       log4net.Config.XmlConfigurator.Configure(new FileInfo("log4net.config"));
-      //og4net.Config.XmlConfigurator.Configure();
-      _log.Debug(" ");
-      _log.Debug("**************************************************************************");
-      _log.Debug("*");
-      _log.Debug("* ZusiStart started - Version:" + AsmInfo.Version.ToString());
-      _log.Debug("*");
-      _log.Debug("*Test*************************************************************************");
+#else
+      log4net.Config.XmlConfigurator.Configure(new FileInfo("log4net.release.config"));
+#endif
+      _log.Info(" ");
+      _log.Info(" ");
+      _log.Info(" ");
+      _log.Info("**************************************************************************");
+      _log.Info("*");
+      _log.Info("* ZusiStart started - Version:" + AsmInfo.Version.ToString());
+      _log.Info("*");
+      _log.Info("**************************************************************************");
       _log.Info("Get Dirs: ZusiExecutable: " + Zusi.Executable);
       _log.Info("Get Dirs: ZusiVerzeichnis:" + Zusi.ZusiPath);
       _log.Info("Get Dirs: ZusiDatenVerzeichnisOffiziell: " + Zusi.DataPath[0]);
       _log.Info("Get Dirs: ZusiDatenVerzeichnis:" + Zusi.DataPath[2]);
-      _log.Debug("Debug lebel enabled");
+      _log.Debug("Debug level enabled");
       _log.Warn("Warning level enabled");
       _log.Info("Info level enabled");
       _log.Error("Error level enabled");
       _log.Fatal("Fatal level enabled");
 
-      base.OnStartup(e);
-
-      // Start Kestrel in a separate thread
-      Thread kestrelThread = new Thread(() =>
+      try
       {
-        _host = Host.CreateDefaultBuilder()
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-              webBuilder.UseKestrel()
-                            .UseStartup<Startup>();
-            })
-            .Build();
-
-        _host.Run();
-      });
-
-      kestrelThread.IsBackground = true;
-      kestrelThread.Start();
+        base.OnStartup(e);
+      }
+      catch (Exception ex)
+      {
+        _log.Error(ex.ToString());
+        if (ex.InnerException != null)
+        {
+          _log.Fatal("Inner Exception:");
+          _log.Fatal(ex.InnerException.ToString);
+          _log.Fatal(ex.InnerException.StackTrace);
+        }
+        MessageBox.Show(ex.Message, LocalizationManager.Translate("Dieser Fehler lässt sich nicht gerade biegen"), MessageBoxButton.OK, MessageBoxImage.Error);
+      }
     }
 
     protected override void OnExit(ExitEventArgs e)
@@ -114,49 +107,14 @@ namespace ZusiStart
           _log.Fatal(ex.InnerException.StackTrace);
         }
 
-        Xceed.Wpf.Toolkit.MessageBox.Show(ex.Message, LocalizationManager.Translate("Dieser Fehler lässt sich nicht gerade biegen"), MessageBoxButton.OK, MessageBoxImage.Error);
+        MessageBox.Show(ex.Message, LocalizationManager.Translate("Dieser Fehler lässt sich nicht gerade biegen"), MessageBoxButton.OK, MessageBoxImage.Error);
       }
       else
       {
-        Xceed.Wpf.Toolkit.MessageBox.Show(e.ExceptionObject.ToString(), LocalizationManager.Translate("Dieser Fehler lässt sich nicht gerade biegen"), MessageBoxButton.OK, MessageBoxImage.Error);
+        MessageBox.Show(e.ExceptionObject.ToString(), LocalizationManager.Translate("Dieser Fehler lässt sich nicht gerade biegen"), MessageBoxButton.OK, MessageBoxImage.Error);
       }
     }
 
-#if WIN32
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private static void InitializeCefSharp()
-        {
-            var settings = new CefSettings
-            {
-                // Set BrowserSubProcessPath based on app bitness at runtime
-                BrowserSubprocessPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
-                                                     Environment.Is64BitProcess ? "x64" : "x86",
-                                                     "CefSharp.BrowserSubprocess.exe")
-            };
-
-            // Make sure you set performDependencyCheck false
-            Cef.Initialize(settings, performDependencyCheck: false, browserProcessHandler: null);
-        }
-
-        // Will attempt to load missing assembly from either x86 or x64 subdir
-        // Required by CefSharp to load the unmanaged dependencies when running using AnyCPU
-        private static Assembly Resolver(object sender, ResolveEventArgs args)
-        {
-            if (args.Name.StartsWith("CefSharp"))
-            {
-                string assemblyName = args.Name.Split(new[] { ',' }, 2)[0] + ".dll";
-                string archSpecificPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
-                                                       Environment.Is64BitProcess ? "x64" : "x86",
-                                                       assemblyName);
-
-                return File.Exists(archSpecificPath)
-                           ? Assembly.LoadFile(archSpecificPath)
-                           : null;
-            }
-
-            return null;
-        }
-#endif
   }
 }
 

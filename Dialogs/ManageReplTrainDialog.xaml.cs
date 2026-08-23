@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 //using ZusiCLIProject.FileLibrary.Zusi3;
-using ZusiKlassenLib.Fahrplan;
+using ZusiKlassenLib2.Fahrplan;
 using ZusiStart.Data;
 
 namespace ZusiStart.Dialogs

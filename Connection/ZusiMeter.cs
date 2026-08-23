@@ -105,7 +105,7 @@ namespace ZusiStart.Connection
         }
       }
       catch {
-        _log.Debug("ZusiMeter Error terminating");
+        _log.Error("ZusiMeter Error terminating");
       };
     }
 

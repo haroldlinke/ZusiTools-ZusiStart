@@ -1,4 +1,9 @@
-﻿using GMap.NET;
+﻿using AvalonDock;
+using AvalonDock.Layout;
+using AvalonDock.Layout.Serialization;
+using CommunityToolkit.Mvvm.Input;
+using GMap.NET;
+using GMap.NET.MapProviders;
 using GMap.NET.WindowsPresentation;
 using log4net;
 using Microsoft.AspNetCore.Builder;
@@ -25,6 +30,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+//using System.Windows.Forms;
+
 
 //using System.Windows.Forms;
 
@@ -34,6 +41,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml;
@@ -45,12 +53,12 @@ using ZusiCLIProject.Routegraph2;
 using ZusiCLIProject.Zusi3Fahrschule2;
 using ZusiDisplayLib;
 using ZusiFahrpultLib;
-using ZusiKlassenLib;
-using ZusiKlassenLib.Buchfahrplan;
-using ZusiKlassenLib.Cab;
-using ZusiKlassenLib.Common;
-using ZusiKlassenLib.Fahrplan;
-using ZusiKlassenLib.TimeTable;
+using ZusiKlassenLib2;
+using ZusiKlassenLib2.Buchfahrplan;
+using ZusiKlassenLib2.Cab;
+using ZusiKlassenLib2.Common;
+using ZusiKlassenLib2.Fahrplan;
+using ZusiKlassenLib2.TimeTable;
 using ZusiMeterGaugesLib;
 using ZusiMeterGaugesLib.Gauges;
 using ZusiMeterGaugesLib.Interfaces;
@@ -84,20 +92,25 @@ namespace ZusiStart
 
   public class TabContentTemplateSelector : DataTemplateSelector
   {
+    private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
     public DataTemplate WebViewTemplate { get; set; }
     public DataTemplate TrackingTemplate { get; set; }
     public DataTemplate RouteGraphTemplate { get; set; }
+    public DataTemplate BildfahrplanTemplate { get; set; }
     public DataTemplate ImageTemplate { get; set; }
     public DataTemplate ListTemplate { get; set; }
 
     public override DataTemplate SelectTemplate(object item, DependencyObject container)
     {
       var tab = item as TabViewModel;
+      _log.Debug($"Selecting template for tab: {tab?.Title}");
       if (tab == null) return base.SelectTemplate(item, container);
       if (tab.Title == DataManager.Instance.tab_title_favorites) return ListTemplate;
       if (tab.IsIntro) return TrackingTemplate;
       if (tab.IsImageTab) return ImageTemplate;
       if (tab.Title == DataManager.Instance.tab_title_routegraph || tab.Title == DataManager.Instance.tab_title_routegraph) return RouteGraphTemplate;
+      if (tab.Title == DataManager.Instance.tab_title_bildfahrplan || tab.Title == DataManager.Instance.tab_title_bildfahrplan) return BildfahrplanTemplate;
       return WebViewTemplate;
     }
   }
@@ -106,7 +119,7 @@ namespace ZusiStart
   {
     #region private fields
 
-    private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+    private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
     public static string _url_zusi_strecken_karte = "https://www.zusi-sk.eu/#10.5/50.96983/6/";
     public static string _url_zusi_datenbank = "http://zusidatenbank.de/?zusistart";
@@ -145,7 +158,7 @@ namespace ZusiStart
     public static readonly RoutedUICommand CommandHelp = new RoutedUICommand("_Dokumentation", nameof(CommandHelp), typeof(MainWindow));
     public static readonly RoutedUICommand CommandExtDocu = new RoutedUICommand("Dokumentation mit _externem Programm öffnen", nameof(CommandExtDocu), typeof(MainWindow));
     public static readonly RoutedUICommand CommandOptions = new RoutedUICommand("Programmeinstellungen", nameof(CommandOptions), typeof(MainWindow));
-    public static readonly RoutedUICommand CommandQuit = new RoutedUICommand("Beenden", nameof(CommandOptions), typeof(MainWindow));
+    public static readonly RoutedUICommand CommandQuit = new RoutedUICommand("Beenden", nameof(CommandQuit), typeof(MainWindow));
     public static readonly RoutedUICommand CommandCreatePictures = new RoutedUICommand("Erzeuge alle Fahrzeugbilder neu", nameof(CommandCreatePictures), typeof(MainWindow));
     public static readonly RoutedUICommand UndoReplLocoCommand = new("_Rückgängig Loktausch", "UndoReplLocoCommand", typeof(MainWindow),
         new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.Z, ModifierKeys.Control) }));
@@ -153,6 +166,17 @@ namespace ZusiStart
       new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F5) }));
     public static readonly RoutedUICommand ManageReplLocosCommand = new("_Austauschloks verwalten...", "ManageReplLocosCommand", typeof(MainWindow),
       new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F6) }));
+    public static readonly RoutedUICommand SaveRevisedTrainCommand = new RoutedUICommand("_Zugänderung permanent speichern", "SaveRevisedTrainCommand", typeof(MainWindow));
+    public static readonly RoutedUICommand UndoRevisedTrainCommand = new RoutedUICommand("_permanente Zugänderung rückgängig machen (nach Neustart)", "UndoRevisedTrainCommand", typeof(MainWindow));
+    public static readonly RoutedUICommand CommandSaveLayout_A = new RoutedUICommand("Layout A speichern", nameof(CommandSaveLayout_A), typeof(MainWindow));
+    public static readonly RoutedUICommand CommandSaveLayout_B = new RoutedUICommand("Layout B speichern", nameof(CommandSaveLayout_B), typeof(MainWindow));
+    public static readonly RoutedUICommand CommandLoadLayout_A = new RoutedUICommand("Layout A laden", nameof(CommandLoadLayout_A), typeof(MainWindow));
+    public static readonly RoutedUICommand CommandLoadLayout_B = new RoutedUICommand("Layout B laden", nameof(CommandLoadLayout_B), typeof(MainWindow));
+    public static readonly RoutedUICommand CommandLoadLayout_Standard_A = new RoutedUICommand("Standard Layout A laden", nameof(CommandLoadLayout_Standard_A), typeof(MainWindow));
+    public static readonly RoutedUICommand CommandLoadLayout_Standard_B = new RoutedUICommand("Standard Layout B laden", nameof(CommandLoadLayout_Standard_B), typeof(MainWindow));
+    public static readonly RoutedUICommand CommandLayout_Showall = new RoutedUICommand("Alle Fenster öffnen", nameof(CommandLayout_Showall), typeof(MainWindow));
+
+    //public ICommand TTcopyPathCommand { get; }
     #endregion
 
     #region dependency properties
@@ -317,6 +341,9 @@ namespace ZusiStart
     public static readonly RoutedUICommand EditFavoriteCommentCommand = new("Kommentar bearbeiten", "EditFavoriteCommentCommand", typeof(MainWindow));
     public static readonly RoutedUICommand DelFavoriteTrainCommand = new("Zug löschen", "DelFavoriteTrainCommand", typeof(MainWindow));
     public static readonly RoutedUICommand SearchTrainCommand = new("Zug suchen", "SearchTrainCommand", typeof(MainWindow));
+    public static readonly RoutedUICommand AnalyseKICommand = new("KI analysieren", "AnalyseKICommand", typeof(MainWindow));
+    public static readonly RoutedUICommand SearchKICommand = new("Mit KI suchen", "SearchKICommand", typeof(MainWindow));
+    public static readonly RoutedUICommand SearchBRCommand = new("Baureihe suchen", "SearchBRCommand", typeof(MainWindow));
     public static readonly RoutedUICommand SearchTrainZusiDBCommand = new("ZUSI Datenbank", "SearchTrainZusiDBCommand", typeof(MainWindow));
     public static readonly RoutedUICommand SearchTrainZusiSKCommand = new("ZUSI Streckenkarte", "SearchTrainZusiSKCommand", typeof(MainWindow));
     public static readonly RoutedUICommand ZSK_PositionOverlayCommand = new("Fadenkreuz Positionieren", "ZSK_PositionOverlayCommand", typeof(MainWindow));
@@ -331,6 +358,7 @@ namespace ZusiStart
     public static readonly RoutedUICommand FilterResetCommand = new("Zurücksetzen", "FilterResetCommand", typeof(MainWindow));
     public static readonly RoutedUICommand TrainStartSettingsCommand = new("Start-Optionen", "TrainStartSettingsCommand", typeof(MainWindow));
     public static readonly RoutedUICommand ResetViewCommand = new("Ansicht zurücksetzen", "ResetViewCommand", typeof(MainWindow));
+    public static readonly RoutedUICommand ReloadCommand = new("Fahrpläne neu laden", "ReloadCommand", typeof(MainWindow));
 
     public static readonly RoutedUICommand FrictionSettingsCommand = new("Gleisbedingungen", "FrictionSettingsCommand", typeof(MainWindow));
     public static readonly RoutedUICommand StartFahrschuleCommand = new("Fahrschule", "StartFahrschuleCommand", typeof(MainWindow));
@@ -347,6 +375,7 @@ namespace ZusiStart
 
     private void UpdateCommandTexts()
     {
+      _log.Debug("Updating command texts for localization");
       AddFavoriteTrainCommand.Text = LocalizationManager.Translate("Zug hinzufügen");
 
       DelFavoriteTrainCommand.Text = LocalizationManager.Translate("Zug löschen");
@@ -375,6 +404,7 @@ namespace ZusiStart
       //BtnFilterReset.Content = FilterResetCommand.Text;
       TrainStartSettingsCommand.Text = LocalizationManager.Translate("Start-Optionen");
       ResetViewCommand.Text = LocalizationManager.Translate("Ansicht zurücksetzen");
+      ReloadCommand.Text = LocalizationManager.Translate("Fahrpläne neu laden");
       BtnTrainStartSettings.Content = TrainStartSettingsCommand.Text;
       FrictionSettingsCommand.Text = LocalizationManager.Translate("Gleisbedingungen");
       frictionSettingsButton.Content = FrictionSettingsCommand.Text;
@@ -391,6 +421,12 @@ namespace ZusiStart
       MenuItemQuit.Header = CommandQuit.Text;
       //MenuItemCreatePictures.Header = CommandCreatePictures.Text;
       TrainStartSettings.Header = TrainStartSettingsCommand.Text;
+      CommandSaveLayout_A.Text = LocalizationManager.Translate("Layout A speichern");
+      CommandSaveLayout_B.Text = LocalizationManager.Translate("Layout B speichern");
+      CommandLoadLayout_A.Text = LocalizationManager.Translate("Layout A laden");
+      CommandLoadLayout_B.Text = LocalizationManager.Translate("Layout B laden");
+      CommandLoadLayout_Standard_A.Text = LocalizationManager.Translate("Standard Layout A laden");
+      CommandLoadLayout_Standard_B.Text = LocalizationManager.Translate("Standard Layout B laden");
 
       EditCommentButtonText = LocalizationManager.Translate("Kommentar bearbeiten");
 
@@ -407,6 +443,7 @@ namespace ZusiStart
 
     private async void InitializeWebViewEnvironment()
     {
+      _log.Debug("Initializing WebView2 environment");
       try
       {
         string userDataFolder = System.IO.Path.Combine(
@@ -417,13 +454,28 @@ namespace ZusiStart
       }
       catch (Exception ex)
       {
-        Log.Error("Fehler bei der Initialisierung der WebView2-Umgebung: " + ex.Message);
+        _log.Error("Fehler bei der Initialisierung der WebView2-Umgebung: " + ex.Message);
         MessageBox.Show(LocalizationManager.Translate("WebView2 konnte nicht initialisiert werden."), LocalizationManager.Translate("Fehler"), MessageBoxButton.OK, MessageBoxImage.Error);
       }
     }
 
+    private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+    {
+      _log.Debug($"Hyperlink clicked: {e.Uri.AbsoluteUri}");
+      try
+      {
+        Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show($"Unable to open link: {ex.Message}");
+      }
+      e.Handled = true;
+    }
+
     private async void TabControl_SelectionChanged2(object sender, SelectionChangedEventArgs e)
     {
+      _log.Debug("Tab selection changed");
       foreach (var item in e.AddedItems)
       {
         var tabItem = (sender as TabControl)?.ItemContainerGenerator.ContainerFromItem(item) as TabItem;
@@ -432,7 +484,7 @@ namespace ZusiStart
         {
 
           TabViewModel tvm = tabItem.Header as TabViewModel;
-
+          _log.Debug($"Selected tab: {tvm?.Title}");
           if (!tvm.IsInitialised)
           {
 
@@ -446,6 +498,7 @@ namespace ZusiStart
 
           if (tvm.Title == DataManager.Instance.tab_title_Streckenkarte) // set Streckenkarte always to fullscreen
           {
+            _log.Debug("Setting Streckenkarte to fullscreen mode");
             tvm.WebViewInstance?.CoreWebView2?.ExecuteScriptAsync("if (!document.fullscreenElement){[...document.querySelectorAll('button, div')].find(el => el.title?.includes('Vollbild'))?.click();}");
 
             //            string script = @"
@@ -514,9 +567,10 @@ namespace ZusiStart
     public MainWindow()
     {
       //FeatureManager.initFeatures([FeatureManager.Features.Tracking, FeatureManager.Features.StartLocation]);
+      _log.Debug("Initializing MainWindow");
       LocalizationManager.Load();
       string lang = Properties.Settings.Default.Language;
-      if (!string.IsNullOrEmpty(lang) && lang != "auto")
+      if (!string.IsNullOrEmpty(lang) && !lang.Contains("auto"))
       {
         DataManager.CurrentLanguage = lang;
       }
@@ -540,7 +594,7 @@ namespace ZusiStart
 
       //InitializeMap();
 
-      Log.Debug("ZusiStart started - Version:" + AsmInfo.Version.ToString());
+      _log.Debug("ZusiStart started - Version:" + AsmInfo.Version.ToString());
 
       EngageScaling();
 
@@ -567,6 +621,9 @@ namespace ZusiStart
 
       CommandBindings.Add(new CommandBinding(DelFavoriteTrainCommand, OnDelFavoriteTrain, OnCanDelFavoriteTrain));
       CommandBindings.Add(new CommandBinding(SearchTrainCommand, OnSearchTrain, OnCanSearchTrain));
+      CommandBindings.Add(new CommandBinding(SearchKICommand, OnSearchKI, OnCanSearchKI));
+      CommandBindings.Add(new CommandBinding(AnalyseKICommand, OnAnalyseKI, OnCanAnalyseKI));
+      CommandBindings.Add(new CommandBinding(SearchBRCommand, OnSearchBR, OnCanSearchBR));
       CommandBindings.Add(new CommandBinding(CreateVehicleListCommand, OnCreateVehicleList, OnCanCreateVehicleList));
       //CommandBindings.Add(new CommandBinding(SearchTrainZusiDBCommand, OnSearchTrainwithZusiDB));
       //CommandBindings.Add(new CommandBinding(SearchBuchfahrplanCommand, OnSearchBuchfahrplan));
@@ -580,6 +637,7 @@ namespace ZusiStart
       CommandBindings.Add(new CommandBinding(ZusiBildFahrplanCommand, OnZusiBildFahrplan, OnCanZusiBildFahrplan));
       CommandBindings.Add(new CommandBinding(TrainStartSettingsCommand, OnTrainStartSettings));
       CommandBindings.Add(new CommandBinding(ResetViewCommand, OnResetView));
+      CommandBindings.Add(new CommandBinding(ReloadCommand, OnReload));
       CommandBindings.Add(new CommandBinding(FrictionSettingsCommand, OnFrictionSettings, OnCanFrictionSettings));
       CommandBindings.Add(new CommandBinding(StartFahrschuleCommand, OnStartFahrschule, OnCanStartFahrschule));
 
@@ -603,8 +661,22 @@ namespace ZusiStart
       //--
       CommandBindings.Add(new CommandBinding(ResetDataCommand, OnResetData, (s, e) => e.CanExecute = IsLoaded));
       CommandBindings.Add(new CommandBinding(ManageReplTrainsCommand, OnManageReplTrains, OnCanManageReplTrains));
+      CommandBindings.Add(new CommandBinding(ManageReplTrainsCommand, OnManageReplTrains, OnCanManageReplTrains));
+      CommandBindings.Add(new CommandBinding(SaveRevisedTrainCommand, OnSaveRevisedTrain, OnCanSaveRevisedTrain));
+      CommandBindings.Add(new CommandBinding(UndoRevisedTrainCommand, OnUndoRevisedTrain, OnCanUndoRevisedTrain));
+
       CommandBindings.Add(new CommandBinding(ReplaceTrainCommand, OnReplaceTrain, OnCanReplaceTrain));
       CommandBindings.Add(new CommandBinding(UndoReplTrainCommand, OnUndoReplTrain, OnCanUndoRepTrain));
+
+      CommandBindings.Add(new CommandBinding(CommandSaveLayout_A, OnSaveLayout_A));
+      CommandBindings.Add(new CommandBinding(CommandSaveLayout_B, OnSaveLayout_B));
+      CommandBindings.Add(new CommandBinding(CommandLoadLayout_A, OnLoadLayout_A));
+      CommandBindings.Add(new CommandBinding(CommandLoadLayout_B, OnLoadLayout_B));
+      CommandBindings.Add(new CommandBinding(CommandLoadLayout_Standard_A, OnLoadLayout_Standard_A));
+      CommandBindings.Add(new CommandBinding(CommandLoadLayout_Standard_B, OnLoadLayout_Standard_B));
+      CommandBindings.Add(new CommandBinding(CommandLayout_Showall, OnLayout_Showall));
+
+
 
       // *** add keyboard bindings
 
@@ -645,45 +717,59 @@ namespace ZusiStart
 
       //dataManager.ProgressChanged += DataManager_ProgressChanged;
       //LoadLocalHtml();
+      //TTcopyPathCommand = new RelayCommand<TimeTableRelation>(TTcopyPath);
     }
+
+    //private void TTcopyPath(TimeTableRelation rel)
+    //{
+    //  string filename = rel.ToString();
+    //}
 
     private void InitializeMap()
     {
+      _log.Debug("Initializing GMap control");
       TabViewModel? zdbTab = DataManager.Instance.Tabs.FirstOrDefault(t => t.Title == DataManager.Instance.tab_title_tracking);
-      zdbTab.gmap.MapProvider = GMap.NET.MapProviders.GMapProviders.OpenStreetMap;
-      zdbTab.gmap.Position = new PointLatLng(50.0, 8.0); // Startposition
-                                                         //GMap.NET.GMaps.Instance.Mode = GMap.NET.AccessMode.ServerOnly;
-                                                         //zdbTab.gmap.Position = new PointLatLng(49.75, 6.64);
-      zdbTab.gmap.Zoom = 12;
-      zdbTab.gmap.MinZoom = 5;
-      zdbTab.gmap.MaxZoom = 18;
-      zdbTab.gmap.Zoom = 12;
-      zdbTab.gmap.ShowCenter = false;
-      zdbTab.gmap.MouseWheelZoomEnabled = true;
-      zdbTab.gmap.MouseWheelZoomType = MouseWheelZoomType.MousePositionAndCenter;
-      zdbTab.gmap.IgnoreMarkerOnMouseWheel = true;
-
-      // Marker direkt zur Markers-Sammlung hinzufügen
-      //marker = new GMapMarker(new PointLatLng(50.0, 8.0))
-      //{
-      //  Shape = new Ellipse
-      //  {
-      //    Width = 24,
-      //    Height = 24,
-      //    Stroke = System.Windows.Media.Brushes.Red,
-      //    StrokeThickness = 10
-      //  }
-      //};
-      marker = new GMapMarker(new PointLatLng(50.0, 8.0))
+      if (zdbTab != null)
       {
-        Shape = new System.Windows.Shapes.Path
+        // Identify your app to OSM
+        GMapProvider.UserAgent = "ZusiStart (contact: support@zusi-tools.hlinke.de)";
+        zdbTab.gmap.MapProvider = GMap.NET.MapProviders.GMapProviders.OpenStreetMap;
+        zdbTab.gmap.Position = new PointLatLng(50.0, 8.0); // Startposition
+                                                           //GMap.NET.GMaps.Instance.Mode = GMap.NET.AccessMode.ServerOnly;
+                                                           //zdbTab.gmap.Position = new PointLatLng(49.75, 6.64);
+        zdbTab.gmap.Zoom = 12;
+        zdbTab.gmap.MinZoom = 5;
+        zdbTab.gmap.MaxZoom = 18;
+        zdbTab.gmap.Zoom = 12;
+        zdbTab.gmap.ShowCenter = false;
+        zdbTab.gmap.MouseWheelZoomEnabled = true;
+        zdbTab.gmap.MouseWheelZoomType = MouseWheelZoomType.MousePositionAndCenter;
+        zdbTab.gmap.IgnoreMarkerOnMouseWheel = true;
+
+        GMaps.Instance.Mode = AccessMode.ServerAndCache;
+
+
+        // Marker direkt zur Markers-Sammlung hinzufügen
+        //marker = new GMapMarker(new PointLatLng(50.0, 8.0))
+        //{
+        //  Shape = new Ellipse
+        //  {
+        //    Width = 24,
+        //    Height = 24,
+        //    Stroke = System.Windows.Media.Brushes.Red,
+        //    StrokeThickness = 10
+        //  }
+        //};
+        marker = new GMapMarker(new PointLatLng(50.0, 8.0))
         {
-          Stroke = System.Windows.Media.Brushes.Red,
-          StrokeThickness = 3,
-          Opacity = 0.75,
-          Data = new GeometryGroup
+          Shape = new System.Windows.Shapes.Path
           {
-            Children = new GeometryCollection
+            Stroke = System.Windows.Media.Brushes.Red,
+            StrokeThickness = 3,
+            Opacity = 0.75,
+            Data = new GeometryGroup
+            {
+              Children = new GeometryCollection
         {
             // Horizontale Linie
             new LineGeometry(new System.Windows.Point(-20, 0), new System.Windows.Point(20, 0)),
@@ -692,36 +778,102 @@ namespace ZusiStart
             // Kreis um das Zentrum (Radius = 12)
             new EllipseGeometry(new System.Windows.Point(0, 0), 12, 12)
         }
+            }
           }
-        }
-      };
+        };
 
 
 
-      zdbTab.gmap.Markers.Add(marker);
 
-      // Assuming vm is your TrackingViewModel and RouteVisual already set **Test** 
-      //zdbTab.gmap.OnMapZoomChanged += () => zdbTab.UpdateRouteTransform(zdbTab.gmap, DataManager.Instance.utmBounds, zone: 32, northHemisphere: true);
-      //zdbTab.gmap.OnMapDrag += () => zdbTab.UpdateRouteTransform(zdbTab.gmap, DataManager.Instance.utmBounds, zone: 32, northHemisphere: true);
+        zdbTab.gmap.Markers.Add(marker);
 
+        // Assuming vm is your TrackingViewModel and RouteVisual already set **Test** 
+        //zdbTab.gmap.OnMapZoomChanged += () => zdbTab.UpdateRouteTransform(zdbTab.gmap, DataManager.Instance.utmBounds, zone: 32, northHemisphere: true);
+        //zdbTab.gmap.OnMapDrag += () => zdbTab.UpdateRouteTransform(zdbTab.gmap, DataManager.Instance.utmBounds, zone: 32, northHemisphere: true);
+      }
     }
 
-    private void loadgmapoverlay()
-    {
-      return; ; // temporär deaktiviert
-                //TabViewModel? zdbTab = DataManager.Instance.Tabs.FirstOrDefault(t => t.Title == DataManager.Instance.tab_title_tracking);
-                //var loader = new RailwayPolylineOverlayWpf(zdbTab.gmap);
-                //_ = loader.LoadRailwayOverlayAsync(49.73, 6.61, 49.77, 6.67); // Trier region
-    }
+    //private void InitializeMap2()
+    //{
+    //  _log.Debug("Initializing GMap control");
 
-    private void Gmap_Loaded(object sender, RoutedEventArgs e)
-    {
-      InitializeMap();
-    }
+    //  // Identify your app to OSM
+    //  GMapProvider.UserAgent = "ZusiStart (contact: support@zusi-tools.hlinke.de)";
+    //  DataManager.Instance.gmap.MapProvider = GMap.NET.MapProviders.GMapProviders.OpenStreetMap;
+    //  DataManager.Instance.gmap.Position = new PointLatLng(50.0, 8.0); // Startposition
+    //                                                                   //GMap.NET.GMaps.Instance.Mode = GMap.NET.AccessMode.ServerOnly;
+    //                                                                   //zdbTab.gmap.Position = new PointLatLng(49.75, 6.64);
+    //  DataManager.Instance.gmap.Zoom = 12;
+    //  DataManager.Instance.gmap.MinZoom = 5;
+    //  DataManager.Instance.gmap.MaxZoom = 18;
+    //  DataManager.Instance.gmap.Zoom = 12;
+    //  DataManager.Instance.gmap.ShowCenter = false;
+    //  DataManager.Instance.gmap.MouseWheelZoomEnabled = true;
+    //  DataManager.Instance.gmap.MouseWheelZoomType = MouseWheelZoomType.MousePositionAndCenter;
+    //  DataManager.Instance.gmap.IgnoreMarkerOnMouseWheel = true;
+
+    //  GMaps.Instance.Mode = AccessMode.ServerAndCache;
+
+
+    //  // Marker direkt zur Markers-Sammlung hinzufügen
+    //  //marker = new GMapMarker(new PointLatLng(50.0, 8.0))
+    //  //{
+    //  //  Shape = new Ellipse
+    //  //  {
+    //  //    Width = 24,
+    //  //    Height = 24,
+    //  //    Stroke = System.Windows.Media.Brushes.Red,
+    //  //    StrokeThickness = 10
+    //  //  }
+    //  //};
+    //  marker = new GMapMarker(new PointLatLng(50.0, 8.0))
+    //  {
+    //    Shape = new System.Windows.Shapes.Path
+    //    {
+    //      Stroke = System.Windows.Media.Brushes.Red,
+    //      StrokeThickness = 3,
+    //      Opacity = 0.75,
+    //      Data = new GeometryGroup
+    //      {
+    //        Children = new GeometryCollection
+    //    {
+    //        // Horizontale Linie
+    //        new LineGeometry(new System.Windows.Point(-20, 0), new System.Windows.Point(20, 0)),
+    //        // Vertikale Linie
+    //        new LineGeometry(new System.Windows.Point(0, -20), new System.Windows.Point(0, 20)),
+    //        // Kreis um das Zentrum (Radius = 12)
+    //        new EllipseGeometry(new System.Windows.Point(0, 0), 12, 12)
+    //    }
+    //      }
+    //    }
+    //  };
+
+    //  DataManager.Instance.gmap.Markers.Add(marker);
+
+    //  // Assuming vm is your TrackingViewModel and RouteVisual already set **Test** 
+    //  //zdbTab.gmap.OnMapZoomChanged += () => zdbTab.UpdateRouteTransform(zdbTab.gmap, DataManager.Instance.utmBounds, zone: 32, northHemisphere: true);
+    //  //zdbTab.gmap.OnMapDrag += () => zdbTab.UpdateRouteTransform(zdbTab.gmap, DataManager.Instance.utmBounds, zone: 32, northHemisphere: true);
+    
+    //}
+
+    //private void loadgmapoverlay()
+    //{
+    //  return; ; // temporär deaktiviert
+    //            //TabViewModel? zdbTab = DataManager.Instance.Tabs.FirstOrDefault(t => t.Title == DataManager.Instance.tab_title_tracking);
+    //            //var loader = new RailwayPolylineOverlayWpf(zdbTab.gmap);
+    //            //_ = loader.LoadRailwayOverlayAsync(49.73, 6.61, 49.77, 6.67); // Trier region
+    //}
+
+    //private void Gmap_Loaded(object sender, RoutedEventArgs e)
+    //{
+    //  _log.Debug("GMap control loaded");
+    //  InitializeMap2();
+    //}
 
     //---------------------------------------------------------------------
     public void Dispose()
     {
+      _log.Debug("Disposing MainWindow");
       Dispose(true);
       GC.SuppressFinalize(this);
     }
@@ -729,6 +881,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void Dispose(bool disposing)
     {
+      _log.Debug("Disposing MainWindow (disposing=" + disposing + ")");
       if (disposing)
       {
         //_miniServer?.Dispose();
@@ -740,6 +893,8 @@ namespace ZusiStart
 
     private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
+      _log.Debug("MainWindow closing");
+
       //if (_webViewWindow_ZDB != null)
       //{
       //  _webViewWindow_ZDB.Close();
@@ -748,11 +903,31 @@ namespace ZusiStart
       //{
       //  _webViewWindow_ZSK.Close();
       //}
+      //DataManager.Instance.SaveDockLayout("A");
     }
+
+
+    //private void LoadDockLayout()
+    //{
+    //  var file = DataManager.Instance.AvalonDockLayoutFilePath;
+
+    //  if (System.IO.File.Exists(file))
+    //  {
+    //    var serializer = new XmlLayoutSerializer(DockManager);
+    //    serializer.Deserialize(file);
+    //  }
+    //}
+
+    //private void SaveDockLayout()
+    //{
+    //  var serializer = new XmlLayoutSerializer(DockManager);
+    //  serializer.Serialize(DataManager.Instance.AvalonDockLayoutFilePath);
+    //}
 
     //---------------------------------------------------------------------
     protected override void OnClosing(CancelEventArgs e)
     {
+      _log.Debug("MainWindow OnClosing");
       SaveWindowSettings();
       DataManager.Instance.SaveGeneralOptions();
       base.OnClosing(e);
@@ -761,6 +936,7 @@ namespace ZusiStart
 
     private void LoadWindowSettings()
     {
+      _log.Debug("Loading window settings");
       this.Top = Properties.Settings.Default.WindowTop;
       this.Left = Properties.Settings.Default.WindowLeft;
       this.Height = Properties.Settings.Default.WindowHeight;
@@ -772,13 +948,14 @@ namespace ZusiStart
         LeftColumn.Width = Properties.Settings.Default.WidthColumnLeft;
       if (Properties.Settings.Default.HeightRowBottom.Value > 0)
         BottomRow.Height = Properties.Settings.Default.HeightRowBottom;
-      if (Properties.Settings.Default.HeightRowTop.Value > 0)
-        TopRow.Height = Properties.Settings.Default.HeightRowTop;
+      //if (Properties.Settings.Default.HeightRowTop.Value > 0)
+      //  TopRow.Height = Properties.Settings.Default.HeightRowTop;
       AdjustWindowPosition();
     }
 
     private void SaveWindowSettings()
     {
+      _log.Debug("Saving window settings");
       Properties.Settings.Default.WindowTop = this.Top;
       Properties.Settings.Default.WindowLeft = this.Left;
       Properties.Settings.Default.WindowHeight = this.Height;
@@ -787,12 +964,13 @@ namespace ZusiStart
       Properties.Settings.Default.WidthColumnRight = RightColumn.Width;
       Properties.Settings.Default.WidthColumnLeft = LeftColumn.Width;
       Properties.Settings.Default.HeightRowBottom = BottomRow.Height;
-      Properties.Settings.Default.HeightRowTop = TopRow.Height;
+      //Properties.Settings.Default.HeightRowTop = TopRow.Height;
       Properties.Settings.Default.Save();
     }
 
     private void AdjustWindowPosition()
     {
+      _log.Debug("Adjusting window position to ensure it's within screen bounds");
       if (this.Top < 0) this.Top = 0;
       //if (this.Left < 0) this.Left = 0;
       if (this.Top + this.Height > SystemParameters.VirtualScreenHeight)
@@ -803,6 +981,7 @@ namespace ZusiStart
 
     public double GetScreenScaleFactor(System.Windows.Window window)
     {
+      _log.Debug("Getting screen scale factor for DPI scaling");
       PresentationSource source = PresentationSource.FromVisual(window);
       if (source != null)
       {
@@ -814,6 +993,7 @@ namespace ZusiStart
 
     private void OnAbout(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Opening About dialog");
       AboutDlg aboutDlg = new AboutDlg();
       aboutDlg.Owner = (System.Windows.Window)this;
       aboutDlg.ShowDialog();
@@ -821,12 +1001,14 @@ namespace ZusiStart
 
     private void OnQuit(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Quit command executed - closing MainWindow");
       window.Close();
     }
 
     //---------------------------------------------------------------------
     private void OnCanManageReplLocos(object sender, CanExecuteRoutedEventArgs e)
     {
+      _log.Debug("Checking if Manage Replacement Locos command can execute");
       TrainItem ti = DataManager.Instance.CurrentTrainItem;
       e.CanExecute = ti == null || !ti.IsLocoReplaced;
     }
@@ -834,6 +1016,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnManageReplLocos(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Manage Replacement Locos command");
       DataManager dm = DataManager.Instance;
       dm.SelectedLoco = null;
       dm.SelectedReplacementLoco = null;
@@ -850,6 +1033,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnCanReplaceLoco(object sender, CanExecuteRoutedEventArgs e)
     {
+      _log.Debug("Checking if Replace Loco command can execute");
       TrainItem ti = DataManager.Instance.CurrentTrainItem;
       //e.CanExecute = ti != null && !ti.IsLocoReplaced;
       DataManager dm = DataManager.Instance;
@@ -859,6 +1043,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnReplaceLoco(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Replace Loco command");
       //DataManager.Instance.CurrentTrainItem.ReplaceLoco(this);
       if (DataManager.Instance.CurrentTrainItem != null)
       {
@@ -878,6 +1063,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnCanUndoReplLoco(object sender, CanExecuteRoutedEventArgs e)
     {
+      _log.Debug("Checking if Undo Replace Loco command can execute");
       TrainItem ti = DataManager.Instance.CurrentTrainItem;
       e.CanExecute = ti != null && ti.IsLocoReplaced;
     }
@@ -885,11 +1071,13 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnUndoReplLoco(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Undo Replace Loco command");
       DataManager.Instance.CurrentTrainItem.UndoReplaceLoco();
     }
 
     private void OnCreatePictures(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Create Pictures command");
       CreatePicturesDlg CreatePicturesDlg = new CreatePicturesDlg();
       CreatePicturesDlg.Owner = (System.Windows.Window)this;
       CreatePicturesDlg.ShowDialog();
@@ -897,12 +1085,14 @@ namespace ZusiStart
 
     private void OnHelp(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Help command - opening Help dialog");
       HelpDlg helpDlg = new HelpDlg();
       helpDlg.ShowDialog();
     }
 
     private void OnExtDocu(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing External Documentation command - opening PDF");
       try
       {
         string relativePath = "help/ZusiStart_Docu_Deutsch.pdf";
@@ -919,9 +1109,99 @@ namespace ZusiStart
 
     private void OnOptions(object sender, ExecutedRoutedEventArgs e)
     {
-      //OptionsDlg optionsDlg = new OptionsDlg();
-      DataManager.Instance.optionsDlg_window.Owner = (System.Windows.Window)this;
-      DataManager.Instance.optionsDlg_window.ShowDialog();
+      _log.Debug("Executing Options command - opening Options dialog");
+      try
+      {
+        //OptionsDlg optionsDlg = new OptionsDlg();
+        DataManager.Instance.optionsDlg_window.Owner = (System.Windows.Window)this;
+        DataManager.Instance.optionsDlg_window.ShowDialog();
+      }
+      catch (Exception ex)
+      {
+        DataManager.Instance.optionsDlg_window = new OptionsDlg();
+        DataManager.Instance.optionsDlg_window.Owner = (System.Windows.Window)this;
+        DataManager.Instance.optionsDlg_window.ShowDialog();
+      }
+
+    }
+
+    private void OnSaveLayout_A(object sender, ExecutedRoutedEventArgs e)
+    {
+      _log.Debug("Executing Save Layout A command");
+      DataManager.Instance.SaveDockLayout("A");
+    }
+
+    private void OnSaveLayout_B(object sender, ExecutedRoutedEventArgs e)
+    {
+      _log.Debug("Executing Save Layout B command");
+      DataManager.Instance.SaveDockLayout("B");
+    }
+
+    private void OnLoadLayout_A(object sender, ExecutedRoutedEventArgs e)
+    {
+      _log.Debug("Executing Load Layout A command");
+      DataManager.Instance.LoadDockLayout("A");
+    }
+
+    private void OnLoadLayout_B(object sender, ExecutedRoutedEventArgs e)
+    {
+      _log.Debug("Executing Load Layout B command");
+      DataManager.Instance.LoadDockLayout("B");
+    }
+
+    private void OnLoadLayout_Standard_A(object sender, ExecutedRoutedEventArgs e)
+    {
+      _log.Debug("Executing Load Layout A command");
+      DataManager.Instance.LoadDockStandardLayout("Std_A");
+    }
+
+    private void OnLoadLayout_Standard_B(object sender, ExecutedRoutedEventArgs e)
+    {
+      _log.Debug("Executing Load Layout B command");
+      DataManager.Instance.LoadDockStandardLayout("Std_B");
+    }
+
+    private void OnLayout_Showall(object sender, ExecutedRoutedEventArgs e)
+    {
+      try
+      {
+        _log.Debug("Executing Show All Layout command");
+        var layout = DockManager.Layout;
+
+        // 1. Geschlossene Fenster wieder anzeigen
+        foreach (var anchor in layout.Descendents().OfType<LayoutAnchorable>())
+        {
+          try
+          {
+
+            if (!anchor.IsVisible)
+              anchor.Show();
+          }
+          catch (Exception ex)
+          {
+            _log.Error("Error in Show All Layout command: " + ex.ToString());
+          }
+        }
+
+        // irgendein existierendes Pane suchen
+        var pane = layout.Descendents().OfType<LayoutAnchorablePane>().FirstOrDefault();
+
+        if (pane != null)
+        {
+          // 2. Fenster ins Pane einfügen, falls noch nicht vorhanden
+          if (!pane.Children.Contains(KiSucheAnchorable))
+            pane.Children.Add(KiSucheAnchorable);
+          KiSucheAnchorable.Show();
+        }
+        //S1Z1T1.Children.Add(KiSucheAnchorable);
+        //KiSucheAnchorable.Show();
+
+      }
+      catch (Exception ex)
+      {
+        _log.Error("Error in Show All Layout command: " + ex.ToString());
+      }
+
     }
 
     //---------------------------------------------------------------------
@@ -934,6 +1214,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnManageReplTrains(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Manage Replacement Trains command");
       DataManager dm = DataManager.Instance;
       dm.SelectedTrainR = null;
       dm.SelectedReplacementTrain = null;
@@ -945,6 +1226,36 @@ namespace ZusiStart
       {
         dm.SaveReplacementTrains();
       }
+    }
+
+    //---------------------------------------------------------------------
+    private void OnCanSaveRevisedTrain(object sender, CanExecuteRoutedEventArgs e)
+    {
+      TrainItem ti = DataManager.Instance.CurrentTrainItem;
+      e.CanExecute = ti != null && (ti.IsLocoReplaced || ti.IsTrainReplaced);
+    }
+
+    //---------------------------------------------------------------------
+    private void OnSaveRevisedTrain(object sender, ExecutedRoutedEventArgs e)
+    {
+      _log.Debug("Executing Save Replacement Trains command");
+      DataManager dm = DataManager.Instance;
+      dm.SaveReplacedTrain();
+    }
+
+    //---------------------------------------------------------------------
+    private void OnCanUndoRevisedTrain(object sender, CanExecuteRoutedEventArgs e)
+    {
+      TrainItem ti = DataManager.Instance.CurrentTrainItem;
+      e.CanExecute = ti != null && (ti.IsLocoReplaced || ti.IsTrainReplaced);
+    }
+
+    //---------------------------------------------------------------------
+    private void OnUndoRevisedTrain(object sender, ExecutedRoutedEventArgs e)
+    {
+      _log.Debug("Executing Save Replacement Trains command");
+      DataManager dm = DataManager.Instance;
+      dm.UndoReplacedTrain();
     }
 
 
@@ -959,6 +1270,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnReplaceTrain(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Replace Train command");
       if (DataManager.Instance.CurrentTrainItem != null)
       {
         DataManager.Instance.CurrentTrainItem.ReplaceTrain(this);
@@ -980,6 +1292,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnFilterRefresh(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Filter Refresh command");
       DataManager.Instance.FilterZugNummer = getFilterSearchtext(tblFilterZugNummer).Trim();
       GrpTrains.BorderBrush = System.Windows.Media.Brushes.Red;
       DataManager_RefreshFilter(sender, e);
@@ -1003,6 +1316,7 @@ namespace ZusiStart
       //    um die GroupBox mit dem Namen "GrpFpl" zu finden und deren BorderBrush zu setzen.
 
       // Expander-Instanz finden (ersetzen Sie ggf. "IhrExpanderName" durch den tatsächlichen Namen)
+      _log.Debug($"Setting GroupBox color: Expander='{expandername}', GroupBox='{groupboxname}', Color='{color}'");
       var expander = FindExpanderInVisualTree(this, expandername);
       if (expander != null)
       {
@@ -1027,6 +1341,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnFplFilterRefresh(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing FPL Filter Refresh command");
       if (tblFilterZugNummer.Text.Trim().Length < 3)
       {
         MessageBox.Show(LocalizationManager.Translate("Bitte mindestens 3 Zeichen für die FPL-Suche eingeben."), LocalizationManager.Translate("Hinweis"), MessageBoxButton.OK, MessageBoxImage.Information);
@@ -1117,10 +1432,6 @@ namespace ZusiStart
       return null;
     }
 
-
-
-
-
     //---------------------------------------------------------------------
     private void OnCanFplFilterRefresh(object sender, CanExecuteRoutedEventArgs e)
     {
@@ -1132,6 +1443,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnFilterReset(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Filter Reset command");
       //tblFilterZugNummer.Text = "";
       //Checkbox_Dekozüge.IsChecked = false;
       //Checkbox_Personenzüge.IsChecked = true;
@@ -1151,6 +1463,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnUndoReplTrain(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Undo Replace Train command");
       DataManager.Instance.CurrentTrainItem.UndoReplaceTrain();
     }
 
@@ -1188,6 +1501,7 @@ namespace ZusiStart
 
     static void CopyDirectory(string sourceDir, string destinationDir)
     {
+      _log.Debug($"Copying directory from '{sourceDir}' to '{destinationDir}'");
       // Create destination directory if it doesn't exist
       Directory.CreateDirectory(destinationDir);
 
@@ -1210,6 +1524,7 @@ namespace ZusiStart
 
     public void SetCurrentTrainCat(string current_traincat)
     {
+      _log.Debug($"Setting current train category to '{current_traincat}'");
       foreach (ComboBoxItem item in ComboBox_TrainCategories.Items)
       {
         if ((string)item.Tag == current_traincat)
@@ -1222,6 +1537,7 @@ namespace ZusiStart
 
     public string GetCurrentTrainCat()
     {
+      _log.Debug("Getting current train category from ComboBox");
       if (ComboBox_TrainCategories.SelectedItem is ComboBoxItem item && item.Tag is string traincat)
       {
         return traincat;
@@ -1232,6 +1548,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
+      _log.Debug("MainWindow loaded - initializing data and UI components");
       Activate();
 
       _dataLoaderWindow = new DataLoaderWindow
@@ -1263,24 +1580,28 @@ namespace ZusiStart
         string demosourcedir = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(executablePath), "Fahrschule", "Timetables");
         CopyDirectory(demosourcedir, demoFplPath);
       }
-
-
-
+      _log.Debug("Initializing DataManager and loading data");
       DataManager.Instance.InitializeData();
+
       DataManager.Instance.dataLoaderWindow = _dataLoaderWindow;
+      _log.Debug("Setting screen scale factor for DPI scaling");
       DataManager.Instance.ScreenScaleFactor = GetScreenScaleFactor(this);
+      _log.Debug("Initializing Options dialog");
       DataManager.Instance.optionsDlg_window = new OptionsDlg();
       //_dataLoaderWindow.ShowDialog();
       get_bildfahrplanpath();
       get_zusidisplaypath();
       get_zusimeterpath();
+      _log.Debug("Creating ZSK location group ID dictionary");
       createZSK_locationGroupId_dict();
       VersionVisibility = Visibility.Visible;
+      _log.Debug("Checking command line arguments for auto-starting a train");
       if ((Startup.commandlineargs.Length == 3 && Startup.commandlineargs[1] == "--start"))
       {
-        Log.Debug("Commandline option --start");
+        _log.Debug("Commandline option --start");
 
         string train = Startup.commandlineargs[2];
+        _log.Debug($"Attempting to start train '{train}' from command line argument");
 
         try
         {
@@ -1292,27 +1613,30 @@ namespace ZusiStart
           }
           DataManager.Instance.CurrentTrain = zd.Root;
           if (zd.Root == null)
-            Log.Debug($"Message: {train} not found");
+            _log.Error($"Message: {train} not found");
           else
           {
             //starte aktuellen Zug:
             object _sender = null;
             ExecutedRoutedEventArgs _e = null;
+            _log.Debug($"Starting train '{train}' from command line argument");
             OnStartTrain(_sender, _e);
           }
 
         }
         catch (Exception ex)
         {
-          Log.Debug(ex.Message);
+          _log.Error(ex.Message);
         }
       }
+      _log.Debug("Updating command texts for localization");
       UpdateCommandTexts();
-      
+
     }
 
     private void get_bildfahrplanpath()
     {
+      _log.Debug("Getting Bildfahrplan executable path from registry");
       string registryPath = @"SOFTWARE\Zusi3\Fahrsim\Einstellungen\MenuBildfahrplanFPL";
       string registryPathSteam = @"SOFTWARE\Zusi3\Fahrsimsteam\Einstellungen\MenuBildfahrplanFPL";
       string attributeName = "Datei";
@@ -1347,6 +1671,7 @@ namespace ZusiStart
             }
           }
         }
+        _log.Debug($"Bildfahrplan executable path: '{DataManager.Instance.BildfahrplanExePath}'");
       }
       catch (Exception ex)
       {
@@ -1356,6 +1681,7 @@ namespace ZusiStart
 
     private void get_zusimeterpath()
     {
+      _log.Debug("Getting ZusiMeter executable path from registry");
       string registryPath = @"SOFTWARE\Zusi3\Fahrsim\Einstellungen\MenuZusiMeter";
       string registryPathSteam = @"SOFTWARE\Zusi3\Fahrsimsteam\Einstellungen\MenuZusiMeter";
       string attributeName = "Datei";
@@ -1390,28 +1716,29 @@ namespace ZusiStart
             }
           }
         }
+        _log.Debug($"ZusiMeter executable path: '{DataManager.Instance.ZusiMeterStartCmd}'");
       }
       catch (Exception ex)
       {
-        Console.WriteLine($"Error accessing registry: {ex.Message}");
+        _log.Error($"Error accessing registry: {ex.Message}");
       }
     }
 
     public string get_zusidisplaypath()
     {
+      _log.Debug("Getting ZusiDisplay executable path based on Zusi installation directory");
       try
       {
         string zusiexe_path = System.IO.Path.GetDirectoryName(Zusi.Executable);
         string zusidisplay_path = System.IO.Path.Combine(zusiexe_path, @"_Tools\ZusiDisplay\");
         string zusidisplay_startcmd = zusidisplay_path + @"ZusiDisplay.64.exe";
         DataManager.Instance.ZusiDisplayStartCmd = zusidisplay_startcmd;
+        _log.Debug($"ZusiDisplay executable path: '{DataManager.Instance.ZusiDisplayStartCmd}'");
         return zusidisplay_startcmd;
-
-
       }
       catch (Exception ex)
       {
-        Console.WriteLine($"Error accessing registry: {ex.Message}");
+        _log.Error($"Error accessing registry: {ex.Message}");
         return "";
       }
     }
@@ -1427,7 +1754,7 @@ namespace ZusiStart
 
 
     //---------------------------------------------------------------------
-    private void DataManager_RefreshFilter(object? sender, EventArgs e)
+    public void DataManager_RefreshFilter(object? sender, EventArgs e)
     {
       if (tvPassengerTrains != null)
         CollectionViewSource.GetDefaultView(tvPassengerTrains.ItemsSource).Refresh();
@@ -1460,6 +1787,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void DataManager_SelectedTimeTableChanged(object sender, EventArgs e)
     {
+      _log.Debug("DataManager selected timetable changed - refreshing train lists");
       CollectionViewSource.GetDefaultView(tvPassengerTrains.ItemsSource).Refresh();
       //CollectionViewSource.GetDefaultView(tvFreightTrains.ItemsSource).Refresh();
     }
@@ -1467,6 +1795,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnExitGame(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Exit Game command - closing MainWindow");
       Close();
     }
 
@@ -1479,6 +1808,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnMinimize(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Minimize command - minimizing MainWindow");
       WindowState = WindowState.Minimized;
     }
 
@@ -1497,6 +1827,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnFavoriteTrainsPage(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Favorite Trains Page command - showing recent trains");
       DataManager.Instance.CurrentTrain = null;
       DataManager.Instance.SelectedRecentTrain = null;
       MainBorderVisibility = Visibility.Collapsed;
@@ -1514,6 +1845,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnAddFavoriteTrain(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Add Favorite Train command - adding current train to recent trains");
       Zug zug = DataManager.Instance.CurrentTrain;
       string timeTablefilename = zug.FahrplanDatei.FullPath;
 
@@ -1525,6 +1857,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnEditFavoriteComment(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Edit Favorite Comment command - toggling comment edit mode for selected recent train");
       RecentTrain rt = DataManager.Instance.SelectedRecentTrain;
 
       rt.CommentEdit = !rt.CommentEdit;
@@ -1569,26 +1902,31 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnDelFavoriteTrain(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Delete Favorite Train command - removing selected recent train from recent trains");
       Zug zug = DataManager.Instance.SelectedRecentTrain.Train;
-      string timeTablefilename = zug.FahrplanDatei.FullPath;
 
-      string timeTableName = System.IO.Path.GetFileNameWithoutExtension(timeTablefilename);
       int index = 0;
+      bool found = false;
       foreach (RecentTrain train in DataManager.Instance.RecentTrains)
       {
-        if (train.TimeTableName == timeTableName)
+        if (train.Train.Nummer == zug.Nummer)
         {
+          found = true;
           break;
         }
         index++;
       }
-      DataManager.Instance.RecentTrains.RemoveAt(index);
-      DataManager.Instance.RecentTrains.Save();
+      if (found)
+      {
+        DataManager.Instance.RecentTrains.RemoveAt(index);
+        DataManager.Instance.RecentTrains.Save();
+      }
     }
 
     //---------------------------------------------------------------------
     private void OnSearchPage(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Search Page command - showing search page");
       DataManager.Instance.CurrentTrain = null;
       DataManager.Instance.SelectedRecentTrain = null;
       DataManager.Instance.CurrentTrainItem = null;
@@ -1611,6 +1949,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnTimeTablePage(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Time Table Page command - showing main page");
       DataManager.Instance.CurrentTrain = null;
       DataManager.Instance.SelectedRecentTrain = null;
       DataManager.Instance.CurrentTrainItem = null;
@@ -1631,7 +1970,7 @@ namespace ZusiStart
     private void OnCanStartTrain(object sender, CanExecuteRoutedEventArgs e)
     {
       bool canExecute = Properties.Settings.Default.TrainStartMode != 1 || ZusiSim.CanStart;
-      e.CanExecute = (canExecute && DataManager.Instance.CurrentTrain != null) || DataManager.Instance.options.RemoteZusi;
+      e.CanExecute = (canExecute && DataManager.Instance.CurrentTrain != null) || (DataManager.Instance.options != null && DataManager.Instance.options.RemoteZusi);
     }
 
     //---------------------------------------------------------------------
@@ -1642,7 +1981,7 @@ namespace ZusiStart
 
     private bool? ZusiTCPServerenabled()
     {
-
+      _log.Debug("Checking if Zusi TCP Server is enabled in registry");
       bool flag_error = false;
       bool flag_zusiSteamkey_found = false;
       bool flag_Zusikey_found = false;
@@ -1655,21 +1994,21 @@ namespace ZusiStart
       {
         using (Registry.CurrentUser.OpenSubKey(zusikeyval, writable: true))
         {
-          Log.Info("ZusiTCPServerenabled key " + zusikeyval + " found");
+          _log.Info("ZusiTCPServerenabled key " + zusikeyval + " found");
           flag_Zusikey_found = true;
           registryKey = Registry.CurrentUser.OpenSubKey(zusikeyval, writable: true);
           if (registryKey != null)
           {
-            Log.Info("ZusiTCPServerenabled key " + zusikeyval + " found");
+            _log.Info("ZusiTCPServerenabled key " + zusikeyval + " found");
             NetzwerkServerAutom_value = (int)registryKey.GetValue("NetzwerkServerAutom");
-            Log.Info("ZusiTCPServerenabled keydata " + NetzwerkServerAutom_value);
+            _log.Info("ZusiTCPServerenabled keydata " + NetzwerkServerAutom_value);
           }
         }
       }
       catch
       {
         flag_Zusikey_found = false;
-        Log.Info("ZusiTCPServerenabled key " + zusikeyval + " Not found");
+        _log.Info("ZusiTCPServerenabled key " + zusikeyval + " Not found");
       }
 
       if (NetzwerkServerAutom_value != 1) // check for Steam version
@@ -1678,21 +2017,21 @@ namespace ZusiStart
         {
           using (Registry.CurrentUser.OpenSubKey(zusiSteamkeyval, writable: true))
           {
-            Log.Info("ZusiTCPServerenabled key " + zusikeyval + " found");
+            _log.Info("ZusiTCPServerenabled key " + zusikeyval + " found");
             flag_zusiSteamkey_found = true;
             registryKey_Steam = Registry.CurrentUser.OpenSubKey(zusiSteamkeyval, writable: true);
             if (registryKey_Steam != null)
             {
-              Log.Info("ZusiTCPServerenabled key " + zusiSteamkeyval + " found");
+              _log.Info("ZusiTCPServerenabled key " + zusiSteamkeyval + " found");
               NetzwerkServerAutom_value = (int)registryKey_Steam.GetValue("NetzwerkServerAutom");
-              Log.Info("ZusiTCPServerenabled keydata " + NetzwerkServerAutom_value);
+              _log.Info("ZusiTCPServerenabled keydata " + NetzwerkServerAutom_value);
             }
           }
         }
         catch
         {
           flag_zusiSteamkey_found = false;
-          Log.Info("ZusiTCPServerenabled key " + zusiSteamkeyval + " Not found");
+          _log.Info("ZusiTCPServerenabled key " + zusiSteamkeyval + " Not found");
         }
       }
       if (NetzwerkServerAutom_value != 1)
@@ -1704,13 +2043,13 @@ namespace ZusiStart
             if (registryKey != null)
             {
               registryKey.SetValue("NetzwerkServerAutom", 1, RegistryValueKind.DWord);
-              Log.Info("ZusiTCPServerenabled NetzwerkServerAutom set to 1");
+              _log.Info("ZusiTCPServerenabled NetzwerkServerAutom set to 1");
               return true;
             }
             if (registryKey_Steam != null)
             {
               registryKey_Steam.SetValue("NetzwerkServerAutom", 1, RegistryValueKind.DWord);
-              Log.Info("ZusiTCPServerenabled NetzwerkServerAutom set to 1");
+              _log.Info("ZusiTCPServerenabled NetzwerkServerAutom set to 1");
               return true;
             }
             break;
@@ -1734,6 +2073,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     public void OnStartFavTrain(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Start Favorite Train command - starting selected recent train");
       Zug zug = DataManager.Instance.SelectedRecentTrain.Train;
       OnStartTrain(zug);
     }
@@ -1741,13 +2081,27 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     public void OnStartTrain(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Start Train command - starting current train");
       Zug zug = DataManager.Instance.CurrentTrain;
       OnStartTrain(zug);
+    }
+
+    public static void DoEvents()
+    {
+      var frame = new DispatcherFrame();
+      Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background,
+          new DispatcherOperationCallback(delegate (object f)
+          {
+            ((DispatcherFrame)f).Continue = false;
+            return null;
+          }), frame);
+      Dispatcher.PushFrame(frame);
     }
 
     //---------------------------------------------------------------------
     public void OnStartTrain(Zug zug)
     {
+      _log.Debug($"Starting train: {zug.Gattung} {zug.Nummer} - checking timetable and starting options");
       try
       {
         //TimeTable timeTable = DataManager.Instance.GetTimeTableOfTrain(zug);
@@ -1849,12 +2203,37 @@ namespace ZusiStart
 
           if (Properties.Settings.Default.OptimiseSchedule == 0)
           {
+
+            //System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            //{
+            //  DataManager.Instance.LoadingStatus = LocalizationManager.Translate("Fahrplan wird optimiert... Dies kann je nach Fahrplangröße einige Zeit dauern.");
+            //});
+            Statuszeile_Fahrplaene.Visibility = Visibility.Collapsed;
+            DataManager.Instance.LoadingStatus = LocalizationManager.Translate("Fahrplan wird optimiert... ") + LocalizationManager.Translate($"Dies kann je nach Fahrplangröße einige Zeit dauern. Anzahl Züge: {timeTable.Trains.Count}");
+            // UI bekommt Zeit zum Rendern
+            DoEvents();
+
             string tmpTimeTableFileName = "";
-            string tempzugfilename = DataManager.Instance.BuildTempTimeTable(zug, timeTable, out tmpTimeTableFileName);
+            string tempzugfilename = "";
+
+            tempzugfilename = DataManager.Instance.BuildTempTimeTable(zug, timeTable, out tmpTimeTableFileName);
+
             if (!string.IsNullOrEmpty(tempzugfilename))
             {
               // start train
               FrictionSettingsPopupVisible = false;
+              //System.Windows.Application.Current.Dispatcher.Invoke(() =>
+              //{
+              //  DataManager.Instance.LoadingStatus =
+              //    LocalizationManager.Translate($"Ausgewählter Zug wird gestartet - Optimierung: {DataManager.Instance.original_traincount} -> {DataManager.Instance.optimised_traincount} - Startzeit: {DataManager.Instance.original_starttime.ToString()} -> {DataManager.Instance.optimized_starttime.ToString()}");
+              //});
+
+              if (DataManager.Instance.original_modulecount > 0)
+
+                DataManager.Instance.LoadingStatus = LocalizationManager.Translate($"Ausgewählter Zug {zug.Gattung} {zug.Nummer} gestartet - Optimierung: Züge {DataManager.Instance.original_traincount} -> {DataManager.Instance.optimised_traincount} - Startzeit {DataManager.Instance.original_starttime.ToString()} -> {DataManager.Instance.optimized_starttime.ToString()} - Module {DataManager.Instance.original_modulecount.ToString()} -> {DataManager.Instance.optimized_modulecount.ToString()}");
+
+              else
+                DataManager.Instance.LoadingStatus = LocalizationManager.Translate($"Ausgewählter Zug {zug.Gattung} {zug.Nummer} gestartet - Optimierung: Züge {DataManager.Instance.original_traincount} -> {DataManager.Instance.optimised_traincount} - Startzeit {DataManager.Instance.original_starttime.ToString()} -> {DataManager.Instance.optimized_starttime.ToString()}");
 
               HideWindow();
 
@@ -1862,9 +2241,8 @@ namespace ZusiStart
               {
                 // ... via TCP interface
                 bool? TCPserver = ZusiTCPServerenabled();
-                if (TCPserver == null)
-                  return;
-                if (TCPserver == true)
+
+                if (TCPserver != null && TCPserver == true)
                 {
                   TrainStartInfo tsi = new() { TimetableFile = tmpTimeTableFileName, TrainNumber = zug.Nummer };
 
@@ -1881,6 +2259,11 @@ namespace ZusiStart
                 // ... commandline
                 ZusiSim.Start(tempzugfilename);
               }
+              if (DataManager.Instance.RO_show_optimised_Streckenmodule)
+              {
+                UpdateRouteGraph2(doc.Filename);
+              }
+
               if (FeatureManager.feature_enabled(FeatureManager.Features.Tracking))
               {
                 // *HLI* DataManager.Instance.zusiMeterControl.assign_fahrpult(_fahrpult);
@@ -1961,7 +2344,7 @@ namespace ZusiStart
       }
       catch (Exception ex)
       {
-        Log.Error(ex.ToString());
+        _log.Error(ex.ToString());
         ShowWindow();
       }
     }
@@ -1969,6 +2352,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void Fahrpult_ClientConnected(object sender, ClientConnectedEventArgs e)
     {
+      _log.Debug("Fahrpult client connected - processing connection status");
       //_log.Debug($"throttle connected ({e.ClientAccepted}, {e.NeededDataAccepted})");
 
       //if (e.ClientAccepted)
@@ -2005,11 +2389,13 @@ namespace ZusiStart
 
     public void Fahrpult_Disconnected(object sender, EventArgs e)
     {
+      _log.Debug("Fahrpult disconnected - showing MainWindow");
       System.Windows.Application.Current.Dispatcher.Invoke(() => ShowWindow());
     }
 
     public void Fahrpult_Connected(object sender, EventArgs e)
     {
+      _log.Debug("Fahrpult connected - hiding MainWindow");
       System.Windows.Application.Current.Dispatcher.Invoke(() => HideWindow(nohide: true));
     }
 
@@ -2149,7 +2535,7 @@ namespace ZusiStart
                   {
                     case ZProgID.Zugdatei:
                       _zugDatei = fp.GetValue<string>();
-                      Log.Debug("Fahrpult_DataProcessor zugDatei" + _zugDatei);
+                      _log.Debug("Fahrpult_DataProcessor zugDatei" + _zugDatei);
 
                       if (_zugDatei == @"Temp\ZusiStart\TempTimetable\ZusiStartTempTimeTable.fpn")
                       {
@@ -2181,7 +2567,7 @@ namespace ZusiStart
 
                       // Vollständiger Pfad zum übergeordneten Verzeichnis
                       string parentDirFullPath = dirInfo.Parent.FullName;
-                      DataManager.Instance.routeGraphOpenFile  = parentDirFullPath + "\\" + parentDirName + ".fpn";
+                      DataManager.Instance.routeGraphOpenFile = parentDirFullPath + "\\" + parentDirName + ".fpn";
 
                       UpdateRouteGraph2(parentDirFullPath + "\\" + parentDirName + ".fpn");
 
@@ -2199,6 +2585,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnResetData(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Reset Data command - showing reset data confirmation dialog");
       ResetDataDialog dlg = new()
       {
         Owner = this
@@ -2221,6 +2608,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnFrictionSettings(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Friction Settings command - toggling friction settings popup visibility");
       FrictionSettingsPopupVisible = !FrictionSettingsPopupVisible;
     }
 
@@ -2235,6 +2623,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnStartFahrschule(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Start Fahrschule command - showing Fahrschule window");
       fahrschulWindow = new FahrschulWindow { Owner = DataManager.Instance.main_window };
 
       fahrschulWindow.Show();
@@ -2249,7 +2638,7 @@ namespace ZusiStart
         }
         DataManager.Instance.CurrentTrain = zd.Root;
         if (zd.Root == null)
-          Log.Debug($"Message: {train} not found");
+          _log.Debug($"Message: {train} not found");
         else
         {
           //starte aktuellen Zug:
@@ -2265,7 +2654,7 @@ namespace ZusiStart
       }
       catch (Exception ex)
       {
-        Log.Debug(ex.Message);
+        _log.Debug(ex.Message);
       }
 
 
@@ -2275,6 +2664,7 @@ namespace ZusiStart
 
     public void FahrschuleConnect()
     {
+      _log.Debug("Attempting to connect to Fahrschule - checking connection status and connecting if not already connected");
       if (fahrschulWindow == null)
         return;
       if (Fahrschule_connected == false)
@@ -2290,6 +2680,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void ZusiSim_Terminated(object sender, EventArgs e)
     {
+      _log.Debug("ZusiSim process terminated - showing MainWindow and quitting Zusi connections");
       Dispatcher.BeginInvoke(new Action(() => ShowWindow()));
       ZusiStart.Connection.ZusiMeter.Quit();
       ZusiStart.Connection.ZusiDisplay.Quit();
@@ -2306,6 +2697,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnCreateVehicleList(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Create Vehicle List command - creating filtered vehicle list if not already created");
       if (DataManager.Instance.FilteredVehicles == null)
       {
         //DataManager.Instance.OnNotifyDataLoadStarted(LoaderType.LoadComplete);
@@ -2325,6 +2717,7 @@ namespace ZusiStart
     //---------------------------------------------------------------------
     private void OnSearchTrain(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing Search Train command - searching for train based on input train number and updating UI accordingly");
       //if (((DataManager)DataContext).SearchTrain(tbxTrainNumber.Text))
       //{
       //  tblkMessage.Visibility = Visibility.Hidden;
@@ -2334,7 +2727,7 @@ namespace ZusiStart
       //  tblkMessage.Visibility = Visibility.Visible;
       //}
       DataManager.SearchVehicleGroupValue = null;
-      if (tbxTrainNumber.Text.Trim().Length < 3)
+      if (tbxTrainNumber.Text == null || tbxTrainNumber.Text.Trim().Length < 3)
       {
         MessageBox.Show(LocalizationManager.Translate("Bitte mindestens 3 Zeichen für die FPL-Suche eingeben."), LocalizationManager.Translate("Hinweis"), MessageBoxButton.OK, MessageBoxImage.Information);
         return;
@@ -2347,6 +2740,7 @@ namespace ZusiStart
         if (!result)
         {
           MessageBox.Show(LocalizationManager.Translate("Kein Fahrplan gefunden."), LocalizationManager.Translate("Hinweis"), MessageBoxButton.OK, MessageBoxImage.Information);
+          //setgroupboxcolor("ExpFpl", "GrpFpl", System.Windows.Media.Brushes.Red, newtitle: DataManager.SearchTrainValue);
         }
         else
         {
@@ -2374,8 +2768,69 @@ namespace ZusiStart
       }
     }
 
+    private void OnSearchKI(object sender, ExecutedRoutedEventArgs e)
+    {
+      DataManager.Instance.OnSearchKI(sender, e);
+    }
+
+    private void OnCanSearchKI(object sender, CanExecuteRoutedEventArgs e)
+    {
+      e.CanExecute = true;  
+    }
+
+
+
+    private void OnAnalyseKI(object sender, ExecutedRoutedEventArgs e)
+    {
+      //DataManager.AnalyseZusiData4KI();
+    }
+
+    private void OnCanAnalyseKI(object sender, CanExecuteRoutedEventArgs e)
+    {
+      e.CanExecute = true;
+    }
+
+
+
+    //---------------------------------------------------------------------
+    private void TbxBRNumber_GotFocus(object sender, RoutedEventArgs e)
+    {
+      //tblkMessage.Visibility = Visibility.Hidden;
+    }
+
+    //---------------------------------------------------------------------
+    private void TbxBRNumber_TextChanged(object sender, EventArgs e)
+    {
+      //tblkMessage.Visibility = Visibility.Hidden;
+    }
+
+    //---------------------------------------------------------------------
+    private void OnCanSearchBR(object sender, CanExecuteRoutedEventArgs e)
+    {
+      e.CanExecute = true; // !string.IsNullOrEmpty(tbxTrainNumber.Text);
+    }
+
+    //---------------------------------------------------------------------
+    private void OnSearchBR(object sender, ExecutedRoutedEventArgs e)
+    {
+      _log.Debug("Executing Search BR command - searching for BR based on input BR number and updating UI accordingly");
+
+      DataManager.SearchVehicleGroupValue = null;
+      if (tbxBRNumber.Text == null || tbxBRNumber.Text.Trim().Length < 2)
+      {
+        MessageBox.Show(LocalizationManager.Translate("Bitte mindestens 2 Zeichen für die BR-Suche eingeben."), LocalizationManager.Translate("Hinweis"), MessageBoxButton.OK, MessageBoxImage.Information);
+        return;
+      }
+      else
+      {
+
+        DataManager.Instance.SearchBR(tbxBRNumber.Text);
+      }
+    }
+
     private void createZSK_locationGroupId_dict()
     {
+      _log.Debug("Creating ZSK_locationGroupId dictionary - reading from CSV file and populating dictionary with location group ID mappings");
       string dateipfad = "Resources/ZSK_locationGroupId.csv"; // Pfad zur CSV-Datei
 
       string absolutePath = System.IO.Path.GetFullPath(dateipfad);
@@ -2391,166 +2846,11 @@ namespace ZusiStart
       }
     }
 
-
-    //private async void StartZusiWebBrowser(string url = "https://www.zusidatenbank.de")
-    //{
-    //  bool int_window = false;
-
-    //  if (int_window)
-    //  {
-    //    DataManager.Instance.webview_ZDB.CoreWebView2.SourceChanged += CoreWebView2SourceChanged_ZDB;
-    //    DataManager.Instance.webview_ZSK.CoreWebView2.SourceChanged += CoreWebView2SourceChanged_ZSK;
-    //    //DataManager.Instance.webview_ZSK.CoreWebView2.FrameNavigationStarting += (sender, args) =>
-    //    //{
-    //    //  Console.WriteLine($"Frame navigating to: {args.Uri}");
-
-    //    //  // Example: Cancel navigation if the URL contains "blockedsite.com"
-    //    //  if (args.Uri.Contains("blockedsite.com"))
-    //    //  {
-    //    //    args.Cancel = true;
-    //    //    Console.WriteLine("Navigation blocked.");
-    //    //  }
-    //    //};
-
-
-    //    MainBorderVisibility = Visibility.Collapsed;
-    //    MainWebBorderVisibility = Visibility.Visible;
-    //    SearchBorderVisibility = Visibility.Collapsed;
-    //    RecentTrainsBorderVisibility = Visibility.Collapsed;
-    //    await webView_ZDB.EnsureCoreWebView2Async(null);
-    //    webView_ZDB.CoreWebView2.Navigate(url);
-    //  }
-    //  else
-    //  {
-    //    //MainBorderVisibility = Visibility.Collapsed;
-    //    //MainWebBorderVisibility = Visibility.Collapsed;
-    //    //SearchBorderVisibility = Visibility.Visible;
-    //    //RecentTrainsBorderVisibility = Visibility.Collapsed;
-
-    //    if (_webViewWindow_ZDB == null || !_webViewWindow_ZDB.IsLoaded)
-    //    {
-    //      _webViewWindow_ZDB = new WebView_Window();
-    //      _webViewWindow_ZDB.set_websource(url);
-    //      _webViewWindow_ZDB.Show();
-    //      await _webViewWindow_ZDB.webViewWin.EnsureCoreWebView2Async(DataManager.Instance.webview_environment);
-
-    //    }
-    //    else
-    //    {
-    //      _webViewWindow_ZDB.Close();
-    //      _webViewWindow_ZDB = new WebView_Window();
-    //      _webViewWindow_ZDB.set_websource(url);
-    //      _webViewWindow_ZDB.Show();
-    //      await _webViewWindow_ZDB.webViewWin.EnsureCoreWebView2Async(DataManager.Instance.webview_environment);
-    //      //_webViewWindow_ZDB.set_websource(url);
-    //      //_webViewWindow_ZDB.Activate();
-    //    }
-
-    //    //var _webview_window = new WebView_Window();
-    //    //_webViewWindow_ZDB.webViewWin.CoreWebView2.Navigate(url);
-
-
-    //    //if (_webViewWindow_ZDB.IsLoaded)
-    //    //{
-    //    //  _webViewWindow_ZDB.Show();
-    //    //  _webViewWindow_ZDB.Closed += _webViewWindow_ZDB_Closed;
-    //    //}
-    //  }
-    //}
-
-    //private void _webViewWindow_ZDB_Closed(object sender, EventArgs e)
-    //{
-    //  //_webViewWindow_ZDB = null;
-    //}
-
-    //private void _webViewWindow_ZSK_Closed(object sender, EventArgs e)
-    //{
-    //  _webViewWindow_ZSK = null;
-    //}
-
-
-    //private void OnWebView_NavigationCompleted_ZDB(object sender, CoreWebView2NavigationCompletedEventArgs e)
-    //{
-    //  //urlTextBlock_ZDB.Text = webView_ZDB.Source.ToString();
-    //}
-
-    //private void OnWebView_NavigationCompleted_ZSK(object sender, CoreWebView2NavigationCompletedEventArgs e)
-    //{
-    //  //urlTextBlock_ZDB.Text = webView_ZDB.Source.ToString();
-    //}
-
-    //public async System.Threading.Tasks.Task NavigateToUrlAsync_ZDB(string url)
-    //{
-    //  var tcs = new TaskCompletionSource<bool>();
-
-    //  EventHandler<CoreWebView2NavigationCompletedEventArgs> handler = null;
-    //  handler = (sender, e) =>
-    //  {
-    //    webView_ZDB.NavigationCompleted -= handler;
-    //    tcs.SetResult(true);
-    //  };
-
-    //  webView_ZDB.NavigationCompleted += handler;
-    //  try
-    //  {
-
-    //    webView_ZDB.CoreWebView2.Navigate(url);
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    Xceed.Wpf.Toolkit.MessageBox.Show("URL: < " + url + " > \n" + ex.Message + "\nBitte in den Optionen korrigieren", "Fehler beim Öffnen der URL", MessageBoxButton.OK, MessageBoxImage.Error);
-    //  }
-    //  await tcs.Task;
-    //}
-
-    //public async void set_websource_ZDB(string value)
-    //{
-    // // adapted to new concept
-    //  var zdbTab = DataManager.Instance.Tabs.FirstOrDefault(t => t.Title == "Zusi-DB");
-    //  if (zdbTab?.WebViewInstance?.CoreWebView2 != null)
-    //  {
-    //    zdbTab.WebViewInstance.CoreWebView2.Navigate(value);
-    //  }
-
-    //}
-
-    //public async System.Threading.Tasks.Task NavigateToUrlAsync_ZSK(string url)
-    //{
-    //  var tcs = new TaskCompletionSource<bool>();
-
-    //  EventHandler<CoreWebView2NavigationCompletedEventArgs> handler = null;
-    //  handler = (sender, e) =>
-    //  {
-    //    webView_ZSK.NavigationCompleted -= handler;
-    //    tcs.SetResult(true);
-    //  };
-
-    //  webView_ZSK.NavigationCompleted += handler;
-    //  try
-    //  {
-    //    webView_ZSK.CoreWebView2.Navigate(url);
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    Xceed.Wpf.Toolkit.MessageBox.Show("URL: < " + url + " > \n" + ex.Message + "\nBitte in den Optionen korrigieren", "Fehler beim Öffnen der URL", MessageBoxButton.OK, MessageBoxImage.Error);
-    //  }
-    //  await tcs.Task;
-    //}
-
-    //public async void set_websource_ZSK(string value)
-    //{
-    //  // adapted to new concept
-    //  var zdbTab = DataManager.Instance.Tabs.FirstOrDefault(t => t.Title == DataManager.Instance.tab_title_Streckenkarte);
-    //  if (zdbTab?.WebViewInstance?.CoreWebView2 != null)
-    //  {
-    //    zdbTab.WebViewInstance.CoreWebView2.Navigate(value);
-    //  }
-    //}
-
     public void CoreWebView2SourceChanged_ZDB(object? sender, CoreWebView2SourceChangedEventArgs e)
     {
       TabViewModel tabvm = InfoTabControl.SelectedValue as TabViewModel;
       string currenttabtitle = tabvm.Title;
+      _log.Debug("ZDB-Webview_SourceChanged - current tab: " + currenttabtitle);
       if (currenttabtitle == DataManager.Instance.tab_title_Zusi_DB) // only execute when ZDB tab is active
       {
 
@@ -2637,12 +2937,13 @@ namespace ZusiStart
     {
       TabViewModel tabvm = InfoTabControl.SelectedValue as TabViewModel;
       string currenttabtitle = tabvm.Title;
+      _log.Debug("ZSK-Webview_SourceChanged - current tab: " + currenttabtitle);
 
       if (currenttabtitle == DataManager.Instance.tab_title_Streckenkarte)
       {
 
         string newSource = ((CoreWebView2)sender).Source.ToString();
-        Log.Debug("ZSK-Webview_Source:" + newSource);
+        _log.Debug("ZSK-Webview_Source:" + newSource);
         System.Diagnostics.Debug.WriteLine($"***** CoreWebView2SourceChanged_ZSK: Source {newSource} *****");
         DataManager.Instance.webview_ZSK_source = newSource;
 
@@ -2704,7 +3005,7 @@ namespace ZusiStart
         //else 
         if (newSource.Contains("zusi-sk.eu/#"))
         {
-          Log.Debug("ZSK-Webview_Source: Startswith Zusi_Sk" + newSource);
+          _log.Debug("ZSK-Webview_Source: Startswith Zusi_Sk" + newSource);
           string[] newSource_parts = newSource.Split("#");
           string location_str = newSource_parts[1];
           string[] location_parts = location_str.Split("/");
@@ -2769,89 +3070,9 @@ namespace ZusiStart
       }
     }
 
-    //private void CoreWebView2_NewWindowRequested_ZDB(object sender, CoreWebView2NewWindowRequestedEventArgs e)
-    //{
-    //  string url_requested = e.Uri;
-    //  string[] url_requested_parts;
-    //  string betriebsstelle = "";
-    //  string strecke = "";
-
-    //  if (url_requested.Contains("?Betriebsstelle="))
-    //  {
-    //    url_requested_parts = url_requested.Split("?");
-    //    if (url_requested_parts.Count() == 2)
-    //    {
-    //      if (url_requested_parts[0].EndsWith(".st3"))
-    //      {
-    //        string searchString = "Betriebsstelle=";
-    //        string url = url_requested_parts[1];
-
-    //        int startIndex = url.IndexOf(searchString) + searchString.Length;
-    //        betriebsstelle = url.Substring(startIndex);
-    //        betriebsstelle = betriebsstelle.Replace("+", " ");
-    //        //DataManager.Instance.main_window.tbxTrainNumber.Text = betriebsstelle;
-    //        bool betriebsstelle_found = DataManager.Instance.SearchTrain(betriebsstelle);
-
-    //        if (betriebsstelle_found)
-    //        {
-    //          e.Handled = true; // Verhindert das Öffnen eines neuen Fensters
-    //          DataManager.Instance.CurrentTrain = null;
-    //          DataManager.Instance.SelectedRecentTrain = null;
-    //          DataManager.Instance.CurrentTrainItem = null;
-    //          //DataManager.Instance.main_window.tbxTrainNumber.Text = betriebsstelle;
-    //          return;
-    //        }
-    //      }
-    //    }
-    //  }
-
-    //  if (url_requested.Contains("?Strecke="))
-    //  {
-    //    url_requested_parts = url_requested.Split("?");
-    //    if (url_requested_parts.Count() == 2)
-    //    {
-    //      if (url_requested_parts[0].EndsWith(".st3"))
-    //      {
-    //        string searchString = "Strecke=";
-    //        string url = url_requested_parts[1];
-
-    //        int startIndex = url.IndexOf(searchString) + searchString.Length;
-    //        strecke = url.Substring(startIndex);
-    //        strecke = strecke.Replace("+", " ");
-    //        url_requested = url_requested_parts[0];
-    //      }
-    //    }
-    //  }
-
-    //  if (url_requested.EndsWith(".st3"))
-    //  {
-    //    e.Handled = true; // Verhindert das Öffnen eines neuen Fensters
-    //    string train_number = "";
-    //    string[] pathitems = url_requested.Split("%5C");
-    //    if (pathitems != null && pathitems.Count() == 5)
-    //    {
-    //      train_number = pathitems[4];
-
-    //      bool train_found = DataManager.Instance.SearchTrain(train_number);
-
-    //      if (train_found)
-    //      {
-    //        e.Handled = true; // Verhindert das Öffnen eines neuen Fensters
-    //        DataManager.Instance.CurrentTrain = null;
-    //        DataManager.Instance.SelectedRecentTrain = null;
-    //        //DataManager.Instance.main_window.tbxTrainNumber.Text = train_number;
-
-    //        if (strecke != "")
-    //        {
-    //          DataManager.Instance.SearchResultTitle = strecke;
-    //        }
-    //      }
-    //    }
-    //  }
-    //}
-
     public void CoreWebView2_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
     {
+      _log.Debug("WebView2 NavigationStarting - URL: " + e.Uri);
       // Check if the URL is the one you want to intercept
       if (e.Uri.Contains("?zugstart="))
       {
@@ -2885,25 +3106,9 @@ namespace ZusiStart
       }
     }
 
-    //private void CoreWebView2_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
-    //{
-    //  bool test = true;
-    //}
-
-    //private void OnSearchTrainwithZusiDB(object sender, ExecutedRoutedEventArgs e)
-    //{
-    //  if (string.IsNullOrEmpty(DataManager.Instance.options.ZDB_Url))
-    //    StartZusiWebBrowser(url: _url_zusi_datenbank);
-    //  else
-    //    StartZusiWebBrowser(url: DataManager.Instance.options.ZDB_Url);
-    //}
-
-    //private void OnSearchBuchfahrplan(object sender, ExecutedRoutedEventArgs e)
-    //{
-    //  SearchBuchfahrplan();
-    //}
     private async void SearchPDFjs(Microsoft.Web.WebView2.Wpf.WebView2 EfpTab, string searchstring)
     {
+      _log.Debug("Executing SearchPDFjs - searching for string: " + searchstring);
 
       await EfpTab.CoreWebView2.ExecuteScriptAsync(@"
 PDFViewerApplication.page = 1; // Gehe zur ersten Seite  
@@ -2928,6 +3133,7 @@ setTimeout(() => {
 
     private async void SearchPDFjs_TOC(Microsoft.Web.WebView2.Wpf.WebView2 EfpTab, string searchstring)
     {
+      _log.Debug("Executing SearchPDFjs_TOC - searching for string in table of contents: " + searchstring);
 
       await EfpTab.CoreWebView2.ExecuteScriptAsync(@"
 PDFViewerApplication.page = 1; // Gehe zur ersten Seite  
@@ -2950,9 +3156,9 @@ setTimeout(() => {
     }
 
     public class Chapter
-    {
-      public string title { get; set; }
-      public object dest { get; set; } // dest ist ein komplexes Objekt
+  {
+    public string title { get; set; }
+    public object dest { get; set; } // dest ist ein komplexes Objekt
     }
 
 
@@ -3026,7 +3232,7 @@ setTimeout(() => {
 
     public void remove_oeril_sk_tab()
     {
-
+      _log.Debug("Removing OeRilSK tab - checking if tab exists and removing it from the tab collection");
       //if (DataManager.Instance.Tabs.Contains(_oeril_sk_tab))
       //{
       //  _oeril_sk_tab = DataManager.Instance.Tabs.FirstOrDefault(t => t.Title == DataManager.Instance.tab_title_OeRilSK);
@@ -3045,6 +3251,7 @@ setTimeout(() => {
 
     public async void SetLaNummer(string lanr)
     {
+      _log.Debug("Setting La-Nummer - searching for La-Nummer: " + lanr);
       if (lanr != null)
       {
         // handle La-PDF
@@ -3112,8 +3319,44 @@ setTimeout(() => {
       }
     }
 
+    /// <summary>
+    /// Merges a list of bitmaps into one horizontal bitmap.
+    /// </summary>
+    static Bitmap MergeBitmapsHorizontally(List<Bitmap> bitmaps)
+    {
+      if (bitmaps == null || bitmaps.Count == 0)
+        throw new ArgumentException("Bitmap list is empty.");
+
+      // Calculate total width and max height
+      int totalWidth = 0;
+      int maxHeight = 0;
+      foreach (var bmp in bitmaps)
+      {
+        if (bmp == null) throw new ArgumentException("One of the bitmaps is null.");
+        totalWidth += bmp.Width + 10;
+        if (bmp.Height > maxHeight) maxHeight = bmp.Height;
+      }
+
+      // Create result bitmap
+      Bitmap result = new Bitmap(totalWidth, maxHeight);
+      using (Graphics g = Graphics.FromImage(result))
+      {
+        g.Clear(System.Drawing.Color.Transparent); // Optional background
+        int offsetX = 0;
+        foreach (var bmp in bitmaps)
+        {
+          g.DrawImage(bmp, offsetX, 0);
+          offsetX += bmp.Width + 10;
+        }
+      }
+
+      return result;
+    }
+
+
     public void SearchBuchfahrplan()
     {
+      _log.Debug("Searching Buchfahrplan - attempting to load and display Buchfahrplan for current train");
       ZT_Buchfahrplan bfpl = new ZT_Buchfahrplan();
 
       string filename; // = @"C:\Program Files\Zusi3\_ZusiData\Timetables\Deutschland\Hamburg_Kassel\Guntershausen-Edesheim_2020_06Uhr-10Uhr\RB14202_14009.timetable.xml";
@@ -3143,22 +3386,22 @@ setTimeout(() => {
               }
             }
 
-
             filename = Zusi.GetRelativePathOf(trn_file.Filename, ref dtp);
             if (zug.BuchfahrplanRohDatei != null)
             {
 
               string bfpl_filename = zug.BuchfahrplanRohDatei.FullPath;
               filename = System.IO.Path.Combine(bfpl_filename, "");
-              Bitmap bitmap = bfpl.show_Buchfahrplan(filename);
-              if (bitmap != null)
+              List<Bitmap> bitmaps = bfpl.show_Buchfahrplan2(filename, zug.BuchfahrplanDll);
+              if (bitmaps != null && bitmaps.Count > 0)
               {
                 //buchfahrplanImage.Source = BitmapToImageSource(bitmap);
-
+                Bitmap merged = MergeBitmapsHorizontally(bitmaps);
                 var imageTab = DataManager.Instance.Tabs.FirstOrDefault(t => t.Title == DataManager.Instance.tab_title_buchfahrplan);
                 if (imageTab != null)
                 {
-                  imageTab.ImageSource = BitmapToImageSource(bitmap);  // @"D:\Pfad\zum\Fahrplanbild.png"; // oder .jpg
+
+                  imageTab.ImageSource = BitmapToImageSource(merged);
                 }
               }
               DataManager.Instance.LaNumberList.Clear();
@@ -3419,12 +3662,13 @@ setTimeout(() => {
 
     private void OnZusiBildFahrplan(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Executing OnZusiBildFahrplan - attempting to start ZusiBildfahrplan with current train data");
       StartZusiBildFahrplan();
     }
 
     private void StartZusiBildFahrplan(string trn_filename = "", string timetablefilename = "")
     {
-      // ... commandline
+      _log.Debug("Starting ZusiBildfahrplan - preparing parameters for ZusiBildfahrplan based on current train data");
       DataPathType dtp = DataPathType.Unknown;
       //string Bildfahrplanfilename = @"C:\Program Files\Zusi3\_Tools\ZUSIBildfahrplan\TimetableGraphProject.exe";
       string Bildfahrplanfilename = "";
@@ -3468,6 +3712,7 @@ setTimeout(() => {
 
     private void StartZusiDisplay()
     {
+      _log.Debug("Starting ZusiDisplay - preparing parameters for ZusiDisplay based on current train data");
       string startcmd = "";
 
       if (DataManager.Instance.options.ZusiDisplay_Exe != "")
@@ -3482,6 +3727,7 @@ setTimeout(() => {
 
     private void StartZusiMeter()
     {
+      _log.Debug("Starting ZusiMeter - preparing parameters for ZusiMeter based on current train data");
       string startcmd = "";
 
       if (DataManager.Instance.options.ZusiMeter_Exe != "")
@@ -3496,16 +3742,18 @@ setTimeout(() => {
 
     public void UpdateMarkerPosition(double latitude, double longitude)
     {
-      if (marker == null)
-      {
-        InitializeMap();
-      }
-      Log.Debug("UpdateMarkerPosition - Pos" + latitude.ToString() + "," + longitude.ToString());
+      //if (marker == null)
+      //{
+      //  InitializeMap();
+      //}
+      //_log.Debug("UpdateMarkerPosition - Pos" + latitude.ToString() + "," + longitude.ToString());
 
-      marker.Position = new PointLatLng(latitude, longitude);
-      TabViewModel? zdbTab = DataManager.Instance.Tabs.FirstOrDefault(t => t.Title == DataManager.Instance.tab_title_tracking);
-      zdbTab.gmap.Position = marker.Position; // Karte auf neue Position zentrieren
-
+      //marker.Position = new PointLatLng(latitude, longitude);
+      //TabViewModel? zdbTab = DataManager.Instance.Tabs.FirstOrDefault(t => t.Title == DataManager.Instance.tab_title_tracking);
+      //if (zdbTab != null)
+      //  //zdbTab.gmap.Position = marker.Position; // Karte auf neue Position zentrieren
+      //  DataManager.Instance.osmGmapControl.gmap.Position = marker.Position;
+      OSMGmapControl.UpdateMarkerPosition(latitude, longitude);
     }
 
     public void UpdateRGMarkerPosition(double utmX, double utmY, double phi)
@@ -3520,12 +3768,20 @@ setTimeout(() => {
     }
     private void OnResetView(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Resetting view - resetting all tabs and views to their default state");
       ShowWindow();
+    }
+
+    private void OnReload(object sender, ExecutedRoutedEventArgs e)
+    {
+      _log.Debug("Reloading - reloading timetable and vehicles");
+      DataManager.Instance.InitializeData();
     }
 
     //---------------------------------------------------------------------
     private void OnTrainStartSettings(object sender, ExecutedRoutedEventArgs e)
     {
+      _log.Debug("Opening Train Start Settings Dialog - allowing user to configure train start options");
       TrainStartSettingsDialog dlg = new()
       {
         Owner = this
@@ -3564,6 +3820,7 @@ setTimeout(() => {
     //---------------------------------------------------------------------
     private void MainWindow_SortModeChanged(object sender, RoutedEventArgs e)
     {
+      _log.Debug("Sort mode changed - updating sorting of train list based on new sort mode");
       if (e.OriginalSource is SortButton sb)
       {
         if (sb.GetVisualAncestor<TreeViewItem>() is TreeViewItem tvi)
@@ -3608,7 +3865,7 @@ setTimeout(() => {
     //---------------------------------------------------------------------
     private static void FadeIn(UIElement what, double duration)
     {
-      Duration d = new(TimeSpan.FromMilliseconds(duration));
+      System.Windows.Duration d = new(TimeSpan.FromMilliseconds(duration));
       DoubleAnimation da = new(1.0, d);
       what.BeginAnimation(OpacityProperty, da);
     }
@@ -3616,7 +3873,7 @@ setTimeout(() => {
     //---------------------------------------------------------------------
     private static void FadeOut(UIElement what, double duration, Action? completed)
     {
-      Duration d = new(TimeSpan.FromMilliseconds(duration));
+      System.Windows.Duration d = new(TimeSpan.FromMilliseconds(duration));
       DoubleAnimation da = new(0.0, d);
       da.Completed += (s, e) => completed?.Invoke();
       what.BeginAnimation(OpacityProperty, da);
@@ -3630,6 +3887,7 @@ setTimeout(() => {
     //---------------------------------------------------------------------
     private void HideWindow(bool nohide = false)
     {
+      _log.Debug("Hiding window - hiding main window and adjusting visibility of UI elements based on hide settings");
       if (!DataManager.Instance.WindowIsHidden)
       {
         DataManager.Instance.WindowIsHidden = true;
@@ -3639,22 +3897,25 @@ setTimeout(() => {
         }
         else
         {
-          brdCol1.Visibility = Visibility.Collapsed;
-          brdTrains.Visibility = Visibility.Collapsed;
-          BrdSelTrain.Visibility = Visibility.Collapsed;
-          TabControlCol1.Visibility = Visibility.Collapsed;
-          brdFahrplaene.Visibility = Visibility.Collapsed;
-          GridSplitterFahrplaene.Visibility = Visibility.Collapsed;
-          StatusLine.Visibility = Visibility.Collapsed;
-          gridLengthLeftColumn = LeftColumn.Width;
-          gridLengthRightColumn = RightColumn.Width;
-          gridLengthTopRow = TopRow.Height;
-          gridLengthBottomRow = BottomRow.Height;
+          DataManager.Instance.LoadDockLayout("B");
+          ////brdCol1.Visibility = Visibility.Collapsed;
+          //brdCol1.Hide();
+          ////brdTrains.Visibility = Visibility.Collapsed;
+          //BrdSelTrain.Visibility = Visibility.Collapsed;
+          ////TabControlCol1.Visibility = Visibility.Collapsed;
+          ////brdFahrplaene.Visibility = Visibility.Collapsed;
+          ////GridSplitterFahrplaene.Visibility = Visibility.Collapsed;
+          ////StatusLine.Visibility = Visibility.Collapsed;
+          //Statuszeile_Buttons.Visibility = Visibility.Collapsed;
+          //gridLengthLeftColumn = LeftColumn.Width;
+          //gridLengthRightColumn = RightColumn.Width;
+          ////gridLengthTopRow = TopRow.Height;
+          //gridLengthBottomRow = BottomRow.Height;
 
-          LeftColumn.Width = new GridLength(0, GridUnitType.Star);
-          RightColumn.Width = new GridLength(0, GridUnitType.Star);
-          TopRow.Height = new GridLength(0, GridUnitType.Star);
-          BottomRow.Height = new GridLength(0, GridUnitType.Star);
+          //LeftColumn.Width = new GridLength(0, GridUnitType.Star);
+          //RightColumn.Width = new GridLength(0, GridUnitType.Star);
+          ////TopRow.Height = new GridLength(0, GridUnitType.Star);
+          //BottomRow.Height = new GridLength(0, GridUnitType.Star);
         }
       }
     }
@@ -3662,25 +3923,30 @@ setTimeout(() => {
     //---------------------------------------------------------------------
     private void ShowWindow()
     {
+      _log.Debug("Showing window - showing main window and adjusting visibility of UI elements based on show settings");
       if (DataManager.Instance.WindowIsHidden)
       {
         DataManager.Instance.WindowIsHidden = false;
         Show();
         FadeIn(this, 600);
 
-        brdCol1.Visibility = Visibility.Visible;
-        brdTrains.Visibility = Visibility.Visible;
-        BrdSelTrain.Visibility = Visibility.Visible;
-        TabControlCol1.Visibility = Visibility.Visible;
-        brdFahrplaene.Visibility = Visibility.Visible;
-        GridSplitterFahrplaene.Visibility = Visibility.Visible;
-        StatusLine.Visibility = Visibility.Visible;
+        DataManager.Instance.LoadDockLayout("A");
+
+        //brdCol1.Show(); // = Visibility.Visible;
+        ////brdTrains.Visibility = Visibility.Visible;
+        //BrdSelTrain.Visibility = Visibility.Visible;
+        ////TabControlCol1.Visibility = Visibility.Visible;
+        ////brdFahrplaene.Visibility = Visibility.Visible;
+        ////GridSplitterFahrplaene.Visibility = Visibility.Visible;
+        //DataManager.Instance.LoadingStatus = " ";
+        //StatusLine.Visibility = Visibility.Visible;
+        //Statuszeile_Buttons.Visibility = Visibility.Visible;
 
 
-        LeftColumn.Width = gridLengthLeftColumn;
-        RightColumn.Width = gridLengthRightColumn;
-        TopRow.Height = gridLengthTopRow;
-        BottomRow.Height = gridLengthBottomRow;
+        //LeftColumn.Width = gridLengthLeftColumn;
+        //RightColumn.Width = gridLengthRightColumn;
+        ////TopRow.Height = gridLengthTopRow;
+        //BottomRow.Height = gridLengthBottomRow;
 
 
         // make sure that ZusiStart is not covered by another app
@@ -3711,6 +3977,7 @@ setTimeout(() => {
     //---------------------------------------------------------------------
     private void GeneralTrains_Filter(object sender, FilterEventArgs e)
     {
+      _log.Debug("Applying general train filter - filtering train list based on train number and other criteria");
       if (e.Item is TrainsViewModel tvm)
       {
         e.Accepted = true;
@@ -3786,15 +4053,26 @@ setTimeout(() => {
     //---------------------------------------------------------------------
     private void TimeTableOverviewControl_SelectedTimeTableChanged(object sender, SelectedTimeTableChangedEventArgs e)
     {
+      _log.Debug("Selected timetable changed - updating timetable relations and views based on new selection");
       DataManager.UpdateTimeTableRelations(e.TimeTables, e.PreferredSelection);
     }
 
     //---------------------------------------------------------------------
     private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
+      _log.Debug("Selected train changed - updating current train and related views based on new selection");
       TrainsViewModel? tvm = e.NewValue as TrainsViewModel;
       DataManager.Instance.CurrentTrainItem = null;
       DataManager.Instance.CurrentTrain = tvm?.Object;
+
+      if (DataManager.Instance.CurrentTrain?.Parent is ZugDatei zd)
+      {
+        if (zd.Filename.StartsWith(Zusi.DataPath[4]))
+        {
+          DataManager.Instance.CurrentTrainItem = new TrainItem(DataManager.Instance.CurrentTrain);
+          DataManager.Instance.CurrentTrainItem.IsTrainReplaced = true;
+        }
+      }
 
     }
 
@@ -3824,6 +4102,7 @@ setTimeout(() => {
     //---------------------------------------------------------------------
     public static bool TrainFiltered_ok(Zug m)
     {
+      _log.Debug("Checking if train is accepted by filter - evaluating train number and related criteria against filter settings");
       bool train_accepted = true;
 
       if (DataManager.Instance.FilterZugNummer != "")
@@ -3842,6 +4121,7 @@ setTimeout(() => {
     //---------------------------------------------------------------------
     public bool TimeTableFiltered_ok(TimeTable m)
     {
+      _log.Debug("Checking if timetable is accepted by filter - evaluating timetable name and related criteria against filter settings");
       bool timetable_accepted = true;
       try
       {
@@ -3860,18 +4140,23 @@ setTimeout(() => {
 
     private void SelectedTimeTableChanged(object sender, SelectionChangedEventArgs e)
     {
+      _log.Debug("Selected timetable relation changed - updating views and related data based on new selection");
       //Ensure the sender is a ListBox
       if (sender is ListBox listBox)
       {
 
+        DataManager.FoundTimeTableIds = null;
+
         TimeTableGroup? selectedItem2 = listBox.SelectedItem as TimeTableGroup;
         TimeTableRelation? selectedItem = listBox.SelectedItem as TimeTableRelation;
         TimeTable selectedTT;
+        _log.Debug("Selected item: " + (selectedItem != null ? selectedItem.TimeTable.Name : "null") + ", Selected group: " + (selectedItem2 != null ? selectedItem2.GroupID : "null"));
 
         DataManager.SearchVehicleGroupValue = null;
         DataManager.SearchTrainValue = null;
         if (selectedItem2 != null) // Timetablegroup
         {
+          _log.Debug("Selected item is a TimeTableGroup" + selectedItem2.GroupID);
           setgroupboxcolor("ExpFpl", "GrpFpl", System.Windows.Media.Brushes.White, newtitle: selectedItem2.GroupID);
           if (DataManager.Instance.SkipTimeTableSelectionUpdate > 0)
           {
@@ -3947,11 +4232,13 @@ setTimeout(() => {
 
     private void SelectedTimeTableRelationChanged(object sender, SelectionChangedEventArgs e)
     {
+      _log.Debug("Selected timetable relation changed - updating views and related data based on new selection");
       // Ensure the sender is a ListBox
       if (sender is ListBox listBox)
       {
         // Get the selected item
         TimeTableRelation? selectedItem = listBox.SelectedItem as TimeTableRelation;
+        _log.Debug("Selected item: " + (selectedItem != null ? selectedItem.TimeTable.Name : "null"));
 
         // Call your desired function or logic
         if (selectedItem != null)
@@ -3959,6 +4246,7 @@ setTimeout(() => {
           if (!string.IsNullOrEmpty(selectedItem.Begruessungsdatei))
           {
             //DataManager.Instance.webview.Source = new Uri(selectedItem.Begruessungsdatei);
+            _log.Debug("Selected timetable relation has a greeting file - setting web source to " + selectedItem.Begruessungsdatei);
             DataManager.Instance.set_websource(DataManager.Instance.tab_title_docu, selectedItem.Begruessungsdatei);
           }
           //if (false) // _activetab == 2)
@@ -3981,11 +4269,13 @@ setTimeout(() => {
 
     private void SelectedTimeTableRelationChanged2(object sender, SelectionChangedEventArgs e)
     {
+      _log.Debug("Selected timetable relation changed (version 2) - updating views and related data based on new selection");
       // Ensure the sender is a ListBox
       if (sender is ListBox listBox)
       {
         // Get the selected item
         TimeTableRelation? selectedItem = listBox.SelectedItem as TimeTableRelation;
+        _log.Debug("Selected item: " + (selectedItem != null ? selectedItem.TimeTable.Name : "null"));
 
         // Call your desired function or logic
         if (selectedItem != null)
@@ -3994,6 +4284,7 @@ setTimeout(() => {
           {
             //DataManager.Instance.webview.Source = new Uri(selectedItem.Begruessungsdatei);
             string begruessungsdatei_filename = selectedItem.Begruessungsdatei;
+            _log.Debug("Selected timetable relation has a greeting file - original filename: " + begruessungsdatei_filename);
             if (begruessungsdatei_filename.StartsWith("file:///"))
             {
               DataPathType dpt = DataPathType.Unknown;
@@ -4025,10 +4316,12 @@ setTimeout(() => {
           if (FeatureManager.feature_enabled(FeatureManager.Features.Tracking))
           {
             //Log.Debug("Fahrpult_DataProcessor - UTM" + selectedItem.TimeTable.Utm.ToString());
-
+            _log.Debug("Selected timetable relation has tracking feature enabled - updating marker position based on timetable UTM coordinates");
             System.Windows.Point point = selectedItem.TimeTable.Utm.ToLatLon();
             UpdateMarkerPosition(point.Y, point.X);
+            _log.Debug("Updated marker position to " + point.Y.ToString() + "," + point.X.ToString());
             //UpdateRailwayOverlay(point.Y, point.X);
+            DataManager.Instance.used_streckenmodule = [];
             DataManager.Instance.routeGraphOpenFile = selectedItem.TimeTable.GetDocument().Filename;
             UpdateRouteGraph2(selectedItem.TimeTable.GetDocument().Filename);
 
@@ -4041,6 +4334,7 @@ setTimeout(() => {
 
     public async void UpdateRouteGraph2(string filename)
     {
+      _log.Debug("Updating route graph - attempting to update route graph view based on selected timetable's document filename: " + filename);
       try
       {
         TabViewModel? zdbTab = DataManager.Instance.Tabs.FirstOrDefault(t => t.Title == DataManager.Instance.tab_title_routegraph);
@@ -4061,8 +4355,8 @@ setTimeout(() => {
         }
       }
       catch (Exception ex)
-      { 
-        LogHelper.LogException(ex, "Something went wrong updating routegraph"); 
+      {
+        LogHelper.LogException(ex, "Something went wrong updating routegraph");
       }
 
     }
@@ -4082,6 +4376,7 @@ setTimeout(() => {
     //---------------------------------------------------------------------
     private void FoundTimeTableTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
+      _log.Debug("Selected found timetable changed - updating current found timetable and related views based on new selection");
       FoundTimeTableViewModel? stt = e.NewValue as FoundTimeTableViewModel;
       DataManager.Instance.SetFoundTimeTable(stt?.Object);
       if (stt != null)
@@ -4093,6 +4388,7 @@ setTimeout(() => {
     //---------------------------------------------------------------------
     private void FoundTrainTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
+      _log.Debug("Selected found train changed - updating current found train and related views based on new selection");
       TrainsViewModel? tvm = e.NewValue as TrainsViewModel;
       DataManager.Instance.CurrentTrain = tvm?.Object;
     }
@@ -4112,10 +4408,12 @@ setTimeout(() => {
     //---------------------------------------------------------------------
     private void TbxFilterTrainNumber_TextChanged(object sender, EventArgs e)
     {
+      _log.Debug("Train number filter text changed - updating train filter based on new text");
       //tblkMessage.Visibility = Visibility.Hidden;
       ZusiStart.Controls.SearchTextBox searchtextbox = sender as ZusiStart.Controls.SearchTextBox;
 
       string searchtext = searchtextbox.Text;
+      _log.Debug("Train number filter text: " + searchtext);
 
       if (searchtext != DataManager.Instance.FilterPlatzhalterText && searchtext != "")
       {
@@ -4127,6 +4425,8 @@ setTimeout(() => {
       else
       {
         DataManager.Instance.FilterZugNummer = "";
+        DataManager.Instance.FoundTimeTables.Clear();
+        DataManager.FoundTimeTableIds = null;
         if (GrpTrains != null)
           GrpTrains.BorderBrush = System.Windows.Media.Brushes.White;
         DataManager_RefreshFilter(sender, e);
@@ -4137,6 +4437,7 @@ setTimeout(() => {
     //---------------------------------------------------------------------
     private void VersionPanel_MouseEnter(object sender, MouseEventArgs e)
     {
+      _log.Debug("Mouse entered version panel - showing about dialog if main border is visible");
       if (MainBorderVisibility == Visibility.Visible)
       {
         AboutDlg dlg = new()
@@ -4177,6 +4478,7 @@ setTimeout(() => {
 
     private void SelectedLaNumberChanged(object sender, SelectionChangedEventArgs e)
     {
+      _log.Debug("Selected LA number changed - updating related views and data based on new selection");
       string lanr = e.ToString();
       if (sender is ListBox listBox)
       {
@@ -4189,6 +4491,7 @@ setTimeout(() => {
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
+      _log.Debug("Window loaded - performing initial setup and loading of data");
       ZusiStart.Controls.SearchTextBox searchtextbox = sender as ZusiStart.Controls.SearchTextBox;
       searchtextbox.Text = DataManager.Instance.FilterPlatzhalterText;
       searchtextbox.Foreground = System.Windows.Media.Brushes.Gray;
@@ -4229,18 +4532,19 @@ setTimeout(() => {
 
     private void GoBackButton_Click(object sender, RoutedEventArgs e)
     {
-     
+
+      _log.Debug("Go back button clicked - navigating back in web view history if possible");
       var Tab = DataManager.Instance.Tabs.FirstOrDefault(t => t.Title == DataManager.Instance.tab_title_Zusi_DB);
       if (Tab != null)
         if (Tab.WebViewInstance.CanGoBack)
-      {
-        Tab.WebViewInstance.GoBack();
-      }
+        {
+          Tab.WebViewInstance.GoBack();
+        }
     }
 
     private void GoForwardButton_Click(object sender, RoutedEventArgs e)
     {
-
+      _log.Debug("Go forward button clicked - navigating forward in web view history if possible");
       var Tab = DataManager.Instance.Tabs.FirstOrDefault(t => t.Title == DataManager.Instance.tab_title_Zusi_DB);
       if (Tab != null)
         if (Tab.WebViewInstance.CanGoForward)
@@ -4248,5 +4552,6 @@ setTimeout(() => {
           Tab.WebViewInstance.GoForward();
         }
     }
+
   }
 }

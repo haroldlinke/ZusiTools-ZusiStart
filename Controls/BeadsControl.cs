@@ -21,8 +21,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ZusiKlassenLib.Buchfahrplan;
-using ZusiKlassenLib.Fahrplan;
+using ZusiKlassenLib2.Buchfahrplan;
+using ZusiKlassenLib2.Fahrplan;
 using ZusiStart.Data;
 
 namespace ZusiStart.Controls

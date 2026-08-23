@@ -1,0 +1,26 @@
+﻿<Window x:Class="ZusiStart.Gleisbelegung.GleisbelegungWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:ZusiStart.Controls"
+        Title="Gleisbelegung"
+        Width="1200"
+        Height="800"
+        Background="#1E1E1E">
+
+  
+    <DockPanel>
+
+      <Menu DockPanel.Dock="Top">
+        <MenuItem Header="Extras">
+          <MenuItem Header="Signal–Gleis–Zuordnung bearbeiten"
+                          Click="EditMapping_Click"/>
+        <!--<MenuItem Header="Farbeinstellungen bearbeiten"
+                Click="ColorMapping_Click"/>-->
+      </MenuItem>
+      </Menu>
+
+      <controls:GleisbelegungControl x:Name="GleisControl"/>
+    </DockPanel>
+  
+
+</Window>
