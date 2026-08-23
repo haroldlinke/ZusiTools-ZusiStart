@@ -1,0 +1,152 @@
+﻿<Window x:Class="ZusiStart.Gleisbelegung.SignalGleisEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Signal–Gleis–Richtung bearbeiten"
+        Width="600" Height="600"
+        WindowStartupLocation="CenterOwner"
+        Background="#1E1E1E">
+
+  <Window.Resources>
+
+    <Style x:Key="DarkHeaderStyle" TargetType="DataGridColumnHeader">
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="Background" Value="#444"/>
+      <Setter Property="BorderBrush" Value="#666"/>
+      <Setter Property="BorderThickness" Value="0,0,1,1"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="DataGridColumnHeader">
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="20"/>
+              </Grid.ColumnDefinitions>
+
+              <!-- Header-Text -->
+              <ContentPresenter
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            Margin="4"
+                            RecognizesAccessKey="True"/>
+
+              <!-- Sortierpfeil -->
+              <Path x:Name="SortArrow"
+                              Grid.Column="1"
+                              VerticalAlignment="Center"
+                              Fill="White"
+                              Data="M 0 0 L 8 0 L 4 4 Z"
+                              Visibility="Collapsed"/>
+            </Grid>
+
+            <ControlTemplate.Triggers>
+              <Trigger Property="SortDirection" Value="Ascending">
+                <Setter TargetName="SortArrow" Property="Visibility" Value="Visible"/>
+                <Setter TargetName="SortArrow" Property="RenderTransform">
+                  <Setter.Value>
+                    <RotateTransform Angle="180"/>
+                  </Setter.Value>
+                </Setter>
+              </Trigger>
+
+              <Trigger Property="SortDirection" Value="Descending">
+                <Setter TargetName="SortArrow" Property="Visibility" Value="Visible"/>
+                <Setter TargetName="SortArrow" Property="RenderTransform">
+                  <Setter.Value>
+                    <RotateTransform Angle="0"/>
+                  </Setter.Value>
+                </Setter>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+  </Window.Resources>
+
+  <DockPanel Margin="10">
+
+    <!-- Buttons oben -->
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0 0 0 10">
+      <Button Content="Speichern"
+                    Width="100"
+                    Margin="0 0 10 0"
+                    Click="Save_Click"/>
+      <Button Content="Schließen"
+                    Width="100"
+                    Margin="0 0 10 0"
+                    Click="Close_Click"/>
+
+      <Button Content="Signal hinzufügen"
+                      Width="100"
+                      Margin="0,10,0,0"
+                      Click="AddSignal_Click"/>
+    </StackPanel>
+
+    <!-- Tabelle -->
+    <!--<DataGrid x:Name="Grid"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  HeadersVisibility="Column"
+                  Background="#2A2A2A"
+                  Foreground="White"
+                  GridLinesVisibility="All"
+                  BorderBrush="Gray"
+                  BorderThickness="1">-->
+    <DataGrid x:Name="Grid"
+          ColumnHeaderHeight="28"
+          AutoGenerateColumns="False"
+          ColumnHeaderStyle="{StaticResource DarkHeaderStyle}"
+          CanUserAddRows="False"
+          CanUserDeleteRows="False"
+          HeadersVisibility="Column"
+          Background="#2A2A2A"
+          Foreground="White"
+          GridLinesVisibility="All"
+          BorderBrush="Gray"
+          BorderThickness="1"
+          RowBackground="#333333"
+          AlternatingRowBackground="#3A3A3A"
+          SelectionMode="Single"
+          SelectionUnit="FullRow">
+
+
+
+      <DataGrid.Columns>
+
+        <DataGridTextColumn Header="Signal"
+                        Binding="{Binding Signal}"
+                        SortMemberPath="Signal"
+                        Width="*"/>
+
+        <DataGridTextColumn Header="Gleis"
+                        Binding="{Binding Gleis}"
+                        SortMemberPath="Gleis"
+                        Width="80"/>
+
+        <DataGridTextColumn Header="Richtung"
+                        Binding="{Binding Richtung}"
+                        SortMemberPath="Richtung"
+                        Width="*"/>
+
+        <!-- Löschbutton -->
+        <DataGridTemplateColumn Width="60">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <Button Content="Löschen"
+                        Padding="4"
+                        Click="DeleteRow_Click"/>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+
+      </DataGrid.Columns>
+
+
+    </DataGrid>
+
+  </DockPanel>
+</Window>

@@ -92,7 +92,12 @@ namespace ZusiStart.Data
           if (doc.Filename.StartsWith(Zusi.DataPath[DataPathType.OfficialProf]))
             TimeTableName = System.IO.Path.GetFileNameWithoutExtension(doc.Filename) + " (professional)";
           else
-            TimeTableName = System.IO.Path.GetFileNameWithoutExtension(doc.Filename) + " (professional-private)";
+          {
+            if (doc.Filename.StartsWith(Zusi.DataPath[DataPathType.TempDir]))
+              TimeTableName = System.IO.Path.GetFileNameWithoutExtension(doc.Filename) + " (temp)";
+            else
+              TimeTableName = System.IO.Path.GetFileNameWithoutExtension(doc.Filename) + " (professional-private)";
+          }
         }
       }
       else

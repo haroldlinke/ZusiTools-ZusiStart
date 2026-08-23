@@ -1,6 +1,34 @@
 ﻿
+8.7.15 - 07.06.2026
+- trains with replace locos will now be saved in temp\trn folder, to avoid issues when starting the train
+
+8.7.14 - 05.06.2026
+- trains with replace locos will now be saved in temp folder
+- Fahrpläne mit externen Zugreihungsdateien werden jetzt unterstützt
+
+8.7.13 - 17.05.2026
+- new: save of train with replaced loco
+- Programmeinstellung konnten zurückgesetzt werden, wenn das Programmeinstellungenfenster nicht geöffnet wurde
+
+8.7.12 - 09.05.2026
+- Crash when ZusiMeter example layouts folder not found fixed
+- "Train Search" search for Baureihe did not work correctly
+- Corrected title in timetable list for Baureihe search
+
+8.7.11 - 07.05.2026
+- Error message "Zusi not installed" extended for Steam-Users
+- Added Refresh-Option to reload all timetables and trains, for timetable editors to check their changes without restarting the program
+- Added "Copy Path" option to context menu of timetables and trains, to copy the path of the selected timetable or train to the clipboard for easier access
+- added posibility to search for Baureihen in the train list - in Zugsuche add "BR" in front of the Baureihen number, e.g. "BR 101" to search for all trains with Baureihe 101". 
+  In Locomotive search there is a new text field to enter the Baureihe (without "BR")
+
+
+8.7.9 - 08.04.2026
+- Option "Zug im Stillstand starten" nicht gut erkennbar. Neue Lösung für Semaphordefinition implementiert, die Ausblenden ohne Absturz des Programms erlaubt.
+
+
 8.7.8 - 08.04.2026
-- Absturz, wenn die Option "Stillstand im Zug" eingeschgaltet wurde. Behoben.
+- Absturz, wenn die Option "Zug im Stillstand starten" eingeschaltet wurde. Behoben.
 - Im Fahrplan Erfurt-Theuern_2025_10-14Uhr_Fiktiver-D-Takt die Züge 53214/53218/53219/53223 bleibt "Erzeuge Fahrzeugbilder..." stehen und es wird kein Zug angezeigt. Behoben.
 - Fehler im Fahrplan Mannheim-Stuttgart Nordbaden_1999_13-18Uhr verhindern den Start von Zügen, wenn die Optimierung eingeschaltet ist. Behoben.
 

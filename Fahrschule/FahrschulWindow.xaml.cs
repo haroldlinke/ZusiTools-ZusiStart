@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using ZusiCLIProject.Utils;
+using log4net;
 
 namespace ZusiCLIProject.Zusi3Fahrschule2
 {
@@ -16,6 +17,8 @@ namespace ZusiCLIProject.Zusi3Fahrschule2
   /// </summary>
   public partial class FahrschulWindow : Window
   {
+    private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
     public FahrschulWindow()
     {
       InitializeComponent();
@@ -27,11 +30,12 @@ namespace ZusiCLIProject.Zusi3Fahrschule2
       //string baseUri = (string)Microsoft.Win32.Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Zusi3", "ZusiVerzeichnisDemo", "");
       //if (string.IsNullOrEmpty(baseUri))
       //  baseUri = (string)Microsoft.Win32.Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Zusi3", "ZusiVerzeichnisDemo", "");
-      if (string.IsNullOrEmpty(baseUri))
-      {
-        MessageBox.Show("Pfad zur Zusi-Demoversion nicht gefunden.");
-        return;
-      }
+      //if (string.IsNullOrEmpty(baseUri))
+      //{
+      //  MessageBox.Show("Pfad zur Zusi-Demoversion nicht gefunden.");
+      //  _log.Debug("Pfad zur Zusi-Demoversion nicht gefunden.");
+      //  return;
+      //}
       baseUri = "file:///" + System.Web.HttpUtility.UrlPathEncode(baseUri + @"\_InstSetup\language\Deutsch\Demo\").Replace("\\\\", "\\").Replace("\\", "/");
       webBrowser.Navigate(new Uri(baseUri + "start.htm"));
       StopZp9Observer = false;
@@ -42,14 +46,17 @@ namespace ZusiCLIProject.Zusi3Fahrschule2
     {
       if (tcpSocket == null)
       {
-        string baseUri = (string)Microsoft.Win32.Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Zusi3", "ZusiVerzeichnisDemo", "");
-        if (string.IsNullOrEmpty(baseUri))
-          baseUri = (string)Microsoft.Win32.Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Zusi3", "ZusiVerzeichnisDemo", "");
-        if (string.IsNullOrEmpty(baseUri))
-        {
-          MessageBox.Show("Pfad zur Zusi-Demoversion nicht gefunden.");
-          return;
-        }
+        //string baseUri = (string)Microsoft.Win32.Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Zusi3", "ZusiVerzeichnisDemo", "");
+        //if (string.IsNullOrEmpty(baseUri))
+        //  baseUri = (string)Microsoft.Win32.Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Zusi3", "ZusiVerzeichnisDemo", "");
+        //if (string.IsNullOrEmpty(baseUri))
+        //{
+        //  MessageBox.Show("Pfad zur Zusi-Demoversion nicht gefunden.");
+        //  _log.Debug("Pfad zur Zusi-Demoversion nicht gefunden.");
+        //  return;
+        //}
+        string? executablePath = Process.GetCurrentProcess().MainModule?.FileName;
+        string baseUri = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(executablePath), "Fahrschule", "webpage");
         baseUri = "file:///" + System.Web.HttpUtility.UrlPathEncode(baseUri + @"\_InstSetup\language\Deutsch\Demo\").Replace("\\\\", "\\").Replace("\\", "/");
         webBrowser.Navigate(new Uri(baseUri + "start.htm"));
         btnConnect.Content = "Trennen";

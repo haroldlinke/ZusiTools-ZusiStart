@@ -69,6 +69,51 @@ namespace ZusiCLIProject.Routegraph2
         Z = input.Z
       };
     }
+
+    //#pragma warning disable CA1307
+    //---------------------------------------------------------------------
+    private static bool IsStationName(string name)
+    {
+      if (!string.IsNullOrEmpty(name))
+      {
+        string s = name.ToLower();
+        if (s.StartsWith("- zbf") ||
+            s.StartsWith("- zf") ||
+            s.StartsWith("- kein ") ||
+            s.StartsWith("bk") ||
+            s.StartsWith("sbk") ||
+            s.StartsWith("va") ||
+            s.StartsWith("ve") ||
+            s.StartsWith("abzw") ||
+            s.StartsWith("esig") ||
+            s.StartsWith("asig") ||
+            s.StartsWith("avsig") ||
+            s.StartsWith("bksig") ||
+            s.StartsWith("zsig") ||
+            s.StartsWith("zvsig") ||
+            s.StartsWith("bü") ||
+            s.StartsWith("üs") ||
+            s.StartsWith("lzb") ||
+            s.StartsWith("- eingl") ||
+            s.StartsWith("betriebs") ||
+            s.StartsWith("strende") ||
+            s.StartsWith("streckenende") ||
+            s.StartsWith("ende") ||
+            s.StartsWith("ri.") ||
+            s.StartsWith("von ") ||
+            s.StartsWith("nach ") ||
+            s.StartsWith("sv") ||
+            s.StartsWith("aufgl"))
+        {
+          return false;
+        }
+
+        return true;
+      }
+
+      return false;
+    }
+
     public StreckeScene(Streckennetz streckennetz, Visualisierung? visualisierung, bool zeigeBetriebsstellen, bool zeigeEtcsFunkmasten)
     {
       int anzahlSegmente = 0;
@@ -244,7 +289,12 @@ namespace ZusiCLIProject.Routegraph2
                 AddChild(si, strecke);
                 AddChild(si.Label, strecke);
 
-                if (zeigeBetriebsstellen && ((SignalTyp)(signal.SignalTyp) != SignalTyp.Vorsignal) && !string.IsNullOrEmpty(signal.NameBetriebsstelle))
+                bool zeige_station = false;
+
+                if (DataManager.BetriebsstellenManager.betriebstelle_in_rot && IsStationName(signal.NameBetriebsstelle))
+                  zeige_station = true;
+
+                if ((zeigeBetriebsstellen && ((SignalTyp)(signal.SignalTyp) != SignalTyp.Vorsignal) && !string.IsNullOrEmpty(signal.NameBetriebsstelle))|| zeige_station )
                 {
                   if (!betriebsstellenKoordinaten.TryGetValue(signal.NameBetriebsstelle, out var r))
                   {
@@ -308,7 +358,9 @@ namespace ZusiCLIProject.Routegraph2
                     ri->moveBy(1000 * (strecke->utmPunkt.UTM_WE - this->m_utmRefPunkt.UTM_WE), 1000 * (strecke->utmPunkt.UTM_NS - this->m_utmRefPunkt.UTM_NS));
 #endif
 
-          var ti = new Label(betriebsstelle, dpi);
+
+          bool show_contextmenu = IsStationName(betriebsstelle);
+          var ti = new Label(betriebsstelle, dpi, show_contextmenu);
           ti.TextAlignment = System.Windows.TextAlignment.Center;
           ti.VerticalAlignment = VerticalAlignment.Center;
           ti.Pos = c;

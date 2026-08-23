@@ -34,6 +34,11 @@ namespace ZusiKlassenLib2.TimeTable
             //"_Docu"
         };
 
+    public static void init_timetabledata()
+    {
+      _dataPathcovered.Clear();
+    }
+
     //---------------------------------------------------------------------
     public static List<TimeTable> EnumerateTimeTables(string[] excludeFolders, CancellationToken cancellationToken)
     {

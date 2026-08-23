@@ -861,11 +861,15 @@ namespace ZusiStart.Miscellaneous
       if (DataManager.Instance.CurrentTrainItem != null)
       {
         ignorecache = DataManager.Instance.CurrentTrainItem.IsLocoReplaced || DataManager.Instance.CurrentTrainItem.IsLocoReplaced;
-        ignorecache = true;
+        ignorecache = false;
         if (ignorecache)
         {
           filename = "tmp_image";
         }
+      }
+      if (ignorecache)
+      {
+        filename = "tmp_image";
       }
 
       BitmapImage imagesource = pictureManager.getPicture3(filename, cachepath, dummywindow, blickwinkel: blickwinkel, ignorecache: ignorecache);

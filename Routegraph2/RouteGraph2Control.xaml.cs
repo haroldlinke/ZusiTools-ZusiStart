@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using AvalonDock.Layout;
+using log4net;
 using Microsoft.VisualBasic.Logging;
 using System;
 using System.Collections.Frozen;
@@ -38,6 +39,8 @@ namespace ZusiCLIProject.Routegraph2
   public partial class RouteGraph2Control : System.Windows.Controls.UserControl
   {
     private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+    private static bool routegraphinit = false;
 
     public RouteGraph2Control()
     {
@@ -103,9 +106,46 @@ namespace ZusiCLIProject.Routegraph2
     {
       try
       {
+        if (!routegraphinit)
+        {
+          var layout = DataManager.Instance.main_window.DockManager.Layout;
+
+          var routeGraphAnchorable =
+              layout.Descendents()
+                    .OfType<LayoutAnchorable>()
+                    .FirstOrDefault(a => a.Content == DataManager.Instance.main_window.RouteGraphControl);
+
+          if (routeGraphAnchorable != null)
+          {
+            routeGraphAnchorable.CanFloat = true;
+            routeGraphAnchorable.CanMove = true;
+            routeGraphAnchorable.CanAutoHide = true;
+            routeGraphAnchorable.CanClose = true;
+            routeGraphAnchorable.CanDockAsTabbedDocument = true;
+          }
+        }
+        
         if (DataManager.Instance.routeGraphOpenFile != "")
         {
+          routegraphinit = true;
           ModulOeffnen([DataManager.Instance.routeGraphOpenFile]);
+          
+          var layout = DataManager.Instance.main_window.DockManager.Layout;
+
+          var routeGraphAnchorable =
+              layout.Descendents()
+                    .OfType<LayoutAnchorable>()
+                    .FirstOrDefault(a => a.Content == DataManager.Instance.main_window.RouteGraphControl);
+
+          if (routeGraphAnchorable != null)
+          {
+            routeGraphAnchorable.CanFloat = false;
+            routeGraphAnchorable.CanMove = false;
+            routeGraphAnchorable.CanAutoHide = false;
+            routeGraphAnchorable.CanClose = false;
+            routeGraphAnchorable.CanDockAsTabbedDocument = false; 
+          }
+
           DataManager.Instance.routeGraphOpenFile = "";
         }
 
@@ -114,6 +154,11 @@ namespace ZusiCLIProject.Routegraph2
       {
         LogHelper.LogException(ex, "Something went wrong loading routegraph");
       }
+    }
+
+    private void OnGenerateRouteGraph(object sender, RoutedEventArgs e)
+    {
+      RouteGraph2Control_Loaded(sender, e);
     }
 
     private bool isInCtor = false;

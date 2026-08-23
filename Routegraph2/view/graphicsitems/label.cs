@@ -13,7 +13,7 @@ namespace ZusiCLIProject.Routegraph2
 {
   public class Label : Canvas, IIgnoreTransformation
   {
-    public Label(string text, DpiScale predetectDpi)
+    public Label(string text, DpiScale predetectDpi, bool show_contextmenu = false)
     {
       Text = text;
       m_textBlock.Text = text;
@@ -49,6 +49,9 @@ namespace ZusiCLIProject.Routegraph2
 
       this.Unloaded += Label_Unloaded;
 
+      if (!show_contextmenu)
+        return;
+
       // Create a ContextMenu
       ContextMenu contextMenu = new ContextMenu();
 
@@ -70,8 +73,19 @@ namespace ZusiCLIProject.Routegraph2
         m_textBlock.Text = string.Empty;
       };
 
+      MenuItem GleisbelegungItem = new MenuItem { Header = "Gleisbelegung anzeigen" };
+      GleisbelegungItem.Click += (s, e) =>
+      {
+        if (!string.IsNullOrEmpty(m_textBlock.Text))
+        {
+          DataManager.Instance.show_gleisbelegung(m_textBlock.Text.ToUpper());
+        }
+      };
+
       // Add items to the context menu
       contextMenu.Items.Add(copyItem);
+      contextMenu.Items.Add(GleisbelegungItem);
+
 
 
       // Assign the context menu to the TextBlock

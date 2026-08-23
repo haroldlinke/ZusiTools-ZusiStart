@@ -32,6 +32,10 @@ namespace ZusiStart.Dialogs
     {
       InitializeComponent();
       // Sprache beim Öffnen setzen
+    }
+
+    private void OptionsDialog_Loaded(object sender, RoutedEventArgs e)
+    {
       string lang = Properties.Settings.Default.Language;
       if (!string.IsNullOrEmpty(lang) && !lang.Contains("auto"))
       {
@@ -57,7 +61,7 @@ namespace ZusiStart.Dialogs
       SaveOptions();
     }
 
-    public void SaveOptions()
+    public void SaveOptions(bool programoptions = true)
     {
       // Sprache speichern
       if (ComboBox_Language.SelectedItem is ComboBoxItem item)
@@ -66,41 +70,55 @@ namespace ZusiStart.Dialogs
       }
       Properties.Settings.Default.Save();
 
-      var local_options = new Options
+      string buchfahrplanlayout_selection = "Automatisch aus TRN-Datei";
+
+      if (ComboBox_BuchfahrplanLayout.SelectedItem != null)
       {
-        Show_ZSK = true,// CheckBox_ZSK.IsChecked ?? false,
-        Show_ZDB = true, //CheckBox_ZDB.IsChecked ?? false,
-        //Show_Bfpl = CheckBox_Bfpl.IsChecked ?? false,
-        ZSK_Url = TextBox_ZSK_URL.Text,
-        ZDB_Url = TextBox_ZDB_URL.Text,
-        Bfpl_Exe = TextBox_Bfpl_Exe.Text,
-        Start_FIS = true,//CheckBox_Start_FIS.IsChecked ?? false,
-        ZusiDisplay_Exe = TextBox_ZusiDisplay_Exe.Text,
-        ZusiDisplay_Param = TextBox_ZusiDisplay_Param.Text,
-        Start_ZusiMeter = true, //CheckBox_Start_ZusiMeter.IsChecked ?? false,
-        ZusiMeter_Exe = TextBox_ZusiMeter_Exe.Text,
-        ZusiMeter_Param = TextBox_ZusiMeter_Param.Text,
-        New_RenderEngine = CheckBox_New_RenderEngine.IsChecked ?? false,
-        Blickwinkel_value = TextBox_Blickwinkel.Text,
-        RemoteZusi = CheckBox_RemoteZusi.IsChecked ?? false,
-        RemoteZusiIP = TextBox_RemoteZusiIP.Text,
-        RemoteTrackingSupport = CheckBox_RemoteTrackingSupport.IsChecked ?? false,
-        DecoTrain_Separate = CheckBox_DecoTrain_Separate.IsChecked ?? false,
-        DonotHideZusiStart = CheckBox_DonotHideZusiStart.IsChecked ?? false,
-        //StartOnlySelectedTrain = CheckBox_StartOnlySelectedTrain.IsChecked ?? false,
-        Show_ZusiMeter_Data = CheckBox_Show_ZusiMeter_Data.IsChecked ?? false,
-        ZusiMeter_Standard_Layoutfile = TextBox_ZusiMeter_Standard_Layoutfile.Text,
-        RO_starttime_no_decotrains = CheckBox_RO_starttime_no_decotrains.IsChecked ?? false,
-        RO_trainselectioncriteria_Stations = CheckBox_RO_trainselectioncriteria_Stations.IsChecked ?? false,
-        RO_trainselection_Streckenmodule = CheckBox_RO_trainselection_Streckenmodule.IsChecked ?? false,
-        Buchfahrplanlayout = ComboBox_BuchfahrplanLayout.SelectedItem.ToString() ?? "Automatisch aus TRN-Datei",
-      };
-      DataManager.Instance.options = local_options;
-      DataManager.Instance.main_window.ZSKButtonVisibility = local_options.Show_ZSK ? Visibility.Visible : Visibility.Collapsed;
-      DataManager.Instance.main_window.ZDBButtonVisibility = local_options.Show_ZDB ? Visibility.Visible : Visibility.Collapsed;
-      DataManager.Instance.main_window.BfpButtonVisibility = local_options.Show_Bfpl ? Visibility.Visible : Visibility.Collapsed;
+        buchfahrplanlayout_selection = ComboBox_BuchfahrplanLayout.SelectedItem.ToString();
+      }
+      if (programoptions)
+      {
+
+        var local_options = new Options
+        {
+          Show_ZSK = true,// CheckBox_ZSK.IsChecked ?? false,
+          Show_ZDB = true, //CheckBox_ZDB.IsChecked ?? false,
+                           //Show_Bfpl = CheckBox_Bfpl.IsChecked ?? false,
+          ZSK_Url = TextBox_ZSK_URL.Text,
+          ZDB_Url = TextBox_ZDB_URL.Text,
+          Bfpl_Exe = TextBox_Bfpl_Exe.Text,
+          Start_FIS = true,//CheckBox_Start_FIS.IsChecked ?? false,
+          ZusiDisplay_Exe = TextBox_ZusiDisplay_Exe.Text,
+          ZusiDisplay_Param = TextBox_ZusiDisplay_Param.Text,
+          Start_ZusiMeter = true, //CheckBox_Start_ZusiMeter.IsChecked ?? false,
+          ZusiMeter_Exe = TextBox_ZusiMeter_Exe.Text,
+          ZusiMeter_Param = TextBox_ZusiMeter_Param.Text,
+          New_RenderEngine = CheckBox_New_RenderEngine.IsChecked ?? false,
+          Blickwinkel_value = TextBox_Blickwinkel.Text,
+          RemoteZusi = CheckBox_RemoteZusi.IsChecked ?? false,
+          RemoteZusiIP = TextBox_RemoteZusiIP.Text,
+          RemoteTrackingSupport = CheckBox_RemoteTrackingSupport.IsChecked ?? false,
+          DecoTrain_Separate = CheckBox_DecoTrain_Separate.IsChecked ?? false,
+          DonotHideZusiStart = CheckBox_DonotHideZusiStart.IsChecked ?? false,
+          //StartOnlySelectedTrain = CheckBox_StartOnlySelectedTrain.IsChecked ?? false,
+          Show_ZusiMeter_Data = CheckBox_Show_ZusiMeter_Data.IsChecked ?? false,
+          ZusiMeter_Standard_Layoutfile = TextBox_ZusiMeter_Standard_Layoutfile.Text,
+          RO_starttime_no_decotrains = CheckBox_RO_starttime_no_decotrains.IsChecked ?? false,
+          RO_trainselectioncriteria_Stations = CheckBox_RO_trainselectioncriteria_Stations.IsChecked ?? false,
+          RO_trainselection_Streckenmodule = CheckBox_RO_trainselection_Streckenmodule.IsChecked ?? false,
+          RO_use_vorlaufzeit = CheckBox_RO_Vorlauf.IsChecked ?? false,
+          RO_vorlaufzeit = TextBox_RO_Vorlauf.Value,
+          RO_use_nachlaufzeit = CheckBox_RO_Nachlauf.IsChecked ?? false,
+          RO_nachlaufzeit = TextBox_RO_Nachlauf.Value,
+          Buchfahrplanlayout = buchfahrplanlayout_selection,
+        };
+        DataManager.Instance.options = local_options;
+      }
+      DataManager.Instance.main_window.ZSKButtonVisibility = DataManager.Instance.options.Show_ZSK ? Visibility.Visible : Visibility.Collapsed;
+      DataManager.Instance.main_window.ZDBButtonVisibility = DataManager.Instance.options.Show_ZDB ? Visibility.Visible : Visibility.Collapsed;
+      DataManager.Instance.main_window.BfpButtonVisibility = DataManager.Instance.options.Show_Bfpl ? Visibility.Visible : Visibility.Collapsed;
       this.Close();
-      if (local_options.RemoteZusi)
+      if (DataManager.Instance.options.RemoteZusi)
       {
         ((RoutedUICommand)MainWindow.StartTrainCommand).Text = LocalizationManager.Translate("Remote Zug monitoren");
         DataManager.Instance.main_window.BtnStartTrain.Content = ((RoutedUICommand)MainWindow.StartTrainCommand).Text;
@@ -243,6 +261,10 @@ namespace ZusiStart.Dialogs
       CheckBox_RO_starttime_no_decotrains.IsChecked= local_options.RO_starttime_no_decotrains;
       CheckBox_RO_trainselectioncriteria_Stations.IsChecked= local_options.RO_trainselectioncriteria_Stations;
       CheckBox_RO_trainselection_Streckenmodule.IsChecked = local_options.RO_trainselection_Streckenmodule;
+      CheckBox_RO_Vorlauf.IsChecked = local_options.RO_use_vorlaufzeit;
+      TextBox_RO_Vorlauf.Value= local_options.RO_vorlaufzeit;
+      CheckBox_RO_Nachlauf.IsChecked = local_options.RO_use_nachlaufzeit;
+      TextBox_RO_Nachlauf.Value = local_options.RO_nachlaufzeit;
 
       string currentLang = DataManager.CurrentLanguage ?? "auto";
       foreach (ComboBoxItem item in ComboBox_Language.Items)

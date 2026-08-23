@@ -1,4 +1,8 @@
-﻿using GMap.NET;
+﻿using AvalonDock;
+using AvalonDock.Layout;
+using AvalonDock.Layout.Serialization;
+using CommunityToolkit.Mvvm.Input;
+using GMap.NET;
 using GMap.NET.MapProviders;
 using GMap.NET.WindowsPresentation;
 using log4net;
@@ -26,6 +30,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+//using System.Windows.Forms;
+
 
 //using System.Windows.Forms;
 
@@ -91,6 +97,7 @@ namespace ZusiStart
     public DataTemplate WebViewTemplate { get; set; }
     public DataTemplate TrackingTemplate { get; set; }
     public DataTemplate RouteGraphTemplate { get; set; }
+    public DataTemplate BildfahrplanTemplate { get; set; }
     public DataTemplate ImageTemplate { get; set; }
     public DataTemplate ListTemplate { get; set; }
 
@@ -103,6 +110,7 @@ namespace ZusiStart
       if (tab.IsIntro) return TrackingTemplate;
       if (tab.IsImageTab) return ImageTemplate;
       if (tab.Title == DataManager.Instance.tab_title_routegraph || tab.Title == DataManager.Instance.tab_title_routegraph) return RouteGraphTemplate;
+      if (tab.Title == DataManager.Instance.tab_title_bildfahrplan || tab.Title == DataManager.Instance.tab_title_bildfahrplan) return BildfahrplanTemplate;
       return WebViewTemplate;
     }
   }
@@ -150,7 +158,7 @@ namespace ZusiStart
     public static readonly RoutedUICommand CommandHelp = new RoutedUICommand("_Dokumentation", nameof(CommandHelp), typeof(MainWindow));
     public static readonly RoutedUICommand CommandExtDocu = new RoutedUICommand("Dokumentation mit _externem Programm öffnen", nameof(CommandExtDocu), typeof(MainWindow));
     public static readonly RoutedUICommand CommandOptions = new RoutedUICommand("Programmeinstellungen", nameof(CommandOptions), typeof(MainWindow));
-    public static readonly RoutedUICommand CommandQuit = new RoutedUICommand("Beenden", nameof(CommandOptions), typeof(MainWindow));
+    public static readonly RoutedUICommand CommandQuit = new RoutedUICommand("Beenden", nameof(CommandQuit), typeof(MainWindow));
     public static readonly RoutedUICommand CommandCreatePictures = new RoutedUICommand("Erzeuge alle Fahrzeugbilder neu", nameof(CommandCreatePictures), typeof(MainWindow));
     public static readonly RoutedUICommand UndoReplLocoCommand = new("_Rückgängig Loktausch", "UndoReplLocoCommand", typeof(MainWindow),
         new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.Z, ModifierKeys.Control) }));
@@ -158,6 +166,17 @@ namespace ZusiStart
       new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F5) }));
     public static readonly RoutedUICommand ManageReplLocosCommand = new("_Austauschloks verwalten...", "ManageReplLocosCommand", typeof(MainWindow),
       new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F6) }));
+    public static readonly RoutedUICommand SaveRevisedTrainCommand = new RoutedUICommand("_Zugänderung permanent speichern", "SaveRevisedTrainCommand", typeof(MainWindow));
+    public static readonly RoutedUICommand UndoRevisedTrainCommand = new RoutedUICommand("_permanente Zugänderung rückgängig machen (nach Neustart)", "UndoRevisedTrainCommand", typeof(MainWindow));
+    public static readonly RoutedUICommand CommandSaveLayout_A = new RoutedUICommand("Layout A speichern", nameof(CommandSaveLayout_A), typeof(MainWindow));
+    public static readonly RoutedUICommand CommandSaveLayout_B = new RoutedUICommand("Layout B speichern", nameof(CommandSaveLayout_B), typeof(MainWindow));
+    public static readonly RoutedUICommand CommandLoadLayout_A = new RoutedUICommand("Layout A laden", nameof(CommandLoadLayout_A), typeof(MainWindow));
+    public static readonly RoutedUICommand CommandLoadLayout_B = new RoutedUICommand("Layout B laden", nameof(CommandLoadLayout_B), typeof(MainWindow));
+    public static readonly RoutedUICommand CommandLoadLayout_Standard_A = new RoutedUICommand("Standard Layout A laden", nameof(CommandLoadLayout_Standard_A), typeof(MainWindow));
+    public static readonly RoutedUICommand CommandLoadLayout_Standard_B = new RoutedUICommand("Standard Layout B laden", nameof(CommandLoadLayout_Standard_B), typeof(MainWindow));
+    public static readonly RoutedUICommand CommandLayout_Showall = new RoutedUICommand("Alle Fenster öffnen", nameof(CommandLayout_Showall), typeof(MainWindow));
+
+    //public ICommand TTcopyPathCommand { get; }
     #endregion
 
     #region dependency properties
@@ -322,6 +341,9 @@ namespace ZusiStart
     public static readonly RoutedUICommand EditFavoriteCommentCommand = new("Kommentar bearbeiten", "EditFavoriteCommentCommand", typeof(MainWindow));
     public static readonly RoutedUICommand DelFavoriteTrainCommand = new("Zug löschen", "DelFavoriteTrainCommand", typeof(MainWindow));
     public static readonly RoutedUICommand SearchTrainCommand = new("Zug suchen", "SearchTrainCommand", typeof(MainWindow));
+    public static readonly RoutedUICommand AnalyseKICommand = new("KI analysieren", "AnalyseKICommand", typeof(MainWindow));
+    public static readonly RoutedUICommand SearchKICommand = new("Mit KI suchen", "SearchKICommand", typeof(MainWindow));
+    public static readonly RoutedUICommand SearchBRCommand = new("Baureihe suchen", "SearchBRCommand", typeof(MainWindow));
     public static readonly RoutedUICommand SearchTrainZusiDBCommand = new("ZUSI Datenbank", "SearchTrainZusiDBCommand", typeof(MainWindow));
     public static readonly RoutedUICommand SearchTrainZusiSKCommand = new("ZUSI Streckenkarte", "SearchTrainZusiSKCommand", typeof(MainWindow));
     public static readonly RoutedUICommand ZSK_PositionOverlayCommand = new("Fadenkreuz Positionieren", "ZSK_PositionOverlayCommand", typeof(MainWindow));
@@ -336,6 +358,7 @@ namespace ZusiStart
     public static readonly RoutedUICommand FilterResetCommand = new("Zurücksetzen", "FilterResetCommand", typeof(MainWindow));
     public static readonly RoutedUICommand TrainStartSettingsCommand = new("Start-Optionen", "TrainStartSettingsCommand", typeof(MainWindow));
     public static readonly RoutedUICommand ResetViewCommand = new("Ansicht zurücksetzen", "ResetViewCommand", typeof(MainWindow));
+    public static readonly RoutedUICommand ReloadCommand = new("Fahrpläne neu laden", "ReloadCommand", typeof(MainWindow));
 
     public static readonly RoutedUICommand FrictionSettingsCommand = new("Gleisbedingungen", "FrictionSettingsCommand", typeof(MainWindow));
     public static readonly RoutedUICommand StartFahrschuleCommand = new("Fahrschule", "StartFahrschuleCommand", typeof(MainWindow));
@@ -381,6 +404,7 @@ namespace ZusiStart
       //BtnFilterReset.Content = FilterResetCommand.Text;
       TrainStartSettingsCommand.Text = LocalizationManager.Translate("Start-Optionen");
       ResetViewCommand.Text = LocalizationManager.Translate("Ansicht zurücksetzen");
+      ReloadCommand.Text = LocalizationManager.Translate("Fahrpläne neu laden");
       BtnTrainStartSettings.Content = TrainStartSettingsCommand.Text;
       FrictionSettingsCommand.Text = LocalizationManager.Translate("Gleisbedingungen");
       frictionSettingsButton.Content = FrictionSettingsCommand.Text;
@@ -397,6 +421,12 @@ namespace ZusiStart
       MenuItemQuit.Header = CommandQuit.Text;
       //MenuItemCreatePictures.Header = CommandCreatePictures.Text;
       TrainStartSettings.Header = TrainStartSettingsCommand.Text;
+      CommandSaveLayout_A.Text = LocalizationManager.Translate("Layout A speichern");
+      CommandSaveLayout_B.Text = LocalizationManager.Translate("Layout B speichern");
+      CommandLoadLayout_A.Text = LocalizationManager.Translate("Layout A laden");
+      CommandLoadLayout_B.Text = LocalizationManager.Translate("Layout B laden");
+      CommandLoadLayout_Standard_A.Text = LocalizationManager.Translate("Standard Layout A laden");
+      CommandLoadLayout_Standard_B.Text = LocalizationManager.Translate("Standard Layout B laden");
 
       EditCommentButtonText = LocalizationManager.Translate("Kommentar bearbeiten");
 
@@ -591,6 +621,9 @@ namespace ZusiStart
 
       CommandBindings.Add(new CommandBinding(DelFavoriteTrainCommand, OnDelFavoriteTrain, OnCanDelFavoriteTrain));
       CommandBindings.Add(new CommandBinding(SearchTrainCommand, OnSearchTrain, OnCanSearchTrain));
+      CommandBindings.Add(new CommandBinding(SearchKICommand, OnSearchKI, OnCanSearchKI));
+      CommandBindings.Add(new CommandBinding(AnalyseKICommand, OnAnalyseKI, OnCanAnalyseKI));
+      CommandBindings.Add(new CommandBinding(SearchBRCommand, OnSearchBR, OnCanSearchBR));
       CommandBindings.Add(new CommandBinding(CreateVehicleListCommand, OnCreateVehicleList, OnCanCreateVehicleList));
       //CommandBindings.Add(new CommandBinding(SearchTrainZusiDBCommand, OnSearchTrainwithZusiDB));
       //CommandBindings.Add(new CommandBinding(SearchBuchfahrplanCommand, OnSearchBuchfahrplan));
@@ -604,6 +637,7 @@ namespace ZusiStart
       CommandBindings.Add(new CommandBinding(ZusiBildFahrplanCommand, OnZusiBildFahrplan, OnCanZusiBildFahrplan));
       CommandBindings.Add(new CommandBinding(TrainStartSettingsCommand, OnTrainStartSettings));
       CommandBindings.Add(new CommandBinding(ResetViewCommand, OnResetView));
+      CommandBindings.Add(new CommandBinding(ReloadCommand, OnReload));
       CommandBindings.Add(new CommandBinding(FrictionSettingsCommand, OnFrictionSettings, OnCanFrictionSettings));
       CommandBindings.Add(new CommandBinding(StartFahrschuleCommand, OnStartFahrschule, OnCanStartFahrschule));
 
@@ -627,8 +661,22 @@ namespace ZusiStart
       //--
       CommandBindings.Add(new CommandBinding(ResetDataCommand, OnResetData, (s, e) => e.CanExecute = IsLoaded));
       CommandBindings.Add(new CommandBinding(ManageReplTrainsCommand, OnManageReplTrains, OnCanManageReplTrains));
+      CommandBindings.Add(new CommandBinding(ManageReplTrainsCommand, OnManageReplTrains, OnCanManageReplTrains));
+      CommandBindings.Add(new CommandBinding(SaveRevisedTrainCommand, OnSaveRevisedTrain, OnCanSaveRevisedTrain));
+      CommandBindings.Add(new CommandBinding(UndoRevisedTrainCommand, OnUndoRevisedTrain, OnCanUndoRevisedTrain));
+
       CommandBindings.Add(new CommandBinding(ReplaceTrainCommand, OnReplaceTrain, OnCanReplaceTrain));
       CommandBindings.Add(new CommandBinding(UndoReplTrainCommand, OnUndoReplTrain, OnCanUndoRepTrain));
+
+      CommandBindings.Add(new CommandBinding(CommandSaveLayout_A, OnSaveLayout_A));
+      CommandBindings.Add(new CommandBinding(CommandSaveLayout_B, OnSaveLayout_B));
+      CommandBindings.Add(new CommandBinding(CommandLoadLayout_A, OnLoadLayout_A));
+      CommandBindings.Add(new CommandBinding(CommandLoadLayout_B, OnLoadLayout_B));
+      CommandBindings.Add(new CommandBinding(CommandLoadLayout_Standard_A, OnLoadLayout_Standard_A));
+      CommandBindings.Add(new CommandBinding(CommandLoadLayout_Standard_B, OnLoadLayout_Standard_B));
+      CommandBindings.Add(new CommandBinding(CommandLayout_Showall, OnLayout_Showall));
+
+
 
       // *** add keyboard bindings
 
@@ -669,52 +717,59 @@ namespace ZusiStart
 
       //dataManager.ProgressChanged += DataManager_ProgressChanged;
       //LoadLocalHtml();
+      //TTcopyPathCommand = new RelayCommand<TimeTableRelation>(TTcopyPath);
     }
+
+    //private void TTcopyPath(TimeTableRelation rel)
+    //{
+    //  string filename = rel.ToString();
+    //}
 
     private void InitializeMap()
     {
       _log.Debug("Initializing GMap control");
       TabViewModel? zdbTab = DataManager.Instance.Tabs.FirstOrDefault(t => t.Title == DataManager.Instance.tab_title_tracking);
-
-      // Identify your app to OSM
-      GMapProvider.UserAgent = "ZusiStart (contact: support@zusi-tools.hlinke.de)";
-      zdbTab.gmap.MapProvider = GMap.NET.MapProviders.GMapProviders.OpenStreetMap;
-      zdbTab.gmap.Position = new PointLatLng(50.0, 8.0); // Startposition
-                                                         //GMap.NET.GMaps.Instance.Mode = GMap.NET.AccessMode.ServerOnly;
-                                                         //zdbTab.gmap.Position = new PointLatLng(49.75, 6.64);
-      zdbTab.gmap.Zoom = 12;
-      zdbTab.gmap.MinZoom = 5;
-      zdbTab.gmap.MaxZoom = 18;
-      zdbTab.gmap.Zoom = 12;
-      zdbTab.gmap.ShowCenter = false;
-      zdbTab.gmap.MouseWheelZoomEnabled = true;
-      zdbTab.gmap.MouseWheelZoomType = MouseWheelZoomType.MousePositionAndCenter;
-      zdbTab.gmap.IgnoreMarkerOnMouseWheel = true;
-
-      GMaps.Instance.Mode = AccessMode.ServerAndCache;
-
-
-      // Marker direkt zur Markers-Sammlung hinzufügen
-      //marker = new GMapMarker(new PointLatLng(50.0, 8.0))
-      //{
-      //  Shape = new Ellipse
-      //  {
-      //    Width = 24,
-      //    Height = 24,
-      //    Stroke = System.Windows.Media.Brushes.Red,
-      //    StrokeThickness = 10
-      //  }
-      //};
-      marker = new GMapMarker(new PointLatLng(50.0, 8.0))
+      if (zdbTab != null)
       {
-        Shape = new System.Windows.Shapes.Path
+        // Identify your app to OSM
+        GMapProvider.UserAgent = "ZusiStart (contact: support@zusi-tools.hlinke.de)";
+        zdbTab.gmap.MapProvider = GMap.NET.MapProviders.GMapProviders.OpenStreetMap;
+        zdbTab.gmap.Position = new PointLatLng(50.0, 8.0); // Startposition
+                                                           //GMap.NET.GMaps.Instance.Mode = GMap.NET.AccessMode.ServerOnly;
+                                                           //zdbTab.gmap.Position = new PointLatLng(49.75, 6.64);
+        zdbTab.gmap.Zoom = 12;
+        zdbTab.gmap.MinZoom = 5;
+        zdbTab.gmap.MaxZoom = 18;
+        zdbTab.gmap.Zoom = 12;
+        zdbTab.gmap.ShowCenter = false;
+        zdbTab.gmap.MouseWheelZoomEnabled = true;
+        zdbTab.gmap.MouseWheelZoomType = MouseWheelZoomType.MousePositionAndCenter;
+        zdbTab.gmap.IgnoreMarkerOnMouseWheel = true;
+
+        GMaps.Instance.Mode = AccessMode.ServerAndCache;
+
+
+        // Marker direkt zur Markers-Sammlung hinzufügen
+        //marker = new GMapMarker(new PointLatLng(50.0, 8.0))
+        //{
+        //  Shape = new Ellipse
+        //  {
+        //    Width = 24,
+        //    Height = 24,
+        //    Stroke = System.Windows.Media.Brushes.Red,
+        //    StrokeThickness = 10
+        //  }
+        //};
+        marker = new GMapMarker(new PointLatLng(50.0, 8.0))
         {
-          Stroke = System.Windows.Media.Brushes.Red,
-          StrokeThickness = 3,
-          Opacity = 0.75,
-          Data = new GeometryGroup
+          Shape = new System.Windows.Shapes.Path
           {
-            Children = new GeometryCollection
+            Stroke = System.Windows.Media.Brushes.Red,
+            StrokeThickness = 3,
+            Opacity = 0.75,
+            Data = new GeometryGroup
+            {
+              Children = new GeometryCollection
         {
             // Horizontale Linie
             new LineGeometry(new System.Windows.Point(-20, 0), new System.Windows.Point(20, 0)),
@@ -723,33 +778,97 @@ namespace ZusiStart
             // Kreis um das Zentrum (Radius = 12)
             new EllipseGeometry(new System.Windows.Point(0, 0), 12, 12)
         }
+            }
           }
-        }
-      };
+        };
 
 
 
-      zdbTab.gmap.Markers.Add(marker);
 
-      // Assuming vm is your TrackingViewModel and RouteVisual already set **Test** 
-      //zdbTab.gmap.OnMapZoomChanged += () => zdbTab.UpdateRouteTransform(zdbTab.gmap, DataManager.Instance.utmBounds, zone: 32, northHemisphere: true);
-      //zdbTab.gmap.OnMapDrag += () => zdbTab.UpdateRouteTransform(zdbTab.gmap, DataManager.Instance.utmBounds, zone: 32, northHemisphere: true);
+        zdbTab.gmap.Markers.Add(marker);
 
+        // Assuming vm is your TrackingViewModel and RouteVisual already set **Test** 
+        //zdbTab.gmap.OnMapZoomChanged += () => zdbTab.UpdateRouteTransform(zdbTab.gmap, DataManager.Instance.utmBounds, zone: 32, northHemisphere: true);
+        //zdbTab.gmap.OnMapDrag += () => zdbTab.UpdateRouteTransform(zdbTab.gmap, DataManager.Instance.utmBounds, zone: 32, northHemisphere: true);
+      }
     }
 
-    private void loadgmapoverlay()
-    {
-      return; ; // temporär deaktiviert
-                //TabViewModel? zdbTab = DataManager.Instance.Tabs.FirstOrDefault(t => t.Title == DataManager.Instance.tab_title_tracking);
-                //var loader = new RailwayPolylineOverlayWpf(zdbTab.gmap);
-                //_ = loader.LoadRailwayOverlayAsync(49.73, 6.61, 49.77, 6.67); // Trier region
-    }
+    //private void InitializeMap2()
+    //{
+    //  _log.Debug("Initializing GMap control");
 
-    private void Gmap_Loaded(object sender, RoutedEventArgs e)
-    {
-      _log.Debug("GMap control loaded");
-      InitializeMap();
-    }
+    //  // Identify your app to OSM
+    //  GMapProvider.UserAgent = "ZusiStart (contact: support@zusi-tools.hlinke.de)";
+    //  DataManager.Instance.gmap.MapProvider = GMap.NET.MapProviders.GMapProviders.OpenStreetMap;
+    //  DataManager.Instance.gmap.Position = new PointLatLng(50.0, 8.0); // Startposition
+    //                                                                   //GMap.NET.GMaps.Instance.Mode = GMap.NET.AccessMode.ServerOnly;
+    //                                                                   //zdbTab.gmap.Position = new PointLatLng(49.75, 6.64);
+    //  DataManager.Instance.gmap.Zoom = 12;
+    //  DataManager.Instance.gmap.MinZoom = 5;
+    //  DataManager.Instance.gmap.MaxZoom = 18;
+    //  DataManager.Instance.gmap.Zoom = 12;
+    //  DataManager.Instance.gmap.ShowCenter = false;
+    //  DataManager.Instance.gmap.MouseWheelZoomEnabled = true;
+    //  DataManager.Instance.gmap.MouseWheelZoomType = MouseWheelZoomType.MousePositionAndCenter;
+    //  DataManager.Instance.gmap.IgnoreMarkerOnMouseWheel = true;
+
+    //  GMaps.Instance.Mode = AccessMode.ServerAndCache;
+
+
+    //  // Marker direkt zur Markers-Sammlung hinzufügen
+    //  //marker = new GMapMarker(new PointLatLng(50.0, 8.0))
+    //  //{
+    //  //  Shape = new Ellipse
+    //  //  {
+    //  //    Width = 24,
+    //  //    Height = 24,
+    //  //    Stroke = System.Windows.Media.Brushes.Red,
+    //  //    StrokeThickness = 10
+    //  //  }
+    //  //};
+    //  marker = new GMapMarker(new PointLatLng(50.0, 8.0))
+    //  {
+    //    Shape = new System.Windows.Shapes.Path
+    //    {
+    //      Stroke = System.Windows.Media.Brushes.Red,
+    //      StrokeThickness = 3,
+    //      Opacity = 0.75,
+    //      Data = new GeometryGroup
+    //      {
+    //        Children = new GeometryCollection
+    //    {
+    //        // Horizontale Linie
+    //        new LineGeometry(new System.Windows.Point(-20, 0), new System.Windows.Point(20, 0)),
+    //        // Vertikale Linie
+    //        new LineGeometry(new System.Windows.Point(0, -20), new System.Windows.Point(0, 20)),
+    //        // Kreis um das Zentrum (Radius = 12)
+    //        new EllipseGeometry(new System.Windows.Point(0, 0), 12, 12)
+    //    }
+    //      }
+    //    }
+    //  };
+
+    //  DataManager.Instance.gmap.Markers.Add(marker);
+
+    //  // Assuming vm is your TrackingViewModel and RouteVisual already set **Test** 
+    //  //zdbTab.gmap.OnMapZoomChanged += () => zdbTab.UpdateRouteTransform(zdbTab.gmap, DataManager.Instance.utmBounds, zone: 32, northHemisphere: true);
+    //  //zdbTab.gmap.OnMapDrag += () => zdbTab.UpdateRouteTransform(zdbTab.gmap, DataManager.Instance.utmBounds, zone: 32, northHemisphere: true);
+    
+    //}
+
+    //private void loadgmapoverlay()
+    //{
+    //  return; ; // temporär deaktiviert
+    //            //TabViewModel? zdbTab = DataManager.Instance.Tabs.FirstOrDefault(t => t.Title == DataManager.Instance.tab_title_tracking);
+    //            //var loader = new RailwayPolylineOverlayWpf(zdbTab.gmap);
+    //            //_ = loader.LoadRailwayOverlayAsync(49.73, 6.61, 49.77, 6.67); // Trier region
+    //}
+
+    //private void Gmap_Loaded(object sender, RoutedEventArgs e)
+    //{
+    //  _log.Debug("GMap control loaded");
+    //  InitializeMap2();
+    //}
 
     //---------------------------------------------------------------------
     public void Dispose()
@@ -784,7 +903,26 @@ namespace ZusiStart
       //{
       //  _webViewWindow_ZSK.Close();
       //}
+      //DataManager.Instance.SaveDockLayout("A");
     }
+
+
+    //private void LoadDockLayout()
+    //{
+    //  var file = DataManager.Instance.AvalonDockLayoutFilePath;
+
+    //  if (System.IO.File.Exists(file))
+    //  {
+    //    var serializer = new XmlLayoutSerializer(DockManager);
+    //    serializer.Deserialize(file);
+    //  }
+    //}
+
+    //private void SaveDockLayout()
+    //{
+    //  var serializer = new XmlLayoutSerializer(DockManager);
+    //  serializer.Serialize(DataManager.Instance.AvalonDockLayoutFilePath);
+    //}
 
     //---------------------------------------------------------------------
     protected override void OnClosing(CancelEventArgs e)
@@ -810,8 +948,8 @@ namespace ZusiStart
         LeftColumn.Width = Properties.Settings.Default.WidthColumnLeft;
       if (Properties.Settings.Default.HeightRowBottom.Value > 0)
         BottomRow.Height = Properties.Settings.Default.HeightRowBottom;
-      if (Properties.Settings.Default.HeightRowTop.Value > 0)
-        TopRow.Height = Properties.Settings.Default.HeightRowTop;
+      //if (Properties.Settings.Default.HeightRowTop.Value > 0)
+      //  TopRow.Height = Properties.Settings.Default.HeightRowTop;
       AdjustWindowPosition();
     }
 
@@ -826,7 +964,7 @@ namespace ZusiStart
       Properties.Settings.Default.WidthColumnRight = RightColumn.Width;
       Properties.Settings.Default.WidthColumnLeft = LeftColumn.Width;
       Properties.Settings.Default.HeightRowBottom = BottomRow.Height;
-      Properties.Settings.Default.HeightRowTop = TopRow.Height;
+      //Properties.Settings.Default.HeightRowTop = TopRow.Height;
       Properties.Settings.Default.Save();
     }
 
@@ -987,6 +1125,85 @@ namespace ZusiStart
 
     }
 
+    private void OnSaveLayout_A(object sender, ExecutedRoutedEventArgs e)
+    {
+      _log.Debug("Executing Save Layout A command");
+      DataManager.Instance.SaveDockLayout("A");
+    }
+
+    private void OnSaveLayout_B(object sender, ExecutedRoutedEventArgs e)
+    {
+      _log.Debug("Executing Save Layout B command");
+      DataManager.Instance.SaveDockLayout("B");
+    }
+
+    private void OnLoadLayout_A(object sender, ExecutedRoutedEventArgs e)
+    {
+      _log.Debug("Executing Load Layout A command");
+      DataManager.Instance.LoadDockLayout("A");
+    }
+
+    private void OnLoadLayout_B(object sender, ExecutedRoutedEventArgs e)
+    {
+      _log.Debug("Executing Load Layout B command");
+      DataManager.Instance.LoadDockLayout("B");
+    }
+
+    private void OnLoadLayout_Standard_A(object sender, ExecutedRoutedEventArgs e)
+    {
+      _log.Debug("Executing Load Layout A command");
+      DataManager.Instance.LoadDockStandardLayout("Std_A");
+    }
+
+    private void OnLoadLayout_Standard_B(object sender, ExecutedRoutedEventArgs e)
+    {
+      _log.Debug("Executing Load Layout B command");
+      DataManager.Instance.LoadDockStandardLayout("Std_B");
+    }
+
+    private void OnLayout_Showall(object sender, ExecutedRoutedEventArgs e)
+    {
+      try
+      {
+        _log.Debug("Executing Show All Layout command");
+        var layout = DockManager.Layout;
+
+        // 1. Geschlossene Fenster wieder anzeigen
+        foreach (var anchor in layout.Descendents().OfType<LayoutAnchorable>())
+        {
+          try
+          {
+
+            if (!anchor.IsVisible)
+              anchor.Show();
+          }
+          catch (Exception ex)
+          {
+            _log.Error("Error in Show All Layout command: " + ex.ToString());
+          }
+        }
+
+        // irgendein existierendes Pane suchen
+        var pane = layout.Descendents().OfType<LayoutAnchorablePane>().FirstOrDefault();
+
+        if (pane != null)
+        {
+          // 2. Fenster ins Pane einfügen, falls noch nicht vorhanden
+          if (!pane.Children.Contains(KiSucheAnchorable))
+            pane.Children.Add(KiSucheAnchorable);
+          KiSucheAnchorable.Show();
+        }
+        //S1Z1T1.Children.Add(KiSucheAnchorable);
+        //KiSucheAnchorable.Show();
+
+      }
+      catch (Exception ex)
+      {
+        _log.Error("Error in Show All Layout command: " + ex.ToString());
+      }
+
+    }
+
     //---------------------------------------------------------------------
     private void OnCanManageReplTrains(object sender, CanExecuteRoutedEventArgs e)
     {
@@ -1009,6 +1226,36 @@ namespace ZusiStart
       {
         dm.SaveReplacementTrains();
       }
+    }
+
+    //---------------------------------------------------------------------
+    private void OnCanSaveRevisedTrain(object sender, CanExecuteRoutedEventArgs e)
+    {
+      TrainItem ti = DataManager.Instance.CurrentTrainItem;
+      e.CanExecute = ti != null && (ti.IsLocoReplaced || ti.IsTrainReplaced);
+    }
+
+    //---------------------------------------------------------------------
+    private void OnSaveRevisedTrain(object sender, ExecutedRoutedEventArgs e)
+    {
+      _log.Debug("Executing Save Replacement Trains command");
+      DataManager dm = DataManager.Instance;
+      dm.SaveReplacedTrain();
+    }
+
+    //---------------------------------------------------------------------
+    private void OnCanUndoRevisedTrain(object sender, CanExecuteRoutedEventArgs e)
+    {
+      TrainItem ti = DataManager.Instance.CurrentTrainItem;
+      e.CanExecute = ti != null && (ti.IsLocoReplaced || ti.IsTrainReplaced);
+    }
+
+    //---------------------------------------------------------------------
+    private void OnUndoRevisedTrain(object sender, ExecutedRoutedEventArgs e)
+    {
+      _log.Debug("Executing Save Replacement Trains command");
+      DataManager dm = DataManager.Instance;
+      dm.UndoReplacedTrain();
     }
 
 
@@ -1335,7 +1582,7 @@ namespace ZusiStart
       }
       _log.Debug("Initializing DataManager and loading data");
       DataManager.Instance.InitializeData();
-      
+
       DataManager.Instance.dataLoaderWindow = _dataLoaderWindow;
       _log.Debug("Setting screen scale factor for DPI scaling");
       DataManager.Instance.ScreenScaleFactor = GetScreenScaleFactor(this);
@@ -1507,7 +1754,7 @@ namespace ZusiStart
 
 
     //---------------------------------------------------------------------
-    private void DataManager_RefreshFilter(object? sender, EventArgs e)
+    public void DataManager_RefreshFilter(object? sender, EventArgs e)
     {
       if (tvPassengerTrains != null)
         CollectionViewSource.GetDefaultView(tvPassengerTrains.ItemsSource).Refresh();
@@ -1657,20 +1904,23 @@ namespace ZusiStart
     {
       _log.Debug("Executing Delete Favorite Train command - removing selected recent train from recent trains");
       Zug zug = DataManager.Instance.SelectedRecentTrain.Train;
-      string timeTablefilename = zug.FahrplanDatei.FullPath;
 
-      string timeTableName = System.IO.Path.GetFileNameWithoutExtension(timeTablefilename);
       int index = 0;
+      bool found = false;
       foreach (RecentTrain train in DataManager.Instance.RecentTrains)
       {
-        if (train.TimeTableName == timeTableName)
+        if (train.Train.Nummer == zug.Nummer)
         {
+          found = true;
           break;
         }
         index++;
       }
-      DataManager.Instance.RecentTrains.RemoveAt(index);
-      DataManager.Instance.RecentTrains.Save();
+      if (found)
+      {
+        DataManager.Instance.RecentTrains.RemoveAt(index);
+        DataManager.Instance.RecentTrains.Save();
+      }
     }
 
     //---------------------------------------------------------------------
@@ -1720,7 +1970,7 @@ namespace ZusiStart
     private void OnCanStartTrain(object sender, CanExecuteRoutedEventArgs e)
     {
       bool canExecute = Properties.Settings.Default.TrainStartMode != 1 || ZusiSim.CanStart;
-      e.CanExecute = (canExecute && DataManager.Instance.CurrentTrain != null) || DataManager.Instance.options.RemoteZusi;
+      e.CanExecute = (canExecute && DataManager.Instance.CurrentTrain != null) || (DataManager.Instance.options != null && DataManager.Instance.options.RemoteZusi);
     }
 
     //---------------------------------------------------------------------
@@ -1978,7 +2228,7 @@ namespace ZusiStart
               //    LocalizationManager.Translate($"Ausgewählter Zug wird gestartet - Optimierung: {DataManager.Instance.original_traincount} -> {DataManager.Instance.optimised_traincount} - Startzeit: {DataManager.Instance.original_starttime.ToString()} -> {DataManager.Instance.optimized_starttime.ToString()}");
               //});
 
-              if (DataManager.Instance.original_modulecount >0)
+              if (DataManager.Instance.original_modulecount > 0)
 
                 DataManager.Instance.LoadingStatus = LocalizationManager.Translate($"Ausgewählter Zug {zug.Gattung} {zug.Nummer} gestartet - Optimierung: Züge {DataManager.Instance.original_traincount} -> {DataManager.Instance.optimised_traincount} - Startzeit {DataManager.Instance.original_starttime.ToString()} -> {DataManager.Instance.optimized_starttime.ToString()} - Module {DataManager.Instance.original_modulecount.ToString()} -> {DataManager.Instance.optimized_modulecount.ToString()}");
 
@@ -2490,6 +2740,7 @@ namespace ZusiStart
         if (!result)
         {
           MessageBox.Show(LocalizationManager.Translate("Kein Fahrplan gefunden."), LocalizationManager.Translate("Hinweis"), MessageBoxButton.OK, MessageBoxImage.Information);
+          //setgroupboxcolor("ExpFpl", "GrpFpl", System.Windows.Media.Brushes.Red, newtitle: DataManager.SearchTrainValue);
         }
         else
         {
@@ -2514,6 +2765,66 @@ namespace ZusiStart
 
           setgroupboxcolor("ExpFpl", "GrpFpl", System.Windows.Media.Brushes.Red, newtitle: DataManager.SearchTrainValue);
         }
+      }
+    }
+
+    private void OnSearchKI(object sender, ExecutedRoutedEventArgs e)
+    {
+      DataManager.Instance.OnSearchKI(sender, e);
+    }
+
+    private void OnCanSearchKI(object sender, CanExecuteRoutedEventArgs e)
+    {
+      e.CanExecute = true;  
+    }
+
+
+
+    private void OnAnalyseKI(object sender, ExecutedRoutedEventArgs e)
+    {
+      //DataManager.AnalyseZusiData4KI();
+    }
+
+    private void OnCanAnalyseKI(object sender, CanExecuteRoutedEventArgs e)
+    {
+      e.CanExecute = true;
+    }
+
+
+
+    //---------------------------------------------------------------------
+    private void TbxBRNumber_GotFocus(object sender, RoutedEventArgs e)
+    {
+      //tblkMessage.Visibility = Visibility.Hidden;
+    }
+
+    //---------------------------------------------------------------------
+    private void TbxBRNumber_TextChanged(object sender, EventArgs e)
+    {
+      //tblkMessage.Visibility = Visibility.Hidden;
+    }
+
+    //---------------------------------------------------------------------
+    private void OnCanSearchBR(object sender, CanExecuteRoutedEventArgs e)
+    {
+      e.CanExecute = true; // !string.IsNullOrEmpty(tbxTrainNumber.Text);
+    }
+
+    //---------------------------------------------------------------------
+    private void OnSearchBR(object sender, ExecutedRoutedEventArgs e)
+    {
+      _log.Debug("Executing Search BR command - searching for BR based on input BR number and updating UI accordingly");
+
+      DataManager.SearchVehicleGroupValue = null;
+      if (tbxBRNumber.Text == null || tbxBRNumber.Text.Trim().Length < 2)
+      {
+        MessageBox.Show(LocalizationManager.Translate("Bitte mindestens 2 Zeichen für die BR-Suche eingeben."), LocalizationManager.Translate("Hinweis"), MessageBoxButton.OK, MessageBoxImage.Information);
+        return;
+      }
+      else
+      {
+
+        DataManager.Instance.SearchBR(tbxBRNumber.Text);
       }
     }
 
@@ -2845,9 +3156,9 @@ setTimeout(() => {
     }
 
     public class Chapter
-    {
-      public string title { get; set; }
-      public object dest { get; set; } // dest ist ein komplexes Objekt
+  {
+    public string title { get; set; }
+    public object dest { get; set; } // dest ist ein komplexes Objekt
     }
 
 
@@ -3431,16 +3742,18 @@ setTimeout(() => {
 
     public void UpdateMarkerPosition(double latitude, double longitude)
     {
-      if (marker == null)
-      {
-        InitializeMap();
-      }
-      _log.Debug("UpdateMarkerPosition - Pos" + latitude.ToString() + "," + longitude.ToString());
+      //if (marker == null)
+      //{
+      //  InitializeMap();
+      //}
+      //_log.Debug("UpdateMarkerPosition - Pos" + latitude.ToString() + "," + longitude.ToString());
 
-      marker.Position = new PointLatLng(latitude, longitude);
-      TabViewModel? zdbTab = DataManager.Instance.Tabs.FirstOrDefault(t => t.Title == DataManager.Instance.tab_title_tracking);
-      zdbTab.gmap.Position = marker.Position; // Karte auf neue Position zentrieren
-
+      //marker.Position = new PointLatLng(latitude, longitude);
+      //TabViewModel? zdbTab = DataManager.Instance.Tabs.FirstOrDefault(t => t.Title == DataManager.Instance.tab_title_tracking);
+      //if (zdbTab != null)
+      //  //zdbTab.gmap.Position = marker.Position; // Karte auf neue Position zentrieren
+      //  DataManager.Instance.osmGmapControl.gmap.Position = marker.Position;
+      OSMGmapControl.UpdateMarkerPosition(latitude, longitude);
     }
 
     public void UpdateRGMarkerPosition(double utmX, double utmY, double phi)
@@ -3457,6 +3770,12 @@ setTimeout(() => {
     {
       _log.Debug("Resetting view - resetting all tabs and views to their default state");
       ShowWindow();
+    }
+
+    private void OnReload(object sender, ExecutedRoutedEventArgs e)
+    {
+      _log.Debug("Reloading - reloading timetable and vehicles");
+      DataManager.Instance.InitializeData();
     }
 
     //---------------------------------------------------------------------
@@ -3578,23 +3897,25 @@ setTimeout(() => {
         }
         else
         {
-          brdCol1.Visibility = Visibility.Collapsed;
-          brdTrains.Visibility = Visibility.Collapsed;
-          BrdSelTrain.Visibility = Visibility.Collapsed;
-          TabControlCol1.Visibility = Visibility.Collapsed;
-          brdFahrplaene.Visibility = Visibility.Collapsed;
-          GridSplitterFahrplaene.Visibility = Visibility.Collapsed;
-          //StatusLine.Visibility = Visibility.Collapsed;
-          Statuszeile_Buttons.Visibility = Visibility.Collapsed;
-          gridLengthLeftColumn = LeftColumn.Width;
-          gridLengthRightColumn = RightColumn.Width;
-          gridLengthTopRow = TopRow.Height;
-          gridLengthBottomRow = BottomRow.Height;
+          DataManager.Instance.LoadDockLayout("B");
+          ////brdCol1.Visibility = Visibility.Collapsed;
+          //brdCol1.Hide();
+          ////brdTrains.Visibility = Visibility.Collapsed;
+          //BrdSelTrain.Visibility = Visibility.Collapsed;
+          ////TabControlCol1.Visibility = Visibility.Collapsed;
+          ////brdFahrplaene.Visibility = Visibility.Collapsed;
+          ////GridSplitterFahrplaene.Visibility = Visibility.Collapsed;
+          ////StatusLine.Visibility = Visibility.Collapsed;
+          //Statuszeile_Buttons.Visibility = Visibility.Collapsed;
+          //gridLengthLeftColumn = LeftColumn.Width;
+          //gridLengthRightColumn = RightColumn.Width;
+          ////gridLengthTopRow = TopRow.Height;
+          //gridLengthBottomRow = BottomRow.Height;
 
-          LeftColumn.Width = new GridLength(0, GridUnitType.Star);
-          RightColumn.Width = new GridLength(0, GridUnitType.Star);
-          TopRow.Height = new GridLength(0, GridUnitType.Star);
-          BottomRow.Height = new GridLength(0, GridUnitType.Star);
+          //LeftColumn.Width = new GridLength(0, GridUnitType.Star);
+          //RightColumn.Width = new GridLength(0, GridUnitType.Star);
+          ////TopRow.Height = new GridLength(0, GridUnitType.Star);
+          //BottomRow.Height = new GridLength(0, GridUnitType.Star);
         }
       }
     }
@@ -3609,21 +3930,23 @@ setTimeout(() => {
         Show();
         FadeIn(this, 600);
 
-        brdCol1.Visibility = Visibility.Visible;
-        brdTrains.Visibility = Visibility.Visible;
-        BrdSelTrain.Visibility = Visibility.Visible;
-        TabControlCol1.Visibility = Visibility.Visible;
-        brdFahrplaene.Visibility = Visibility.Visible;
-        GridSplitterFahrplaene.Visibility = Visibility.Visible;
-        DataManager.Instance.LoadingStatus = " ";
-        StatusLine.Visibility = Visibility.Visible;
-        Statuszeile_Buttons.Visibility = Visibility.Visible;
+        DataManager.Instance.LoadDockLayout("A");
+
+        //brdCol1.Show(); // = Visibility.Visible;
+        ////brdTrains.Visibility = Visibility.Visible;
+        //BrdSelTrain.Visibility = Visibility.Visible;
+        ////TabControlCol1.Visibility = Visibility.Visible;
+        ////brdFahrplaene.Visibility = Visibility.Visible;
+        ////GridSplitterFahrplaene.Visibility = Visibility.Visible;
+        //DataManager.Instance.LoadingStatus = " ";
+        //StatusLine.Visibility = Visibility.Visible;
+        //Statuszeile_Buttons.Visibility = Visibility.Visible;
 
 
-        LeftColumn.Width = gridLengthLeftColumn;
-        RightColumn.Width = gridLengthRightColumn;
-        TopRow.Height = gridLengthTopRow;
-        BottomRow.Height = gridLengthBottomRow;
+        //LeftColumn.Width = gridLengthLeftColumn;
+        //RightColumn.Width = gridLengthRightColumn;
+        ////TopRow.Height = gridLengthTopRow;
+        //BottomRow.Height = gridLengthBottomRow;
 
 
         // make sure that ZusiStart is not covered by another app
@@ -3742,6 +4065,15 @@ setTimeout(() => {
       DataManager.Instance.CurrentTrainItem = null;
       DataManager.Instance.CurrentTrain = tvm?.Object;
 
+      if (DataManager.Instance.CurrentTrain?.Parent is ZugDatei zd)
+      {
+        if (zd.Filename.StartsWith(Zusi.DataPath[4]))
+        {
+          DataManager.Instance.CurrentTrainItem = new TrainItem(DataManager.Instance.CurrentTrain);
+          DataManager.Instance.CurrentTrainItem.IsTrainReplaced = true;
+        }
+      }
+
     }
 
     //private async void ReloadPageWithDummyNavigation(string originalUrl)
@@ -3812,7 +4144,9 @@ setTimeout(() => {
       //Ensure the sender is a ListBox
       if (sender is ListBox listBox)
       {
-        
+
+        DataManager.FoundTimeTableIds = null;
+
         TimeTableGroup? selectedItem2 = listBox.SelectedItem as TimeTableGroup;
         TimeTableRelation? selectedItem = listBox.SelectedItem as TimeTableRelation;
         TimeTable selectedTT;
@@ -3822,7 +4156,7 @@ setTimeout(() => {
         DataManager.SearchTrainValue = null;
         if (selectedItem2 != null) // Timetablegroup
         {
-          _log.Debug("Selected item is a TimeTableGroup"+selectedItem2.GroupID);
+          _log.Debug("Selected item is a TimeTableGroup" + selectedItem2.GroupID);
           setgroupboxcolor("ExpFpl", "GrpFpl", System.Windows.Media.Brushes.White, newtitle: selectedItem2.GroupID);
           if (DataManager.Instance.SkipTimeTableSelectionUpdate > 0)
           {
@@ -4091,6 +4425,8 @@ setTimeout(() => {
       else
       {
         DataManager.Instance.FilterZugNummer = "";
+        DataManager.Instance.FoundTimeTables.Clear();
+        DataManager.FoundTimeTableIds = null;
         if (GrpTrains != null)
           GrpTrains.BorderBrush = System.Windows.Media.Brushes.White;
         DataManager_RefreshFilter(sender, e);
@@ -4216,5 +4552,6 @@ setTimeout(() => {
           Tab.WebViewInstance.GoForward();
         }
     }
+
   }
 }

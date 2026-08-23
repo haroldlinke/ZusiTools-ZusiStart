@@ -73,7 +73,7 @@ namespace ZusiStart.Data
     public bool IsTrainReplaced
     {
       get => (bool)GetValue(IsTrainReplacedProperty);
-      private set => SetValue(_isTrainReplacedKey, value);
+      set => SetValue(_isTrainReplacedKey, value);
     }
 
     private static readonly DependencyPropertyKey _isLocoInFrontKey = DependencyProperty.RegisterReadOnly(

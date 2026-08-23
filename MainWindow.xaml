@@ -13,6 +13,7 @@
         xmlns:s="clr-namespace:Sovoma;assembly=Sovoma"
         xmlns:sw="clr-namespace:Sovoma.WPF.Converter;assembly=Sovoma.WPF"
         xmlns:WpF="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        xmlns:ad="https://github.com/Dirkster99/AvalonDock"
         xmlns:gmaps="clr-namespace:GMap.NET.WindowsPresentation;assembly=GMap.NET.WindowsPresentation"
         mc:Ignorable="d"
         x:Name="window" 
@@ -40,10 +41,6 @@
     <cv:ZusiDBVisibilityConverter x:Key="ZusiDBVisibilityConverter"/>
     <sw:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibilityConverter"/>
     <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-
-
-
-
     <Style x:Key="ListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
       <Setter Property="SnapsToDevicePixels" Value="True"/>
       <Setter Property="OverridesDefaultStyle" Value="True"/>
@@ -129,7 +126,7 @@
     </DataTemplate>
 
     <!-- **** Tracking-Tab **** -->
-    <DataTemplate x:Key="TrackingTemplate">
+    <!--<DataTemplate x:Key="TrackingTemplate">
       <Grid Height="Auto">
         <Grid.RowDefinitions>
           <RowDefinition Height="*"/>
@@ -141,16 +138,25 @@
         </Grid.ColumnDefinitions>
         <ContentControl Content="{Binding gmap}" Grid.Row="0" Grid.Column="0"/>
 
-        <!--<ContentPresenter Content="{Binding RouteGraphContent}" IsHitTestVisible="False"/>-->
+        -->
+    <!--<ContentPresenter Content="{Binding RouteGraphContent}" IsHitTestVisible="False"/>-->
+    <!--
         <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center">
     Map data from  
     <Hyperlink NavigateUri="https://openstreetmap.org/copyright" RequestNavigate="Hyperlink_RequestNavigate">
         OpenStreetMap
     </Hyperlink>
         </TextBlock>
-        <zusiMeter:ZusiMeterControl Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right"/>
+        -->
+    <!--<zusiMeter:ZusiMeterControl Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" 
+                                    Visibility="{Binding IsChecked,
+                                                 ElementName=CheckBox_Show_ZusiMeter_Data,
+                                                 Converter={StaticResource BoolToVisibilityConverter}}"/>-->
+    <!--
+        <zusiMeter:ZusiMeterControl Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" 
+                            Visibility="Collapsed"/>
       </Grid>
-    </DataTemplate>
+    </DataTemplate>-->
 
     <!-- **** RouteGraph-Tab **** -->
     <DataTemplate x:Key="RouteGraphTemplate">
@@ -167,6 +173,25 @@
       </Grid>
     </DataTemplate>
 
+    <!-- **** BildFahrplan-Tab **** -->
+    <!--<DataTemplate x:Key="BildfahrplanTemplate">
+      <Grid Height="Auto">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="*">
+          </RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <ContentPresenter Content="{Binding BildFahrplanContent}"/>
+      </Grid>
+    </DataTemplate>-->
+    <DataTemplate x:Key="BildfahrplanTemplate">
+      <ctrls:BildfahrplanControl x:Name="Bildfahrplan"/>
+    </DataTemplate>
+
+
     <!-- **** Buchfahrplan Image-Tab **** -->
     <DataTemplate x:Key="ImageTemplate">
       <DockPanel>
@@ -177,13 +202,15 @@
     </DataTemplate>
 
     <!-- **** Favorites List-Tab **** -->
-    <DataTemplate x:Key="ListTemplate">
+    <!--<DataTemplate x:Key="ListTemplate">
       <DockPanel>
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
           <Button Command="{x:Static local:MainWindow.AddFavoriteTrainCommand}" CommandTarget="{Binding ElementName=window}" Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" Style="{DynamicResource DialogButtonStyle}" Margin="6,6,6,6"/>
           <Button Command="{x:Static local:MainWindow.DelFavoriteTrainCommand}" CommandTarget="{Binding ElementName=window}" Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" Style="{DynamicResource DialogButtonStyle}" Margin="6,6,6,6"/>
           <Button Command="{x:Static local:MainWindow.StartFavTrainCommand}" Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" Style="{DynamicResource DialogButtonStyle}" Margin="6,6,6,6"/>
-          <!--<Button x:Name="BtnEditComment"  Command="{x:Static local:MainWindow.EditFavoriteCommentCommand}" Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" Style="{DynamicResource DialogButtonStyle}" Margin="6,6,6,6" HorizontalAlignment="Right"/>-->
+          -->
+    <!--<Button x:Name="BtnEditComment"  Command="{x:Static local:MainWindow.EditFavoriteCommentCommand}" Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" Style="{DynamicResource DialogButtonStyle}" Margin="6,6,6,6" HorizontalAlignment="Right"/>-->
+    <!--
           <Button x:Name="BtnEditComment"  Command="{x:Static local:MainWindow.EditFavoriteCommentCommand}" Content="{Binding EditCommentButtonText, ElementName=window}" Style="{DynamicResource DialogButtonStyle}" Margin="6,6,6,6" HorizontalAlignment="Right"/>
 
         </StackPanel>
@@ -205,7 +232,9 @@
                       </Border>
                       <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
-                          <!--<Setter Property="Background" TargetName="brd" Value="{DynamicResource Bright2.Transparent.Background}"/>-->
+                          -->
+    <!--<Setter Property="Background" TargetName="brd" Value="{DynamicResource Bright2.Transparent.Background}"/>-->
+    <!--
                           <Setter Property="Background" TargetName="brd" Value="{DynamicResource Bright2.Transparent.Background}"/>
                           <Setter Property="BorderBrush" TargetName="brd" Value="Gold"/>
                           <Setter Property="BorderThickness" TargetName="brd" Value="4"/>
@@ -227,16 +256,22 @@
           </ListBox>
         </Border>
       </DockPanel>
-    </DataTemplate>
+    </DataTemplate>-->
 
 
     <!-- **** Tab Content Selector **** -->
-    <local:TabContentTemplateSelector x:Key="TabSelector"
+    <!--<local:TabContentTemplateSelector x:Key="TabSelector"
                                       WebViewTemplate="{StaticResource WebViewTemplate}"
                                       TrackingTemplate="{StaticResource TrackingTemplate}"
                                       ImageTemplate="{StaticResource ImageTemplate}"
                                       ListTemplate="{StaticResource ListTemplate}"
-                                      RouteGraphTemplate="{StaticResource RouteGraphTemplate}"/>
+                                      RouteGraphTemplate="{StaticResource RouteGraphTemplate}"/>-->
+
+    <local:TabContentTemplateSelector x:Key="TabSelector"
+                                  WebViewTemplate="{StaticResource WebViewTemplate}"
+                                  
+                                  ImageTemplate="{StaticResource ImageTemplate}"
+                                  />
   </Window.Resources>
 
   <!--<Window.InputBindings>
@@ -271,9 +306,9 @@
       <ColumnDefinition Width="4*" />
       <ColumnDefinition Width="2*" />
     </Grid.ColumnDefinitions>-->
-    <GridSplitter x:Name="GridSplitter1_1" Grid.Row="1" Grid.Column="0" Background="Gray" Width="10" Cursor="SizeWE" />
+    <!--<GridSplitter x:Name="GridSplitter1_1" Grid.Row="1" Grid.Column="0" Background="Gray" Width="10" Cursor="SizeWE" />
     <GridSplitter x:Name="GridSplitter1_2" Grid.Row="1" Grid.Column="1" Background="Gray" Width="10" Cursor="SizeWE" />
-    <GridSplitter x:Name="GridSplitter2_1" Grid.Row="2" Height="5" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" Background="Gray" Grid.ColumnSpan="4"/>
+    <GridSplitter x:Name="GridSplitter2_1" Grid.Row="2" Height="5" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" Background="Gray" Grid.ColumnSpan="4"/>-->
 
     <!-- ==================================== Main Menue ========================================== -->
     <Menu VerticalAlignment="Center"  Padding="0,0" Visibility="Visible" Grid.ColumnSpan="4">
@@ -287,9 +322,9 @@
         <MenuItem x:Name="MenuItemOptions" Command="{x:Static local:MainWindow.CommandOptions}" />
         <MenuItem x:Name="TrainStartSettings" Command="{x:Static local:MainWindow.TrainStartSettingsCommand}"/>
         <MenuItem x:Name="MenuItemShowAll" Command="{x:Static local:MainWindow.ResetViewCommand}" />
+        <MenuItem x:Name="MenuItemReload" Command="{x:Static local:MainWindow.ReloadCommand}" />
         <MenuItem x:Name="MenuItemQuit" Command="{x:Static local:MainWindow.CommandQuit}" />
       </MenuItem>
-
       <MenuItem Header="_Zugtausch">
         <MenuItem Command="{x:Static local:MainWindow.UndoReplTrainCommand}"/>
         <MenuItem Command="{x:Static local:MainWindow.ManageReplTrainsCommand}"/>
@@ -300,369 +335,603 @@
           <Separator/>
           <MenuItem Command="{x:Static local:MainWindow.ManageReplLocosCommand}"/>
         </MenuItem>
-        <!--<MenuItem Header="_Loktausch">
-          <MenuItem Command="{x:Static local:MainWindow.UndoReplLocoCommand}"/>
-          <MenuItem Command="{x:Static local:MainWindow.ManageReplLocoCommand}"/>
-        </MenuItem>-->
+        <Separator/>
+        <MenuItem Command="{x:Static local:MainWindow.SaveRevisedTrainCommand}"/>
+        <MenuItem Command="{x:Static local:MainWindow.UndoRevisedTrainCommand}"/>
       </MenuItem>
-      <!--<MenuItem Header="_Loktausch">
-        <MenuItem Command="{x:Static local:MainWindow.UndoReplLocoCommand}"/>
-        <MenuItem Command="{x:Static local:MainWindow.ManageReplLocoCommand}"/>
-      </MenuItem>-->
+      <MenuItem Header="_Ansicht">
+        <MenuItem x:Name="MenuItemSaveLayout_A" Command="{x:Static local:MainWindow.CommandSaveLayout_A}" />
+        <MenuItem x:Name="MenuItemSaveLayout_B" Command="{x:Static local:MainWindow.CommandSaveLayout_B}"/>
+        <MenuItem x:Name="MenuItemLoadLayout_A" Command="{x:Static local:MainWindow.CommandLoadLayout_A}" />
+        <MenuItem x:Name="MenuItemLoadLayout_B" Command="{x:Static local:MainWindow.CommandLoadLayout_B}" />
+        <MenuItem x:Name="MenuItemLoadLayout_Standard_A" Command="{x:Static local:MainWindow.CommandLoadLayout_Standard_A}" />
+        <MenuItem x:Name="MenuItemLoadLayout_Standard_B" Command="{x:Static local:MainWindow.CommandLoadLayout_Standard_B}" />
+        <MenuItem x:Name="MenuItemLayout_Show_All" Command="{x:Static local:MainWindow.CommandLayout_Showall}" />
+      </MenuItem>
+
       <MenuItem Header="_Info">
         <MenuItem Command="{x:Static local:MainWindow.CommandAbout}"/>
-        <!--<MenuItem Command="{x:Static local:MainWindow.CommandHelp}"/>
-  <MenuItem Command="{x:Static local:MainWindow.CommandExtDocu}"/>-->
       </MenuItem>
     </Menu>
 
     <!-- ==================================== 1. Spalte ========================================== -->
     <!-- ==================================== Fahrplanauswahl ==================================== -->
-    <Border Grid.Row="1" Grid.Column="0" x:Name="brdCol1" Background="{DynamicResource Blue.Transparent.Background}" CornerRadius="6" Margin="0,0,3,0" Padding="3" Grid.ColumnSpan="1" >
+    <ad:DockingManager x:Name="DockManager" Grid.Row="1" Grid.ColumnSpan="3" Grid.RowSpan="3" Background="{DynamicResource Blue.Transparent.Background}">
+      <ad:LayoutRoot>
+        <ad:LayoutPanel Orientation="Horizontal">
+          <ad:LayoutAnchorablePane x:Name="S1Z1T1">
+            <ad:LayoutAnchorable Title="Fahrplangruppen" x:Name="brdCol1" ContentId="IdFahrplanGruppen">
+              <!--<Border Grid.Row="1" Grid.Column="0" x:Name="brdCol1" Background="{DynamicResource Blue.Transparent.Background}" CornerRadius="6" Margin="0,0,3,0" Padding="3" Grid.ColumnSpan="1" >-->
 
-      <!-- ==================================== 1. Spalte , 1. Zeile============================== -->
-      <!-- ============================= Fahrplangruppen/Zugsuche ================================ -->
-      <TabControl x:Name="TabControlCol1" Background="{DynamicResource Blue.Transparent.Background}">
+              <!-- ==================================== 1. Spalte , 1. Zeile============================== -->
+              <!-- ============================= Fahrplangruppen/Zugsuche ================================ -->
+              <!--<TabControl x:Name="TabControlCol1" Background="{DynamicResource Blue.Transparent.Background}">
 
-        <!-- ==================================== 1. Spalte , Tab 1 ============================== -->
-        <!-- ============================= Fahrplangruppen/Strecken=============================== -->
-        <TabItem Header="{Binding Source='Strecken', Converter={StaticResource Loc}}" ToolTip="{Binding Source='Liste aller im offiziellen und im privaten Verzeichnis gefundener Strecken', Converter={StaticResource Loc}}">
-          <!--<GroupBox Header="{Binding Source='Fahrplangruppen', Converter={StaticResource Loc}}" Foreground="White" BorderThickness="1" BorderBrush="WhiteSmoke" Grid.Row="1" Margin="1,0,1,1" Background="{DynamicResource Blue.Transparent.Background}">-->
-
-          <ListBox x:Name="ListTimeTableGrp" BorderThickness="0" Background="{x:Null}" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding GroupedTimeTables}" ScrollViewer.HorizontalScrollBarVisibility="Visible" 
+                  -->
+              <!-- ==================================== 1. Spalte , Tab 1 ============================== -->
+              <!-- ============================= Fahrplangruppen/Strecken=============================== -->
+              <!--
+                  <TabItem Header="{Binding Source='Strecken', Converter={StaticResource Loc}}" ToolTip="{Binding Source='Liste aller im offiziellen und im privaten Verzeichnis gefundener Strecken', Converter={StaticResource Loc}}">
+                    -->
+              <!--<GroupBox Header="{Binding Source='Fahrplangruppen', Converter={StaticResource Loc}}" Foreground="White" BorderThickness="1" BorderBrush="WhiteSmoke" Grid.Row="1" Margin="1,0,1,1" Background="{DynamicResource Blue.Transparent.Background}">-->
+              <ListBox x:Name="ListTimeTableGrp" BorderThickness="0" Background="{x:Null}" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding GroupedTimeTables}" ScrollViewer.HorizontalScrollBarVisibility="Visible" 
                      HorizontalContentAlignment="Center" ItemContainerStyle="{StaticResource ListBoxItemStyle}" PreviewGotKeyboardFocus="ListBox_PreviewGotKeyboardFocus"
                      SelectionChanged="SelectedTimeTableChanged">
-            <ListBox.ItemTemplate>
-              <DataTemplate>
-                <ctrls:TimeTableOverviewControl x:Name="toc" Source="{Binding}" SelectedTimeTableChanged="TimeTableOverviewControl_SelectedTimeTableChanged"
-                                                  IsSelected="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Mode=TwoWay}"/>
-              </DataTemplate>
-            </ListBox.ItemTemplate>
-          </ListBox>
-          <!--</GroupBox>-->
-        </TabItem>
-
-        <!-- ==================================== 1. Spalte , Tab 2 ============================== -->
-        <!-- ============================= Zugsuche nach Zugnummer/Station ======================= -->
-        <TabItem Header="{Binding Source='Zugsuche', Converter={StaticResource Loc}}" IsEnabled="{Binding AllVehicles_loaded}" ToolTip="{Binding Source='Suche nach Zugnummer oder Stationsnamen in allen Strecken', Converter={StaticResource Loc}}">
-          <!--<Border  Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Top" x:Name="brdSearch" Panel.ZIndex="1" d:IsHidden="True" >-->
-          <Border Grid.Row="0" Grid.Column="0" CornerRadius="6" Margin="3,0,3,3" Background="{StaticResource Blue.Transparent.Background}" Padding="3">
-            <Grid>
-              <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition/>
-              </Grid.RowDefinitions>
-              <TextBlock Text="{Binding Source='Einen Zug anhand der Zugnummer oder Betriebsstelle suchen', Converter={StaticResource Loc}}" TextWrapping="Wrap" Foreground="AntiqueWhite" FontSize="14" HorizontalAlignment="Center" Padding="0,5,0,0"/>
-              <TextBlock Grid.Row="1" TextWrapping="Wrap" Margin="12" Foreground="WhiteSmoke" 
-                                   Text="{Binding Source='Im Suchfeld kann amgegeben werden: die Zugnummer mit oder ohne Gattung (z.B. ERB1234 oder 1234) oder der Name einer Betriebsstelle (z.B. HAGEN oder RATHAUS).', Converter={StaticResource Loc}}"/>
-              <TextBlock Grid.Row="2" TextWrapping="Wrap" Margin="12" Foreground="WhiteSmoke" 
-                                   Text="{Binding Source='Es werden allen Betriebsstellen ausgesucht, die den Namen enthalten. Leerzeichen können weggelassen werden und werden ignoriert. Es wird nicht zwischen Groß- und Kleinschreibung unterschieden.', Converter={StaticResource Loc}}"/>
-
-              <StackPanel Orientation="Vertical" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0,12,0,0">
-                <Label Content="Suchen nach" VerticalAlignment="Center" HorizontalContentAlignment="Left" Foreground="White" Margin="0,0,0,0" FontSize="14"/>
-
-                <ctrls:SearchTextBox x:Name="tbxTrainNumber" VerticalAlignment="Center" HorizontalAlignment="Left" MinWidth="99" Width="200" GotFocus="TbxTrainNumber_GotFocus" FontSize="14" TextChanged="TbxTrainNumber_TextChanged"/>
-                <Button Command="{x:Static local:MainWindow.SearchTrainCommand}" HorizontalAlignment="Left" 
-                            Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" Style="{DynamicResource ZusiStartButtonStyle}" IsDefault="True" Margin="0,0,0,0" VerticalAlignment="Center"/>
-
-              </StackPanel>
-              <TextBlock x:Name="tblkMessage" Grid.Row="3" Grid.ColumnSpan="2" Foreground="#FFFF9C00" HorizontalAlignment="Center" Text="Zug nicht gefunden" VerticalAlignment="Top" Margin="0,12,0,0" Visibility="Hidden"/>
-            </Grid>
-          </Border>
-          <!--</Border>-->
-        </TabItem>
-
-        <!-- ==================================== 1. Spalte , Tab 3 ============================== -->
-        <!-- ===================================== Fahrzeugsuche ================================= -->
-        <TabItem Header="{Binding Source='Fahrzeugsuche', Converter={StaticResource Loc}}" IsEnabled="{Binding AllVehicles_loaded}" ToolTip="{Binding Source='Suche nach Fahrzeugtyp in allen Strecken', Converter={StaticResource Loc}}">
-          <Grid VerticalAlignment="Top">
-            <Grid.RowDefinitions>
-              <RowDefinition Height="Auto"/>
-              <RowDefinition Height="Auto"/>
-              <RowDefinition Height="*"/>
-              <!--<RowDefinition Height="Auto"/>-->
-            </Grid.RowDefinitions>
-
-            <!-- Reihe 1: Fahrzeugauswahl -->
-            <Grid Grid.Row="0" VerticalAlignment="Top" Height="Auto" Margin="0,0,3,3">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="auto"/>
-              </Grid.ColumnDefinitions>
-              <Border CornerRadius="6" Padding="3" Background="{DynamicResource Blue.Transparent.Background}" BorderBrush="AntiqueWhite" BorderThickness="1">
-                <StackPanel>
-                  <Label Content="Traktion" Foreground="AntiqueWhite" HorizontalAlignment="Center" FontSize="14" VerticalAlignment="Top"/>
-                  <zg:Knob HorizontalAlignment="Center" VerticalAlignment="Center" SelectedNotch="{Binding TractionKind, Mode=TwoWay}"
-                                         LockedLabelBrush="Gray" SelectedLabelBrush="GreenYellow" FontSize="10" Width="Auto" Margin="5">
-                    <zg:Knob.Notches>
-                      <zg:Notch Label="beliebig"/>
-                      <zg:Notch Label="Dampf"/>
-                      <zg:Notch Label="Diesel"/>
-                      <zg:Notch Label="Elektrisch"/>
-                      <zg:Notch Label="Akku"/>
-                    </zg:Knob.Notches>
-                  </zg:Knob>
-                </StackPanel>
-              </Border>
-              <Border Grid.Column="1" CornerRadius="6" Padding="3" Background="{DynamicResource Blue.Transparent.Background}" BorderBrush="AntiqueWhite" BorderThickness="1" Margin="6,0,0,0">
-                <StackPanel>
-                  <Label Content="Fahrzeugart" Foreground="AntiqueWhite" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="14"/>
-                  <zg:Knob HorizontalAlignment="Center" VerticalAlignment="Center" SelectedNotch="{Binding TrainKind, Mode=TwoWay}" Notches="{Binding TrainKindNotches}"
-                                         LockedLabelBrush="Gray" SelectedLabelBrush="GreenYellow" FontSize="10" Width="Auto" Margin="5"/>
-                </StackPanel>
-              </Border>
-              <Border Grid.Column="2" CornerRadius="6" Padding="3" Background="{DynamicResource Blue.Transparent.Background}" BorderBrush="AntiqueWhite" BorderThickness="1" Margin="6,0,0,0">
-                <StackPanel>
-                  <Label Content="Epoche" Foreground="AntiqueWhite" HorizontalAlignment="Center" FontSize="14" VerticalAlignment="Top"/>
-                  <zg:Knob x:Name="knobEpoche" HorizontalAlignment="Center" VerticalAlignment="Top" SelectedNotch="{Binding Epoche, Mode=TwoWay}"
-                                     SelectedLabelBrush="GreenYellow" FontSize="10"  Width="Auto" Margin="5">
-                    <zg:Knob.Notches>
-                      <zg:Notch Label="beliebig"/>
-                      <zg:Notch Label="I"/>
-                      <zg:Notch Label="II"/>
-                      <zg:Notch Label="III"/>
-                      <zg:Notch Label="IV"/>
-                      <zg:Notch Label="V"/>
-                      <zg:Notch Label="VI"/>
-                    </zg:Knob.Notches>
-                  </zg:Knob>
-                  <TextBlock Foreground="AntiqueWhite" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="{Binding SelectedNotch, ElementName=knobEpoche, Converter={StaticResource EpocheToStringConverter}}"/>
-                </StackPanel>
-              </Border>
-              <Border Grid.Column="3" CornerRadius="6" Padding="3" Background="{DynamicResource Blue.Transparent.Background}" BorderBrush="AntiqueWhite" BorderThickness="1" Margin="6,0,0,0">
-                <StackPanel>
-                  <Label Content="Dekofahrzeuge" Foreground="AntiqueWhite" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="14"/>
-                  <zg:Knob x:Name="knobDeco" HorizontalAlignment="Center" VerticalAlignment="Center" SelectedNotch="{Binding TrainkindDeco, Mode=TwoWay}"
-                   SelectedLabelBrush="GreenYellow" FontSize="10" Width="Auto" Margin="5">
-                    <zg:Knob.Notches>
-                      <zg:Notch Label="beliebig"/>
-                      <zg:Notch Label="keine"/>
-                      <zg:Notch Label="nur"/>
-                    </zg:Knob.Notches>
-                  </zg:Knob>
-                </StackPanel>
-              </Border>
-            </Grid>
-            <DockPanel Grid.Row="3">
-              <Grid DockPanel.Dock="Top" Height="40">
-                <Grid.RowDefinitions>
-                  <RowDefinition Height="40"/>
-                </Grid.RowDefinitions>
-                <Button Command="{x:Static local:MainWindow.CreateVehicleListCommand}" CommandTarget="{Binding ElementName=window}" Content="Erzeuge Lokliste" HorizontalAlignment="Center" Style="{DynamicResource ZusiStartButtonStyle}" Visibility="Visible" Width="300"/>
-              </Grid>
-
-              <Border Grid.Row="1" CornerRadius="6" Background="{DynamicResource Blue.Transparent.Background}" Padding="3" Margin="0,3,3,0">
-                <ListBox Background="{x:Null}" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding FilteredVehicles, Mode=OneWay}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Auto" 
-                                 ItemContainerStyle="{DynamicResource ListBoxItemStyle}" BorderThickness="0"
-                                 SelectedItem="{Binding CurrentVehicleContainer}">
-                  <ListBox.ItemTemplate>
-                    <DataTemplate>
-                      <Border CornerRadius="6" Background="{DynamicResource Bright.Transparent.Background}" Padding="3">
-                        <Grid>
-                          <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="500"/>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="auto"/>
-                          </Grid.ColumnDefinitions>
-
-                          <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                          </Grid.RowDefinitions>
-
-                          <Label Content="{Binding DisplayName}" FontWeight="Bold" Grid.Row="0" Margin="0,0,0,-20"/>
-                          <Grid Grid.Row="1">
-                            <Grid.ColumnDefinitions>
-                              <!--<ColumnDefinition Width="{Binding Sources[1], Converter={StaticResource ColWidthConverter}}"/>-->
-                              <ColumnDefinition Width="Auto"/>
-                              <ColumnDefinition Width="Auto"/>
-                              <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Image Source="{Binding Sources[0]}" Stretch="None" Margin="{Binding Margins[0]}"/>
-                            <!--<Image Grid.Column="1" Source="{Binding Sources[1]}" Stretch="None" Margin="{Binding Margins[1]}" 
-                                                       Visibility="{Binding Source, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToVisibilityConverter}}"/>-->
-                            <Image Grid.Column="1" Source="{Binding Sources[1]}" Stretch="None" Margin="{Binding Margins[1]}" 
-                               Visibility="Visible"/>
-                            <!--<Image Grid.Column="2" Source="{Binding Sources[2]}" Stretch="None" Margin="{Binding Margins[2]}"
-                                                       Visibility="{Binding Source, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToVisibilityConverter}}"/>-->
-                            <Image Grid.Column="2" Source="{Binding Sources[2]}" Stretch="None" Margin="{Binding Margins[2]}"
-                               Visibility="Visible"/>
-
-                          </Grid>
-                        </Grid>
-                      </Border>
-                    </DataTemplate>
-                  </ListBox.ItemTemplate>
-                </ListBox>
-              </Border>
-            </DockPanel>
-          </Grid>
-        </TabItem>
-      </TabControl>
-    </Border>
-
-    <!-- ==================================== 2. Spalte ======================================== -->
-    <Border x:Name="brdBrowser" Grid.Row="1" Grid.Column="1" Background="{DynamicResource Blue.Transparent.Background}" Margin="3,0,3,0" CornerRadius="6" Padding="6" Visibility="Visible">
-      <Grid>
-        <Grid.RowDefinitions>
-          <RowDefinition x:Name="TopRow" Height="auto"/>
-          <RowDefinition Height="10"/>
-          <RowDefinition></RowDefinition>
-        </Grid.RowDefinitions>
-
-
-        <!-- ==================================== 2. Spalte , 1. Zeile============================== -->
-        <!-- ====================================== Fahrplanliste ================================== -->
-        <Border x:Name="brdFahrplaene" Visibility="Visible">
-
-          <Expander x:Name="ExpFpl" Header="Fahrpläne" IsExpanded="True" Margin="1" DockPanel.Dock="Top">
-            <Expander.Style>
-              <Style TargetType="Expander">
-                <Setter Property="Template">
-                  <Setter.Value>
-                    <ControlTemplate TargetType="Expander">
-                      <GroupBox x:Name="GrpFpl" Header="{Binding Source='Fahrpläne', Converter={StaticResource Loc}}" Foreground="White" BorderThickness="1" BorderBrush="WhiteSmoke" Grid.Row="1" Margin="1,0,1,1">
-                        <WrapPanel Orientation="Horizontal">
-                          <!-- Header mit Toggle -->
-                          <ToggleButton Style="{StaticResource TrainViewExpanderButtonStyle}" Content="{TemplateBinding Header}" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
-                                              FontWeight="Bold" Background="LightGray" BorderThickness="0" Padding="5" VerticalAlignment="Top"/>
-                          <!-- Inhalt -->
-                          <ContentPresenter Visibility="{TemplateBinding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}"
-                                                  Margin="5"/>
-                        </WrapPanel>
-                      </GroupBox>
-                    </ControlTemplate>
-                  </Setter.Value>
-                </Setter>
-              </Style>
-            </Expander.Style>
-
-            <WrapPanel Orientation="Horizontal">
-              <ListBox x:Name="ListTimeTables" ItemsSource="{Binding Relations}" SelectedItem="{Binding SelectedTimeTableRelation}" BorderThickness="0" Margin="1,0,0,1" Background="{x:Null}"
-                             ScrollViewer.HorizontalScrollBarVisibility="Disabled" Grid.Row="1" IsSynchronizedWithCurrentItem="True" 
-                             Visibility="{Binding Relations.Count, ConverterParameter=0, Converter={StaticResource CountToVisibilityConverter}, Mode=OneWay}"
-                             SelectionChanged="SelectedTimeTableRelationChanged2">
-                <ListBox.Resources>
-                  <Style TargetType="{x:Type ListBoxItem}">
-                    <Setter Property="Background" Value="{x:Null}"/>
-                    <Setter Property="Foreground" Value="{DynamicResource Generic.Foreground}"/>
-                    <Setter Property="Template">
-                      <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                          <Border x:Name="brd" Background="blue" BorderBrush="White" BorderThickness="1" CornerRadius="0" Padding="3" Margin="0,3,10,3">
-                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                          </Border>
-                          <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                              <Setter Property="Background" TargetName="brd" Value="{DynamicResource Bright2.Transparent.Background}"/>
-                              <Setter Property="Foreground" Value="Gray"/>
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="True">
-                              <Setter Property="Background" TargetName="brd" Value="{DynamicResource Bright2.Transparent.Background}"/>
-                              <Setter Property="BorderBrush" TargetName="brd" Value="Gold"/>
-                              <Setter Property="Foreground" Value="Black"/>
-                            </Trigger>
-                          </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                      </Setter.Value>
-                    </Setter>
-                  </Style>
-                </ListBox.Resources>
-                <ListBox.ItemsPanel>
-                  <ItemsPanelTemplate>
-                    <WrapPanel IsItemsHost="True" Orientation="Horizontal"/>
-                  </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
                 <ListBox.ItemTemplate>
                   <DataTemplate>
-                    <TextBlock Text="{Binding TimeTableName}" TextAlignment="Center" ToolTip="{Binding TimeTableName}">
-                      <TextBlock.Resources>
-                        <Style TargetType="{x:Type ToolTip}">
+                    <ctrls:TimeTableOverviewControl x:Name="toc" Source="{Binding}" SelectedTimeTableChanged="TimeTableOverviewControl_SelectedTimeTableChanged"
+                                                  IsSelected="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Mode=TwoWay}"/>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+            </ad:LayoutAnchorable>
+          </ad:LayoutAnchorablePane>
+          <!--</GroupBox>-->
+          <!--</TabItem>
+
+                  -->
+          <!-- ==================================== 1. Spalte , Tab 2 ============================== -->
+          <!-- ============================= Zugsuche nach Zugnummer/Station ======================= -->
+          <!--
+           <TabItem Header="{Binding Source='Zugsuche', Converter={StaticResource Loc}}" IsEnabled="{Binding AllVehicles_loaded}" ToolTip="{Binding Source='Suche nach Zugnummer oder Stationsnamen in allen Strecken', Converter={StaticResource Loc}}">-->
+          <ad:LayoutAnchorablePane x:Name="S1Z1T2">
+            <ad:LayoutAnchorable x:Name="ZugsucheAnchorable" Title="Zugsuche" ContentId="IdZugsuche">
+              <!--<Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="153*"/>
+                  <ColumnDefinition Width="15*"/>
+                  <ColumnDefinition Width="168*"/>
+                  <ColumnDefinition Width="742*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto"/>
+                  <RowDefinition Height="Auto"/>
+                  <RowDefinition Height="Auto"/>
+                  <RowDefinition Height="Auto"/>
+                  <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="{Binding Source='Einen Zug anhand der Zugnummer, Betriebsstelle oder Baureihe suchen', Converter={StaticResource Loc}}" TextWrapping="Wrap" Foreground="AntiqueWhite" FontSize="14" HorizontalAlignment="Left" Padding="0,5,0,0" Grid.ColumnSpan="4" Margin="12,0,0,11"/>
+                <TextBlock Grid.Row="1" TextWrapping="Wrap" Margin="12,12,11,10" Foreground="WhiteSmoke" 
+                                   Text="{Binding Source='Im Suchfeld kann angegeben werden: die Zugnummer mit oder ohne Gattung (z.B. ERB1234 oder 1234) oder der Name einer Betriebsstelle (z.B. HAGEN oder RATHAUS) oder eine Baureihe (z.B. BR103).', Converter={StaticResource Loc}}" Grid.ColumnSpan="4"/>
+                <TextBlock Grid.Row="2" TextWrapping="Wrap" Margin="12,13,11,11" Foreground="WhiteSmoke" 
+                                   Text="{Binding Source='Es werden allen Betriebsstellen ausgesucht, die den Namen enthalten. Leerzeichen können weggelassen werden und werden ignoriert. Es wird nicht zwischen Groß- und Kleinschreibung unterschieden.', Converter={StaticResource Loc}}" Grid.ColumnSpan="4"/>
+
+                <StackPanel Orientation="Vertical" Grid.Row="3" Grid.ColumnSpan="3" HorizontalAlignment="Left" Margin="0,13,0,0" Grid.RowSpan="2">
+                  <Label Content="Suchen nach" VerticalAlignment="Center" HorizontalContentAlignment="Left" Foreground="White" Margin="0,0,0,0" FontSize="14"/>
+
+                  <ctrls:SearchTextBox x:Name="tbxTrainNumber" VerticalAlignment="Center" HorizontalAlignment="Left" MinWidth="99" Width="200" GotFocus="TbxTrainNumber_GotFocus" FontSize="14" TextChanged="TbxTrainNumber_TextChanged"/>
+                  <Button Command="{x:Static local:MainWindow.SearchTrainCommand}" HorizontalAlignment="Left" 
+                            Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" Style="{DynamicResource ZusiStartButtonStyle}" IsDefault="True" Margin="0,0,0,0" VerticalAlignment="Center"/>
+
+                </StackPanel>
+                <TextBlock x:Name="tblkMessage" Grid.Row="3" Foreground="#FFFF9C00" HorizontalAlignment="Left" Text="Zug nicht gefunden" VerticalAlignment="Top" Margin="331,13,0,0" Visibility="Hidden" Grid.Column="3" Grid.RowSpan="2"/>
+              </Grid>-->
+              <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="153*"/>
+                    <ColumnDefinition Width="15*"/>
+                    <ColumnDefinition Width="168*"/>
+                    <ColumnDefinition Width="742*"/>
+                  </Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                  </Grid.RowDefinitions>
+                  <TextBlock Text="{Binding Source='Einen Zug anhand der Zugnummer, Betriebsstelle oder Baureihe suchen', Converter={StaticResource Loc}}" TextWrapping="Wrap" Foreground="AntiqueWhite" FontSize="14" HorizontalAlignment="Left" Padding="0,5,0,0" Grid.ColumnSpan="4" Margin="12,0,0,11"/>
+                  <TextBlock Grid.Row="2" TextWrapping="Wrap" Margin="12,12,11,10" Foreground="WhiteSmoke" 
+                     Text="{Binding Source='Im Suchfeld kann angegeben werden: die Zugnummer mit oder ohne Gattung (z.B. ERB1234 oder 1234) oder der Name einer Betriebsstelle (z.B. HAGEN oder RATHAUS) oder eine Baureihe (z.B. BR103).', Converter={StaticResource Loc}}" Grid.ColumnSpan="4"/>
+                  <TextBlock Grid.Row="3" TextWrapping="Wrap" Margin="12,13,11,11" Foreground="WhiteSmoke" 
+                     Text="{Binding Source='Es werden allen Betriebsstellen ausgesucht, die den Namen enthalten. Leerzeichen können weggelassen werden und werden ignoriert. Es wird nicht zwischen Groß- und Kleinschreibung unterschieden.', Converter={StaticResource Loc}}" Grid.ColumnSpan="4"/>
+
+                  <StackPanel Orientation="Vertical" Grid.Row="1" Grid.ColumnSpan="4" HorizontalAlignment="Left" Margin="0,13,0,0">
+                    <Label Content="Suchen nach" VerticalAlignment="Center" HorizontalContentAlignment="Left" Foreground="White" Margin="0,0,0,0" FontSize="14"/>
+
+                    <ctrls:SearchTextBox x:Name="tbxTrainNumber" VerticalAlignment="Center" HorizontalAlignment="Left" MinWidth="99" Width="200" GotFocus="TbxTrainNumber_GotFocus" FontSize="14" TextChanged="TbxTrainNumber_TextChanged"/>
+                    <Button Command="{x:Static local:MainWindow.SearchTrainCommand}" HorizontalAlignment="Left" 
+              Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" Style="{DynamicResource ZusiStartButtonStyle}" IsDefault="True" Margin="0,0,0,0" VerticalAlignment="Center"/>
+
+                  </StackPanel>
+                  <TextBlock x:Name="tblkMessage" Grid.Row="4" Foreground="#FFFF9C00" HorizontalAlignment="Left" Text="Zug nicht gefunden" VerticalAlignment="Top" Margin="331,13,0,0" Visibility="Hidden" Grid.Column="3" Grid.RowSpan="2"/>
+                </Grid>
+              </ScrollViewer>
+            </ad:LayoutAnchorable>
+          </ad:LayoutAnchorablePane>
+          <!--</TabItem>-->
+
+          <!-- ==================================== 1. Spalte , Tab 3 ============================== -->
+          <!-- ===================================== Fahrzeugsuche ================================= -->
+          <!--<TabItem Header="{Binding Source='Fahrzeugsuche', Converter={StaticResource Loc}}" IsEnabled="{Binding AllVehicles_loaded}" ToolTip="{Binding Source='Suche nach Fahrzeugtyp in allen Strecken', Converter={StaticResource Loc}}">-->
+          <ad:LayoutAnchorablePane x:Name="S1Z1T3">
+            <ad:LayoutAnchorable x:Name="FahrzeugsucheAnchorable" Title="Fahrzeugsuche" ContentId="IdFahrzeugsuche">
+              <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                <Grid VerticalAlignment="Top">
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <!--<RowDefinition Height="Auto"/>-->
+                  </Grid.RowDefinitions>
+
+                  <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0,12,0,12">
+                    <Label Content="Suche nach Baureihen" VerticalAlignment="Center" HorizontalContentAlignment="Left" Foreground="White" Margin="0,12,0,12" FontSize="14"/>
+                    <ctrls:SearchTextBox x:Name="tbxBRNumber" VerticalAlignment="Center" HorizontalAlignment="Left" MinWidth="100" Width="100" FontSize="14" TextChanged="TbxBRNumber_TextChanged" Margin="12,12,0,12"/>
+                    <Button Command="{x:Static local:MainWindow.SearchBRCommand}" HorizontalAlignment="Left" 
+                      Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" Style="{DynamicResource ZusiStartButtonStyle}" IsDefault="True" Margin="12,12,12,12" VerticalAlignment="Center"/>
+
+                  </StackPanel>
+
+                  <!-- Reihe 1: Fahrzeugauswahl -->
+                  <Grid Grid.Row="1" VerticalAlignment="Top" Height="Auto" Margin="0,0,3,3">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="auto"/>
+                      <ColumnDefinition Width="auto"/>
+                      <ColumnDefinition Width="auto"/>
+                      <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Border CornerRadius="6" Padding="3" Background="{DynamicResource Blue.Transparent.Background}" BorderBrush="AntiqueWhite" BorderThickness="1">
+                      <StackPanel>
+                        <Label Content="Traktion" Foreground="AntiqueWhite" HorizontalAlignment="Center" FontSize="14" VerticalAlignment="Top"/>
+                        <zg:Knob HorizontalAlignment="Center" VerticalAlignment="Center" SelectedNotch="{Binding TractionKind, Mode=TwoWay}"
+                                         LockedLabelBrush="Gray" SelectedLabelBrush="GreenYellow" FontSize="10" Width="Auto" Margin="5">
+                          <zg:Knob.Notches>
+                            <zg:Notch Label="beliebig"/>
+                            <zg:Notch Label="Dampf"/>
+                            <zg:Notch Label="Diesel"/>
+                            <zg:Notch Label="Elektrisch"/>
+                            <zg:Notch Label="Akku"/>
+                          </zg:Knob.Notches>
+                        </zg:Knob>
+                      </StackPanel>
+                    </Border>
+                    <Border Grid.Column="1" CornerRadius="6" Padding="3" Background="{DynamicResource Blue.Transparent.Background}" BorderBrush="AntiqueWhite" BorderThickness="1" Margin="6,0,0,0">
+                      <StackPanel>
+                        <Label Content="Fahrzeugart" Foreground="AntiqueWhite" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="14"/>
+                        <zg:Knob HorizontalAlignment="Center" VerticalAlignment="Center" SelectedNotch="{Binding TrainKind, Mode=TwoWay}" Notches="{Binding TrainKindNotches}"
+                                         LockedLabelBrush="Gray" SelectedLabelBrush="GreenYellow" FontSize="10" Width="Auto" Margin="5"/>
+                      </StackPanel>
+                    </Border>
+                    <Border Grid.Column="2" CornerRadius="6" Padding="3" Background="{DynamicResource Blue.Transparent.Background}" BorderBrush="AntiqueWhite" BorderThickness="1" Margin="6,0,0,0">
+                      <StackPanel>
+                        <Label Content="Epoche" Foreground="AntiqueWhite" HorizontalAlignment="Center" FontSize="14" VerticalAlignment="Top"/>
+                        <zg:Knob x:Name="knobEpoche" HorizontalAlignment="Center" VerticalAlignment="Top" SelectedNotch="{Binding Epoche, Mode=TwoWay}"
+                                     SelectedLabelBrush="GreenYellow" FontSize="10"  Width="Auto" Margin="5">
+                          <zg:Knob.Notches>
+                            <zg:Notch Label="beliebig"/>
+                            <zg:Notch Label="I"/>
+                            <zg:Notch Label="II"/>
+                            <zg:Notch Label="III"/>
+                            <zg:Notch Label="IV"/>
+                            <zg:Notch Label="V"/>
+                            <zg:Notch Label="VI"/>
+                          </zg:Knob.Notches>
+                        </zg:Knob>
+                        <TextBlock Foreground="AntiqueWhite" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="{Binding SelectedNotch, ElementName=knobEpoche, Converter={StaticResource EpocheToStringConverter}}"/>
+                      </StackPanel>
+                    </Border>
+                    <Border Grid.Column="3" CornerRadius="6" Padding="3" Background="{DynamicResource Blue.Transparent.Background}" BorderBrush="AntiqueWhite" BorderThickness="1" Margin="6,0,0,0">
+                      <StackPanel>
+                        <Label Content="Dekofahrzeuge" Foreground="AntiqueWhite" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="14"/>
+                        <zg:Knob x:Name="knobDeco" HorizontalAlignment="Center" VerticalAlignment="Center" SelectedNotch="{Binding TrainkindDeco, Mode=TwoWay}"
+                   SelectedLabelBrush="GreenYellow" FontSize="10" Width="Auto" Margin="5">
+                          <zg:Knob.Notches>
+                            <zg:Notch Label="beliebig"/>
+                            <zg:Notch Label="keine"/>
+                            <zg:Notch Label="nur"/>
+                          </zg:Knob.Notches>
+                        </zg:Knob>
+                      </StackPanel>
+                    </Border>
+                  </Grid>
+                  <DockPanel Grid.Row="3">
+                    <Grid DockPanel.Dock="Top" Height="40">
+                      <Grid.RowDefinitions>
+                        <RowDefinition Height="40"/>
+                      </Grid.RowDefinitions>
+                      <Button Command="{x:Static local:MainWindow.CreateVehicleListCommand}" CommandTarget="{Binding ElementName=window}" Content="Erzeuge Lokliste" HorizontalAlignment="Center" Style="{DynamicResource ZusiStartButtonStyle}" Visibility="Visible" Width="300"/>
+                    </Grid>
+
+                    <Border Grid.Row="1" CornerRadius="6" Background="{DynamicResource Blue.Transparent.Background}" Padding="3" Margin="0,3,3,0">
+                      <ListBox Background="{x:Null}" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding FilteredVehicles, Mode=OneWay}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Auto" 
+                                 ItemContainerStyle="{DynamicResource ListBoxItemStyle}" BorderThickness="0"
+                                 SelectedItem="{Binding CurrentVehicleContainer}">
+                        <ListBox.ItemTemplate>
+                          <DataTemplate>
+                            <Border CornerRadius="6" Background="{DynamicResource Bright.Transparent.Background}" Padding="3">
+                              <Grid>
+                                <Grid.ColumnDefinitions>
+                                  <ColumnDefinition Width="500"/>
+                                  <ColumnDefinition Width="auto"/>
+                                  <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Grid.RowDefinitions>
+                                  <RowDefinition Height="auto"/>
+                                  <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Label Content="{Binding DisplayName}" FontWeight="Bold" Grid.Row="0" Margin="0,0,0,-20"/>
+                                <Grid Grid.Row="1">
+                                  <Grid.ColumnDefinitions>
+                                    <!--<ColumnDefinition Width="{Binding Sources[1], Converter={StaticResource ColWidthConverter}}"/>-->
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                  </Grid.ColumnDefinitions>
+                                  <Image Source="{Binding Sources[0]}" Stretch="None" Margin="{Binding Margins[0]}"/>
+                                  <!--<Image Grid.Column="1" Source="{Binding Sources[1]}" Stretch="None" Margin="{Binding Margins[1]}" 
+                                                       Visibility="{Binding Source, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToVisibilityConverter}}"/>-->
+                                  <Image Grid.Column="1" Source="{Binding Sources[1]}" Stretch="None" Margin="{Binding Margins[1]}" 
+                               Visibility="Visible"/>
+                                  <!--<Image Grid.Column="2" Source="{Binding Sources[2]}" Stretch="None" Margin="{Binding Margins[2]}"
+                                                       Visibility="{Binding Source, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToVisibilityConverter}}"/>-->
+                                  <Image Grid.Column="2" Source="{Binding Sources[2]}" Stretch="None" Margin="{Binding Margins[2]}"
+                               Visibility="Visible"/>
+
+                                </Grid>
+                              </Grid>
+                            </Border>
+                          </DataTemplate>
+                        </ListBox.ItemTemplate>
+                      </ListBox>
+                    </Border>
+                  </DockPanel>
+                </Grid>
+              </ScrollViewer>
+            </ad:LayoutAnchorable>
+          </ad:LayoutAnchorablePane>
+          <!--</TabItem>
+                </TabControl>
+              </Border>-->
+
+          <!-- ==================================== 1. Spalte , Tab 4 ============================== -->
+          <!-- ============================= Zugsuche mit KI ======================= -->
+
+          <ad:LayoutAnchorablePane x:Name="S1Z1T4">
+            <ad:LayoutAnchorable x:Name="KiSucheAnchorable" Title="KI-Zugsuche" ContentId="IdKIsuche">
+
+              <!--<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">-->
+
+              <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="0,13,0,0">
+                <TextBlock Text="{Binding Source='Einen Zug über KI suchen', Converter={StaticResource Loc}}" TextWrapping="Wrap" Foreground="AntiqueWhite" FontSize="14" HorizontalAlignment="Left" Padding="0,5,0,0" Margin="12,0,0,11"/>
+
+                <Label Content="Suchen nach" VerticalAlignment="Top" HorizontalContentAlignment="Left" Foreground="White" Margin="12,0,0,0" FontSize="14"/>
+
+                <TextBox x:Name="tbxKISearchText" Width="300" Foreground="black" HorizontalAlignment="Left" Text="" VerticalAlignment="Top" Margin="10,10,0,0" Visibility="Visible" Height="280" TextWrapping="Wrap"/>
+
+                <Button Command="{x:Static local:MainWindow.SearchKICommand}" HorizontalAlignment="Left" Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" Style="{DynamicResource ZusiStartButtonStyle}" IsDefault="True" Margin="0,0,0,0" VerticalAlignment="Center"/>
+
+                <!--<ScrollViewer
+              VerticalScrollBarVisibility="Auto"
+              HorizontalScrollBarVisibility="Disabled"
+              Margin="20"
+              Height="150">
+                  <TextBlock x:Name="tbxKIResult" Foreground="black" Background="White"  HorizontalAlignment="Left" Text="" VerticalAlignment="Top" Margin="20,20,20,20" Visibility="Visible" Width="200" Height="250" TextWrapping="Wrap" Padding="10,10,10,10"/>
+                </ScrollViewer>-->
+                <TextBox x:Name="tbxKIResult"
+         Foreground="black"
+         Text=""
+         TextWrapping="Wrap"
+         VerticalScrollBarVisibility="Auto"
+         HorizontalScrollBarVisibility="Auto"
+         Margin="20"
+         Height="150"
+         IsReadOnly="True"
+         BorderThickness="0"
+         Background="White"/>
+              </StackPanel>
+
+              <!--</ScrollViewer>-->
+            </ad:LayoutAnchorable>
+          </ad:LayoutAnchorablePane>
+
+          <!-- ==================================== 2. Spalte ======================================== -->
+          <ad:LayoutAnchorablePane x:Name="S2Z1">
+            <ad:LayoutAnchorable x:Name="FahrplaeneAnchorable" Title="{Binding Source='Fahrpläne', Converter={StaticResource Loc}}" ContentId="IdFahrplaene">
+              <!--<Border x:Name="brdBrowser" Grid.Row="1" Grid.Column="1" Background="{DynamicResource Blue.Transparent.Background}" Margin="3,0,3,0" CornerRadius="6" Padding="6" Visibility="Visible">
+                <Grid>
+                  <Grid.RowDefinitions>
+                    <RowDefinition x:Name="TopRow" Height="auto"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition></RowDefinition>
+                  </Grid.RowDefinitions>-->
+
+
+              <!-- ==================================== 2. Spalte , 1. Zeile============================== -->
+              <!-- ====================================== Fahrplanliste ================================== -->
+              <!--<Border x:Name="brdFahrplaene" Visibility="Visible">
+
+                    <Expander x:Name="ExpFpl" Header="Fahrpläne" IsExpanded="True" Margin="1" DockPanel.Dock="Top">
+                      <Expander.Style>
+                        <Style TargetType="Expander">
                           <Setter Property="Template">
                             <Setter.Value>
-                              <ControlTemplate TargetType="{x:Type ToolTip}">
-                                <Border Background="{DynamicResource Bright.Transparent.Background}" BorderBrush="Gold" BorderThickness="1" CornerRadius="6" Padding="3">
-                                  <StackPanel>
-                                    <TextBlock Foreground="Black" FontWeight="Bold" Text="{Binding TimeTableName}"/>
-                                    <TextBlock Foreground="Black" Text="{Binding Hint}"/>
-                                  </StackPanel>
-                                </Border>
+                              <ControlTemplate TargetType="Expander">
+                                <GroupBox x:Name="GrpFpl" Header="{Binding Source='Fahrpläne', Converter={StaticResource Loc}}" Foreground="White" BorderThickness="1" BorderBrush="WhiteSmoke" Grid.Row="1" Margin="1,0,1,1">
+                                  <WrapPanel Orientation="Horizontal">
+                                    -->
+              <!-- Header mit Toggle -->
+              <!--
+                                    <ToggleButton Style="{StaticResource TrainViewExpanderButtonStyle}" Content="{TemplateBinding Header}" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                              FontWeight="Bold" Background="LightGray" BorderThickness="0" Padding="5" VerticalAlignment="Top"/>
+                                    -->
+              <!-- Inhalt -->
+              <!--
+                                    <ContentPresenter Visibility="{TemplateBinding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                  Margin="5"/>
+                                  </WrapPanel>
+                                </GroupBox>
                               </ControlTemplate>
                             </Setter.Value>
                           </Setter>
                         </Style>
-                      </TextBlock.Resources>
+                      </Expander.Style>-->
+
+              <WrapPanel Orientation="Horizontal">
+                <ListBox x:Name="ListTimeTables" ItemsSource="{Binding Relations}" SelectedItem="{Binding SelectedTimeTableRelation}" BorderThickness="0" Margin="1,0,0,1" Background="{x:Null}"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled" Grid.Row="1" IsSynchronizedWithCurrentItem="True" 
+                             Visibility="{Binding Relations.Count, ConverterParameter=0, Converter={StaticResource CountToVisibilityConverter}, Mode=OneWay}"
+                             SelectionChanged="SelectedTimeTableRelationChanged2"
+                       Tag="{Binding Source={x:Static data:DataManager.Instance}}">
+                  <ListBox.ToolTip>
+                    <TextBlock Text="{Binding}" />
+                  </ListBox.ToolTip>
+                  <ListBox.Resources>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                      <Setter Property="Tag" Value="{Binding Tag, ElementName=ListTimeTables}" />
+                      <Setter Property="Background" Value="{x:Null}"/>
+                      <Setter Property="Foreground" Value="{DynamicResource Generic.Foreground}"/>
+                      <Setter Property="ContextMenu">
+                        <Setter.Value>
+                          <ContextMenu>
+                            <MenuItem Header="Pfad kopieren"
+                                  Command="{Binding PlacementTarget.Tag.TTcopyPathCommand,
+                                  RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                  CommandParameter="{Binding}" />
+                          </ContextMenu>
+                        </Setter.Value>
+                      </Setter>
+
+                      <Setter Property="Template">
+                        <Setter.Value>
+                          <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                            <Border x:Name="brd" Background="blue" BorderBrush="White" BorderThickness="1" CornerRadius="0" Padding="3" Margin="0,3,10,3">
+                              <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" SnapsToDevicePixels="True" Focusable="False" IsHitTestVisible="True"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                              <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" TargetName="brd" Value="{DynamicResource Bright2.Transparent.Background}"/>
+                                <Setter Property="Foreground" Value="Gray"/>
+                              </Trigger>
+                              <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" TargetName="brd" Value="{DynamicResource Bright2.Transparent.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="brd" Value="Gold"/>
+                                <Setter Property="Foreground" Value="Black"/>
+                              </Trigger>
+                            </ControlTemplate.Triggers>
+                          </ControlTemplate>
+                        </Setter.Value>
+                      </Setter>
+
+                    </Style>
+                  </ListBox.Resources>
+                  <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                      <WrapPanel IsItemsHost="True" Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                  </ListBox.ItemsPanel>
+                  <ListBox.ItemTemplate>
+                    <DataTemplate>
+                      <TextBlock Text="{Binding TimeTableName}" TextAlignment="Center" ToolTip="{Binding TimeTableName}">
+                        <TextBlock.Resources>
+                          <Style TargetType="{x:Type ToolTip}">
+                            <Setter Property="Template">
+                              <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ToolTip}">
+                                  <Border Background="{DynamicResource Bright.Transparent.Background}" BorderBrush="Gold" BorderThickness="1" CornerRadius="6" Padding="3">
+                                    <StackPanel>
+                                      <TextBlock Foreground="Black" FontWeight="Bold" Text="{Binding TimeTableName}"/>
+                                      <TextBlock Foreground="Black" Text="{Binding Hint}"/>
+                                    </StackPanel>
+                                  </Border>
+                                </ControlTemplate>
+                              </Setter.Value>
+                            </Setter>
+                          </Style>
+                        </TextBlock.Resources>
                           </TextBlock>
+                    </DataTemplate>
+                  </ListBox.ItemTemplate>
+                </ListBox>
+              </WrapPanel>
+              <!--</Expander>
+                  </Border>
+
+             
+
+                  -->
+            </ad:LayoutAnchorable>
+          </ad:LayoutAnchorablePane>
+          <!-- ==================================== 2. Spalte , 2. Zeile ============================= -->
+          <!--
+                  <GridSplitter x:Name="GridSplitterFahrplaene" Grid.Row="1" Height="5" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" Background="Gray" Grid.ColumnSpan="4"/>-->
+
+          <!-- ==================================== 2. Spalte , 3. Zeile ============================= -->
+          <!-- ==================================== Information Section ============================== -->
+          <ad:LayoutAnchorablePane x:Name="S2Z2T1">
+            <ad:LayoutAnchorable x:Name="InformationAnchorable" Title="{Binding Source='Information', Converter={StaticResource Loc}}" ContentId="IdInformation">
+              <!--<GroupBox Header="{Binding Source='Information', Converter={StaticResource Loc}}" Foreground="White" BorderThickness="1" BorderBrush="WhiteSmoke" Grid.Row="2" Margin="1,0,1,1">-->
+              <!-- ***** Tabcontrol ****-->
+              <TabControl x:Name="InfoTabControl" ContentTemplateSelector="{StaticResource TabSelector}" ItemsSource="{Binding Tabs}" SelectionChanged="TabControl_SelectionChanged2" Grid.Row="0">
+                <TabControl.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding Title}" ToolTip="{Binding Tooltip}" />
                   </DataTemplate>
-                </ListBox.ItemTemplate>
-              </ListBox>
-            </WrapPanel>
-          </Expander>
-        </Border>
+                </TabControl.ItemTemplate>
+              </TabControl>
+              <!--</GroupBox>-->
+              <!--</Grid>-->
+              <!--</Grid>
+              </Border>-->
+            </ad:LayoutAnchorable>
+          </ad:LayoutAnchorablePane>
 
-        <!-- ==================================== 2. Spalte , 2. Zeile ============================= -->
-        <GridSplitter x:Name="GridSplitterFahrplaene" Grid.Row="1" Height="5" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" Background="Gray" Grid.ColumnSpan="4"/>
+          <ad:LayoutAnchorablePane x:Name="S2Z2T2">
+            <ad:LayoutAnchorable x:Name="TrackingAnchorable" Title="{Binding Source='Tracking', Converter={StaticResource Loc}}" ContentId="IdTracking">
+              <Grid Height="Auto">
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="*"/>
+                  <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <ctrls:OSMGmapControl x:Name="OSMGmapControl"/>
+                <!--<ContentControl Content="{Binding osmGmapControl}" Grid.Row="0" Grid.Column="0"/>-->
 
-        <!-- ==================================== 2. Spalte , 3. Zeile ============================= -->
-        <!-- ==================================== Information Section ============================== -->
-        <GroupBox Header="{Binding Source='Information', Converter={StaticResource Loc}}" Foreground="White" BorderThickness="1" BorderBrush="WhiteSmoke" Grid.Row="2" Margin="1,0,1,1">
-          <!-- ***** Tabcontrol ****-->
-          <TabControl x:Name="InfoTabControl" ContentTemplateSelector="{StaticResource TabSelector}" ItemsSource="{Binding Tabs}" SelectionChanged="TabControl_SelectionChanged2" Grid.Row="0">
-            <TabControl.ItemTemplate>
-              <DataTemplate>
-                <TextBlock Text="{Binding Title}" ToolTip="{Binding Tooltip}" />
-              </DataTemplate>
-            </TabControl.ItemTemplate>
-          </TabControl>
-        </GroupBox>
-        <!--</Grid>-->
-      </Grid>
-    </Border>
+                <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center">
+Map data from  
+<Hyperlink NavigateUri="https://openstreetmap.org/copyright" RequestNavigate="Hyperlink_RequestNavigate">
+    OpenStreetMap
+</Hyperlink>
+                </TextBlock>
+              </Grid>
+            </ad:LayoutAnchorable>
+          </ad:LayoutAnchorablePane>
 
-    <!-- ==================================== 3. Spalte  ============================= -->
+          <ad:LayoutAnchorablePane x:Name="S2Z2T3">
+            <ad:LayoutAnchorable x:Name="RouteGraphAnchorable" Title="{Binding Source='RouteGraph', Converter={StaticResource Loc}}" ContentId="IdRouteGraph">
+              <routeGraph:RouteGraph2Control x:Name="RouteGraphControl"/>
+            </ad:LayoutAnchorable>
+          </ad:LayoutAnchorablePane>
 
-    <!-- **** Anzeige der Züge **** -->
-    <Border x:Name="brdTrains" BorderThickness="0" Background="{DynamicResource Blue.Transparent.Background}" CornerRadius="6" Grid.Row="1" Grid.Column="2" Margin="3,0,0,0" Padding="6" Visibility="Visible">
-      <Grid>
-        <Grid.RowDefinitions>
-          <RowDefinition Height="auto"/>
-          <RowDefinition Height="*"/>
-        </Grid.RowDefinitions >
-        <!-- ==================================== 3. Spalte , 1. Zeile ============================= -->
-        <!-- ======================================= Zugfilter ===================================== -->
-        <GroupBox x:Name="BrdFilter" Header="{Binding Source='Zugfilter', Converter={StaticResource Loc}}" Grid.Row="0" Grid.ColumnSpan="2" BorderBrush="WhiteSmoke" BorderThickness="1" Foreground="White" Margin="1,0,1,0">
-          <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <ToggleButton IsChecked="{Binding IsTrainListExpanded}" Style="{StaticResource TrainViewExpanderButtonStyle}" VerticalAlignment="Center" Width="10" Height="10" Margin="0,0,10,0" Checked="ToggleButton_Checked"  ToolTip="Alles Ein-/Ausklappen">
-            </ToggleButton>
-            <ctrls:SearchTextBox x:Name="tblFilterZugNummer" Background="WhiteSmoke" Foreground="Black" VerticalAlignment="Center" HorizontalAlignment="Left" MinWidth="99" Width="150" GotFocus="TbxFilterSearchtxt_GotFocus" LostFocus="TbxFilterSearchtxt_LostFocus" FontSize="12" TextChanged="TbxFilterTrainNumber_TextChanged" Text="{Binding Source='Zugnummer oder Stationsname', Converter={StaticResource Loc}}"  ToolTip="{Binding Source='Filtern nach Zugnummer oder Stationsnamen', Converter={StaticResource Loc}}"/>
-            <!--<CheckBox x:Name="Checkbox_Dekozüge" Grid.Row="2" Grid.Column="4" Margin="10,0,0,0" Foreground="WhiteSmoke"  VerticalAlignment="Center" HorizontalAlignment="Right"/>
+          <ad:LayoutAnchorablePane x:Name="S2Z2T4">
+            <ad:LayoutAnchorable x:Name="BildfahrplanAnchorable" Title="{Binding Source='Bildfahrplan', Converter={StaticResource Loc}}" ContentId="IdBildfahrplan">
+              <ctrls:BildfahrplanControl x:Name="BildfahrplanControl"/>
+            </ad:LayoutAnchorable>
+          </ad:LayoutAnchorablePane>
+
+          <ad:LayoutAnchorablePane x:Name="S2Z2T5">
+            <ad:LayoutAnchorable x:Name="FavoritesAnchorable" Title="{Binding Source='Favorites', Converter={StaticResource Loc}}" ContentId="IdFavorites">
+              <DockPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                  <Button Command="{x:Static local:MainWindow.AddFavoriteTrainCommand}" CommandTarget="{Binding ElementName=window}" Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" Style="{DynamicResource DialogButtonStyle}" Margin="6,6,6,6"/>
+                  <Button Command="{x:Static local:MainWindow.DelFavoriteTrainCommand}" CommandTarget="{Binding ElementName=window}" Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" Style="{DynamicResource DialogButtonStyle}" Margin="6,6,6,6"/>
+                  <Button Command="{x:Static local:MainWindow.StartFavTrainCommand}" Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" Style="{DynamicResource DialogButtonStyle}" Margin="6,6,6,6"/>
+                  <!--<Button x:Name="BtnEditComment"  Command="{x:Static local:MainWindow.EditFavoriteCommentCommand}" Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" Style="{DynamicResource DialogButtonStyle}" Margin="6,6,6,6" HorizontalAlignment="Right"/>-->
+                  <Button x:Name="BtnEditComment"  Command="{x:Static local:MainWindow.EditFavoriteCommentCommand}" Content="{Binding EditCommentButtonText, ElementName=window}" Style="{DynamicResource DialogButtonStyle}" Margin="6,6,6,6" HorizontalAlignment="Right"/>
+
+                </StackPanel>
+                <Border x:Name="brdRecent" Panel.ZIndex="1" Background="{DynamicResource Blue.Transparent.Background}" CornerRadius="6" Padding="0,1,0,3"
+        Visibility="Visible" >
+                  <ListBox BorderThickness="0" Background="Transparent"
+             ItemsSource="{Binding RecentTrains}"
+             SelectedItem="{Binding SelectedRecentTrain, Mode=TwoWay}"
+             HorizontalContentAlignment="Stretch"
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.Resources>
+                      <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="Background" Value="{DynamicResource Bright.Transparent.Background}"/>
+                        <Setter Property="Template">
+                          <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                              <Border x:Name="brd" BorderBrush="{DynamicResource Blue.Transparent.Background}" BorderThickness="1" CornerRadius="6" Padding="0" Margin="2,0,2,3">
+                                <ContentPresenter/>
+                              </Border>
+                              <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                  <!--<Setter Property="Background" TargetName="brd" Value="{DynamicResource Bright2.Transparent.Background}"/>-->
+                                  <Setter Property="Background" TargetName="brd" Value="{DynamicResource Bright2.Transparent.Background}"/>
+                                  <Setter Property="BorderBrush" TargetName="brd" Value="Gold"/>
+                                  <Setter Property="BorderThickness" TargetName="brd" Value="4"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                  <Setter Property="Background" TargetName="brd" Value="{DynamicResource Bright2.Transparent.Background}"/>
+                                </Trigger>
+                              </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                          </Setter.Value>
+                        </Setter>
+                      </Style>
+                    </ListBox.Resources>
+                    <ListBox.ItemTemplate>
+                      <DataTemplate>
+                        <ctrls:TimeTableInfoControl3 Source="{Binding Train}" UseCounter="{Binding Used}" TimeTableName="{Binding TimeTableName}" Comment="{Binding Comment, Mode=TwoWay}"/>
+                      </DataTemplate>
+                    </ListBox.ItemTemplate>
+                  </ListBox>
+                </Border>
+              </DockPanel>
+            </ad:LayoutAnchorable>
+          </ad:LayoutAnchorablePane>
+
+
+
+          <!-- ==================================== 3. Spalte  ============================= -->
+          <ad:LayoutAnchorablePane x:Name="S3Z1">
+            <ad:LayoutAnchorable x:Name="ZugFilterAnchorable" Title="ZugFilter" ContentId="IdZugFilter">
+              <!-- **** Anzeige der Züge **** -->
+              <!--<Border x:Name="brdTrains" BorderThickness="0" Background="{DynamicResource Blue.Transparent.Background}" CornerRadius="6" Grid.Row="1" Grid.Column="2" Margin="3,0,0,0" Padding="6" Visibility="Visible">
+                <Grid>
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                  </Grid.RowDefinitions >-->
+              <!-- ==================================== 3. Spalte , 1. Zeile ============================= -->
+              <!-- ======================================= Zugfilter ===================================== -->
+              <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                <GroupBox x:Name="BrdFilter" Header="{Binding Source='Zugfilter', Converter={StaticResource Loc}}" Grid.Row="0" Grid.ColumnSpan="2" BorderBrush="WhiteSmoke" BorderThickness="1" Foreground="White" Margin="1,0,1,0">
+                  <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <!--<ToggleButton IsChecked="{Binding IsTrainListExpanded}" Style="{StaticResource TrainViewExpanderButtonStyle}" VerticalAlignment="Center" Width="10" Height="10" Margin="0,0,10,0" Checked="ToggleButton_Checked"  ToolTip="Alles Ein-/Ausklappen">
+                    </ToggleButton>-->
+                    <ctrls:SearchTextBox x:Name="tblFilterZugNummer" Background="WhiteSmoke" Foreground="Black" VerticalAlignment="Center" HorizontalAlignment="Left" MinWidth="99" Width="150" GotFocus="TbxFilterSearchtxt_GotFocus" LostFocus="TbxFilterSearchtxt_LostFocus" FontSize="12" TextChanged="TbxFilterTrainNumber_TextChanged" Text="{Binding Source='Zugnummer oder Stationsname', Converter={StaticResource Loc}}"  ToolTip="{Binding Source='Filtern nach Zugnummer oder Stationsnamen', Converter={StaticResource Loc}}"/>
+                    <!--<CheckBox x:Name="Checkbox_Dekozüge" Grid.Row="2" Grid.Column="4" Margin="10,0,0,0" Foreground="WhiteSmoke"  VerticalAlignment="Center" HorizontalAlignment="Right"/>
             <Label Grid.Row="2" Grid.Column="5" Content="{Binding Source='Dekozüge', Converter={StaticResource Loc}}" Margin="0,0,0,0" Foreground="WhiteSmoke"  VerticalAlignment="Center" HorizontalAlignment="Left"/>-->
 
-            <ToggleButton IsChecked="{Binding IsPersonTrainsAllowed}" VerticalAlignment="Center" Width="40" Height="40" Margin="5,0,0,0" Style="{StaticResource DecoTrainsButtonStyle}" Checked="ToggleButton_Checked"  ToolTip="Personenzüge anzeigen">
-              <ToggleButton.Content>
-                <Viewbox Stretch="Uniform">
-                  <Canvas Width="100" Height="100">
-                    <!-- Kopf -->
-                    <Ellipse Fill="DarkSlateGray" Stroke="Black" StrokeThickness="1"
+                    <ToggleButton IsChecked="{Binding IsPersonTrainsAllowed}" VerticalAlignment="Center" Width="40" Height="40" Margin="5,0,0,0" Style="{StaticResource DecoTrainsButtonStyle}" Checked="ToggleButton_Checked"  ToolTip="Personenzüge anzeigen">
+                      <ToggleButton.Content>
+                        <Viewbox Stretch="Uniform">
+                          <Canvas Width="100" Height="100">
+                            <!-- Kopf -->
+                            <Ellipse Fill="DarkSlateGray" Stroke="Black" StrokeThickness="1"
                          Width="30" Height="30" Canvas.Left="35" Canvas.Top="10"/>
-                    <!-- Schultern / Körper -->
-                    <Path Fill="DarkSlateGray" Stroke="Black" StrokeThickness="1"
+                            <!-- Schultern / Körper -->
+                            <Path Fill="DarkSlateGray" Stroke="Black" StrokeThickness="1"
                       Data="M30,50 C30,70 70,70 70,50 C70,40 30,40 30,50 Z" />
-                  </Canvas>
-                </Viewbox>
-              </ToggleButton.Content>
-            </ToggleButton>
+                          </Canvas>
+                        </Viewbox>
+                      </ToggleButton.Content>
+                    </ToggleButton>
 
-            <ToggleButton IsChecked="{Binding IsFreightTrainsAllowed}" VerticalAlignment="Center" Width="40" Height="40" Margin="5,0,0,0" Style="{StaticResource DecoTrainsButtonStyle}" Checked="ToggleButton_Checked" ToolTip="Güterzüge anzeigen">
-              <ToggleButton.Content>
-                <Viewbox Stretch="Uniform">
-                  <Canvas Width="100" Height="100">
-                    <Path Fill="SaddleBrown" Stroke="Black" StrokeThickness="2"
+                    <ToggleButton IsChecked="{Binding IsFreightTrainsAllowed}" VerticalAlignment="Center" Width="40" Height="40" Margin="5,0,0,0" Style="{StaticResource DecoTrainsButtonStyle}" Checked="ToggleButton_Checked" ToolTip="Güterzüge anzeigen">
+                      <ToggleButton.Content>
+                        <Viewbox Stretch="Uniform">
+                          <Canvas Width="100" Height="100">
+                            <Path Fill="SaddleBrown" Stroke="Black" StrokeThickness="2"
                       Data="M30,10 C20,10 20,90 30,90 
                             C40,90 60,90 70,90 
                             C80,90 80,10 70,10 
@@ -670,57 +939,71 @@
                             M30,30 L70,30 
                             M30,50 L70,50 
                             M30,70 L70,70" />
-                  </Canvas>
-                </Viewbox>
-              </ToggleButton.Content>
-            </ToggleButton>
+                          </Canvas>
+                        </Viewbox>
+                      </ToggleButton.Content>
+                    </ToggleButton>
 
-            <ToggleButton IsChecked="{Binding IsDecoTrainsAllowed}" VerticalAlignment="Center"  Width="40" Height="40" Content="D" Margin="5,0,0,0" Style="{StaticResource DecoTrainsButtonStyle}" Checked="ToggleButton_Checked"  ToolTip="Dekozüge anzeigen"/>
-          </StackPanel>
-        </GroupBox>
-        <!-- ==================================== 3. Spalte , 2. Zeile ============================= -->
-        <!-- ======================================= Zugliste ====================================== -->
-        <GroupBox x:Name="GrpTrains" Header="{Binding Source='Züge', Converter={StaticResource Loc}}" Grid.Row="1" Grid.ColumnSpan="2" BorderBrush="WhiteSmoke" BorderThickness="1" Foreground="White" Margin="1,0,1,0">
+                    <ToggleButton IsChecked="{Binding IsDecoTrainsAllowed}" VerticalAlignment="Center"  Width="40" Height="40" Content="D" Margin="5,0,0,0" Style="{StaticResource DecoTrainsButtonStyle}" Checked="ToggleButton_Checked"  ToolTip="Dekozüge anzeigen"/>
+                  </StackPanel>
+                </GroupBox>
+              </ScrollViewer>
+            </ad:LayoutAnchorable>
+          </ad:LayoutAnchorablePane>
+          <!-- ==================================== 3. Spalte , 2. Zeile ============================= -->
+          <!-- ======================================= Zugliste ====================================== -->
+          <ad:LayoutAnchorablePane x:Name="S3Z2">
+            <ad:LayoutAnchorable x:Name="ZugListeAnchorable" Title="Züge" ContentId="IdZugListe">
+              <GroupBox x:Name="GrpTrains" Header="{Binding Source='Züge', Converter={StaticResource Loc}}" Grid.Row="1" Grid.ColumnSpan="2" BorderBrush="WhiteSmoke" BorderThickness="1" Foreground="White" Margin="1,0,1,0">
 
-          <ctrls:TrainsView x:Name="tvPassengerTrains"
+                <ctrls:TrainsView x:Name="tvPassengerTrains"
                                       ItemsSource="{Binding Source={StaticResource PassengerTrains}}" 
                                       Margin="0,0,3,0" 
                                       Style="{StaticResource TrainViewStyle}"
                                       DataContext="{Binding TrainsViewModel}"
                                       SelectedItemChanged="TreeView_SelectedItemChanged" Grid.Row="1"/>
-        </GroupBox>
-      </Grid>
-    </Border>
+              </GroupBox>
 
-    <!-- ======================================= 2. Zeile ====================================== -->
-    <!-- ======================================= Ausgewählter Zug und Statuszeile ====================================== -->
+            </ad:LayoutAnchorable>
+          </ad:LayoutAnchorablePane>
 
-    <!-- ================================= Gleisbedingungen ======================================= -->
-    <Popup Placement="Top" PlacementTarget="{Binding ElementName=frictionSettingsButton, Mode=OneWay}" PopupAnimation="Fade" AllowsTransparency="True" IsOpen="{Binding FrictionSettingsPopupVisible, ElementName=window}" Grid.RowSpan="2" Grid.ColumnSpan="3" Margin="0,0,880,0">
-      <Border x:Name="brdFrictionSettings" CornerRadius="6" Padding="3" Background="{DynamicResource Blue.Transparent.Background}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="200" Height="200" Margin="0,0,743,0" 
-                        Panel.ZIndex="2" BorderBrush="Goldenrod" BorderThickness="1">
-        <Border.Effect>
-          <DropShadowEffect/>
-        </Border.Effect>
-        <DockPanel>
-          <Label Content="Gleisbedingungen" Foreground="AntiqueWhite" HorizontalAlignment="Center" FontSize="14" VerticalAlignment="Top" DockPanel.Dock="Top"/>
-          <zg:Knob VerticalAlignment="Center" HorizontalAlignment="Center" KnobSize="60" SelectedLabelBrush="GreenYellow" SelectedNotch="{Binding FrictionPreset, Mode=TwoWay, Converter={StaticResource FrictionPresetConverter}}">
-            <zg:Knob.Notches>
-              <zg:Notch Label="trocken"/>
-              <zg:Notch Label="naß"/>
-              <zg:Notch Label="neblig"/>
-              <zg:Notch Label="vereist"/>
-            </zg:Knob.Notches>
-          </zg:Knob>
-        </DockPanel>
-      </Border>
-    </Popup>
 
-    <!-- ==================================== Ausgewählter Zug Info ==================================== -->
-    <ctrls:TimeTableInfoControl x:Name="BrdSelTrain" Grid.Row="3" Source="{Binding CurrentTrain, Mode=OneWay}" Margin="0,6,0,0" Visibility="Visible" Grid.ColumnSpan="4"/>
+          <!-- ======================================= 2. Zeile ====================================== -->
+          <!-- ======================================= Ausgewählter Zug und Statuszeile ====================================== -->
+          <ad:LayoutAnchorablePane x:Name="SxZ2">
+            <ad:LayoutAnchorable x:Name="ZugInfoAnchorable" Title="ZugInfo" ContentId="IdZugInfo">
+              <!-- ==================================== Ausgewählter Zug Info ==================================== -->
+              <ctrls:TimeTableInfoControl x:Name="BrdSelTrain" Grid.Row="3" Source="{Binding CurrentTrain, Mode=OneWay}" Margin="0,6,0,0" Visibility="Visible" Grid.ColumnSpan="4"/>
+            </ad:LayoutAnchorable>
+          </ad:LayoutAnchorablePane>
+        </ad:LayoutPanel>
+      </ad:LayoutRoot>
+    </ad:DockingManager>
 
     <!-- ==================================== Statuszeile ==================================== -->
     <DockPanel x:Name="StatusLine" Grid.Row="4" Margin="0,6,6,0" Visibility="Visible" Width="auto" Grid.ColumnSpan="4">
+      <!-- ================================= Gleisbedingungen ======================================= -->
+      <Popup Placement="Top" PlacementTarget="{Binding ElementName=frictionSettingsButton, Mode=OneWay}" PopupAnimation="Fade" AllowsTransparency="True" IsOpen="{Binding FrictionSettingsPopupVisible, ElementName=window}" Grid.RowSpan="2" Grid.ColumnSpan="3" Margin="0,0,880,0">
+        <Border x:Name="brdFrictionSettings" CornerRadius="6" Padding="3" Background="{DynamicResource Blue.Transparent.Background}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="200" Height="200" Margin="0,0,743,0" 
+                    Panel.ZIndex="2" BorderBrush="Goldenrod" BorderThickness="1">
+          <Border.Effect>
+            <DropShadowEffect/>
+          </Border.Effect>
+          <DockPanel>
+            <Label Content="Gleisbedingungen" Foreground="AntiqueWhite" HorizontalAlignment="Center" FontSize="14" VerticalAlignment="Top" DockPanel.Dock="Top"/>
+            <zg:Knob VerticalAlignment="Center" HorizontalAlignment="Center" KnobSize="60" SelectedLabelBrush="GreenYellow" SelectedNotch="{Binding FrictionPreset, Mode=TwoWay, Converter={StaticResource FrictionPresetConverter}}">
+              <zg:Knob.Notches>
+                <zg:Notch Label="trocken"/>
+                <zg:Notch Label="naß"/>
+                <zg:Notch Label="neblig"/>
+                <zg:Notch Label="vereist"/>
+              </zg:Knob.Notches>
+            </zg:Knob>
+          </DockPanel>
+        </Border>
+      </Popup>
+
+
       <StackPanel Orientation="Horizontal" Width="auto">
         <Border Background="#54000000" CornerRadius="6" Padding="3" HorizontalAlignment="Left">
           <Grid>
@@ -759,5 +1042,8 @@
         <Button x:Name="BtnStartTrain" Command="{x:Static local:MainWindow.StartTrainCommand}" Height="34" Content="{Binding Command.Text, RelativeSource={RelativeSource Self}}" Style="{DynamicResource ZusiStartButtonStyle}" Margin="12,0,0,0"/>
       </StackPanel>
     </DockPanel>
+
+
+
   </Grid>
 </Window>

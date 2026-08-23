@@ -59,9 +59,9 @@
       <TextBlock Grid.Row="4" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10" Text="{Binding Source='Es wird ein temporärer Fahrplan mit den Zügen erstellt, die während der Fahrzeit des ausgewählten Zuges fahren. Alle anderen Züge werden aus dem Fahrplan gelöscht.', Converter={StaticResource Loc}}"/>
 
 
-      <!--<ToggleButton Grid.Row="11" Margin="0,0,12,0" Grid.RowSpan="2" IsChecked="{Binding StartimStillstand, Mode=TwoWay}" VerticalAlignment="Bottom" Style="{StaticResource SemaphoreToggleButtonStyle}" />-->
-      <ToggleButton Grid.Row="5" Margin="25,14,14,0" Grid.RowSpan="2" IsChecked="{Binding StartimStillstand, Mode=TwoWay}" VerticalAlignment="Top" Visibility="{Binding OptimiseSchedule, Converter={StaticResource BoolToVisibilityConverter}}" Height="24"/>
-      <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Source='Zug immer im Stillstand starten', Converter={StaticResource Loc}}" Margin="0,12,0,0" Visibility="{Binding OptimiseSchedule, Converter={StaticResource BoolToVisibilityConverter}}"/>
+      <ToggleButton Grid.Row="5" Margin="0,0,12,0" Grid.RowSpan="2" IsChecked="{Binding StartimStillstand, Mode=TwoWay}" VerticalAlignment="Bottom" Style="{StaticResource SemaphoreToggleButtonStyle}" Visibility="{Binding OptimiseSchedule, Converter={StaticResource BoolToVisibilityConverter}}"/>
+      <!--<ToggleButton Grid.Row="5" Margin="25,14,14,0" Grid.RowSpan="2" IsChecked="{Binding StartimStillstand, Mode=TwoWay}" VerticalAlignment="Top" Visibility="{Binding OptimiseSchedule, Converter={StaticResource BoolToVisibilityConverter}}" Height="24"/>-->
+      <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Source='Zug immer im Stillstand starten (Nur bei eingeschalteter Fahrplan Optimierung )', Converter={StaticResource Loc}}" Margin="0,12,0,0" Visibility="{Binding OptimiseSchedule, Converter={StaticResource BoolToVisibilityConverter}}"/>
       <TextBlock Grid.Row="6" Grid.Column="1" TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10" Text="{Binding Source='(Hp1) Züge werden immer im Stillstand gestartet, auch wenn der Fahrplan etwas anderes vorsieht', Converter={StaticResource Loc}}" Visibility="{Binding OptimiseSchedule, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
 

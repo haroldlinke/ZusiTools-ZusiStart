@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:cv="clr-namespace:ZusiStart.Converter"
         xmlns:local="clr-namespace:ZusiStart.Dialogs"
+        xmlns:controls="clr-namespace:ZusiStart.Controls"
+        Loaded="OptionsDialog_Loaded"
         mc:Ignorable="d"
         Title="Optionen" WindowStyle="None" AllowsTransparency="True" ResizeMode="NoResize" Background="{x:Null}" UseLayoutRounding="True" SnapsToDevicePixels="True" ShowInTaskbar="False" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner" MinHeight="400">
 
@@ -20,6 +22,8 @@
 
       </Grid.ColumnDefinitions>
       <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
@@ -104,7 +108,33 @@
         <CheckBox x:Name="CheckBox_RO_starttime_no_decotrains" Content="{Binding Source='Startzeitanpassung: Dekozüge nicht berücksichtigen', Converter={StaticResource Loc}}" Margin="12,6,12,0" VerticalAlignment="Bottom" />
         <CheckBox x:Name="CheckBox_RO_trainselectioncriteria_Stations" Content="{Binding Source='Zugauswahl: Nur Züge im optimierten Fahrplan berücksichtigen, die die vom ausgewählten Zug befahrenen Streckenmodule ebenfalls in diesem Zeitraum befahren', Converter={StaticResource Loc}}" Margin="12,6,12,0" VerticalAlignment="Bottom" />
         <CheckBox x:Name="CheckBox_RO_trainselection_Streckenmodule" Content="{Binding Source='Streckenmodulauswahl: Nur Streckenmodule im optimierten Fahrplan berücksichtigen, die die von Zügen befahrenen werden', Converter={StaticResource Loc}}" Margin="12,6,12,0" VerticalAlignment="Bottom" />
-      </StackPanel>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
+          <CheckBox x:Name="CheckBox_RO_Vorlauf" Content="{Binding Source='Vorlaufzeit verwenden', Converter={StaticResource Loc}}" Margin="12,0,12,0" VerticalAlignment="Bottom" Visibility="Collapsed"/>
+          <TextBlock  Text="{Binding Source='Vorlaufzeit:', Converter={StaticResource Loc}}" VerticalAlignment="Bottom" Margin="30,0,0,0" Grid.Row="0" Grid.Column="0"/>
+          <!--<TextBox Name="TextBox_RO_Vorlauf" MaxLength="5" Width="30" Height="20" Margin="10,0" VerticalAlignment="Bottom"/>-->
+          <controls:NumericUpDown x:Name="TextBox_RO_Vorlauf"
+                        Value="{Binding RO_vorlaufzeit, Mode=OneWay}"
+                        Min="0" Max="99999" Step="1" MaxLength="5"
+                        Width="60" Height="24" Margin="10,0" VerticalAlignment="Bottom" Grid.Row="0" Grid.Column="1"/>
+        
+          <CheckBox x:Name="CheckBox_RO_Nachlauf" Content="{Binding Source='Nachlaufzeit verwenden', Converter={StaticResource Loc}}" Margin="12,0,12,0" VerticalAlignment="Bottom" Visibility="Collapsed" />
+          <TextBlock  Text="{Binding Source='Nachlaufzeit:', Converter={StaticResource Loc}}" VerticalAlignment="Bottom" Margin="30,0,0,0" Grid.Row="1" Grid.Column="0"/>
+          <!--<TextBox Name="TextBox_RO_Nachlauf" MaxLength="5" Width="30" Height="20" Margin="10,0" VerticalAlignment="Bottom"/>-->
+          <controls:NumericUpDown x:Name="TextBox_RO_Nachlauf"
+               Value="{Binding RO_nachlaufzeit, Mode=OneWay}"
+               Min="0" Max="99999" Step="1" MaxLength="5"
+               Width="60" Height="24" Margin="10,0" VerticalAlignment="Bottom" Grid.Row="1" Grid.Column="1"/>
+       
+    </Grid>
+    </StackPanel>
       <!-- additional parameters -->
       <StackPanel Orientation="Vertical" Grid.Row="24" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,6,0,0">
         <TextBlock Text="{Binding Source='Weitere Parameter', Converter={StaticResource Loc}}" Margin="0,12,0,0"/>

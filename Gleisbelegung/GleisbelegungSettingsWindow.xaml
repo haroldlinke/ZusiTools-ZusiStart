@@ -1,0 +1,84 @@
+﻿<Window x:Class="ZusiStart.Gleisbelegung.GleisbelegungSettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:cv="clr-namespace:ZusiStart.Converter"
+        xmlns:local="clr-namespace:ZusiStart.Gleisbelegung"
+        mc:Ignorable="d"
+        Title="Gleisbelegung – Einstellungen"
+        Width="600" Height="500">
+  <Window.Resources>
+    <cv:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
+  </Window.Resources>
+
+  <Grid Margin="10">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <TabControl x:Name="Tabs">
+
+      <!-- TAB 1: Farben -->
+      <TabItem Header="Farben">
+        <StackPanel Margin="10">
+
+          <TextBlock Text="Hintergrund" FontWeight="Bold"/>
+          <Button Content="Farbe wählen" Click="PickBackground"/>
+
+          <TextBlock Text="Zeitlinie" FontWeight="Bold" Margin="0,10,0,0"/>
+          <Button Content="Farbe wählen" Click="PickTimeLine"/>
+
+          <TextBlock Text="Gleislinie" FontWeight="Bold" Margin="0,10,0,0"/>
+          <Button Content="Farbe wählen" Click="PickTrackLine"/>
+
+          <TextBlock Text="Konfliktfarben" FontWeight="Bold" Margin="0,20,0,0"/>
+          <Button Content="Konflikt-Rand" Click="PickConflictBorder"/>
+          <Button Content="Konflikt-Overlay" Click="PickConflictOverlay"/>
+        </StackPanel>
+      </TabItem>
+
+      <!-- TAB 2: Zuggattungen -->
+      <TabItem Header="Zuggattungen">
+        <StackPanel Margin="10">
+          <DataGrid x:Name="GridTrainTypes"
+                              AutoGenerateColumns="False"
+                              Height="300">
+
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="Gattung" Binding="{Binding TrainType}" Width="*"/>
+
+              <DataGridTemplateColumn Header="Farbe" Width="100">
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <Border Background="{Binding Color, Converter={StaticResource ColorToBrushConverter}}"
+                                                Width="40" Height="20"
+                                                MouseDown="PickTrainTypeColor"/>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+
+              <DataGridTemplateColumn Width="60">
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <Button Content="Löschen" Click="DeleteTrainType"/>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+            </DataGrid.Columns>
+          </DataGrid>
+
+          <Button Content="Gattung hinzufügen" Click="AddTrainType" Margin="0,10,0,0"/>
+        </StackPanel>
+      </TabItem>
+
+    </TabControl>
+
+    <!-- Buttons unten -->
+    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+      <Button Content="Speichern" Width="100" Margin="0,0,10,0" Click="SaveAll"/>
+      <Button Content="Abbrechen" Width="100" Click="Cancel"/>
+    </StackPanel>
+  </Grid>
+</Window>

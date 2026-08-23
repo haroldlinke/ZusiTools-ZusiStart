@@ -61,8 +61,8 @@ namespace ZusiKlassenLib2.Fahrplan
 
     private readonly List<FahrzeugVarianten> _gruppen = new();
     private readonly List<FahrzeugInfo> _fahrzeuge = new();
-    //private string _datei;
     private Datei _datei;
+    //private FahrzeugVariantenLink _datei;
 
     public int FzgPosition => _fzgPosition;
 
@@ -70,9 +70,9 @@ namespace ZusiKlassenLib2.Fahrplan
 
     public List<FahrzeugInfo> Fahrzeuge => _fahrzeuge;
 
-    //public string Datei => _datei;
+    public Datei Datei => _datei;
    
-    public Datei Datei { get { return _datei; } }
+    //public FahrzeugVariantenLink Datei { get { return _datei; } }
 
     public bool PerZufallUebernehmen => _perZufallUebernehmen;
     public double SpZugNiedriger => _spZugNiedriger;
@@ -98,6 +98,23 @@ namespace ZusiKlassenLib2.Fahrplan
 
       //_datei = (string)x.Element("Datei");
       _datei = x.GetOptionalElement(this, "Datei", (p, c) => new Datei((ZusiObject)p, c));
+      //_datei = x.GetOptionalElement(this, "Datei", (p, c) => new FahrzeugVariantenLink((ZusiObject)p, c));
+      if (_datei != null)
+      {
+        string filename = _datei.FullPath;
+        try
+        {
+          FahrzeugVariantenDatei fvDatei = new FahrzeugVariantenDatei(this, filename);
+          fvDatei.Parse();
+          FahrzeugVarianten fv = fvDatei.Root;
+          _gruppen.Add(new FahrzeugVarianten(this, fv));
+          _datei = null; // Datei-Element wird nicht mehr benötigt, da die Daten jetzt in _gruppen enthalten sind
+        }
+        catch (Exception ex)
+        {
+            _log.Error($"FahrzeugVarianten: Fehler beim Laden der Datei '{filename}'", ex);
+        }
+      }
 
     }
 

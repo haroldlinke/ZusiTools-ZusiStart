@@ -18,6 +18,7 @@ namespace ZusiKlassenLib2
     Official,
     OfficialProf,
     DataDir,
+    TempDir,
 #if WITH_WORKINGDIRS
         DataDirProf,
         WorkerDirA,
@@ -34,7 +35,8 @@ namespace ZusiKlassenLib2
 #if WITH_WORKINGDIRS
         private readonly string[] _dataPath = new string[] { null, null, null, null, null, null, null, null };
 #else
-    private readonly string[] _dataPath = new string[] { null, null, null, null };
+    //private readonly string[] _dataPath = new string[] { null, null, null, null };
+    private readonly string[] _dataPath = new string[] { null, null, null, null, null };
 #endif
 
     public int Length => _dataPath.Length;
@@ -403,6 +405,10 @@ namespace ZusiKlassenLib2
         name = _dataPathKey + _profSuffix;
         _dataPath[3] = hklm.GetValue(name) as string;
       }
+
+      // Temporary path for trains with replaced vehicles or locos
+
+      _dataPath[4] = _dataPath[2] + "Temp\\trn\\";
 
       // Achtung: NUR FÜR PROF AUSGEBEN
       if (_profVersion)

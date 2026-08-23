@@ -44,7 +44,7 @@ namespace ZusiStart
     {
       if (!Zusi.IsInstalled)
       {
-        throw new InvalidOperationException("Dieses Programm kann nicht ausgeführt werden, da die Vollversion des Zusi nicht installiert ist.");
+        throw new InvalidOperationException("Dieses Programm kann nicht ausgeführt werden, da die Vollversion des Zusi nicht installiert ist.\nFür Steam-Anwender: Zusi Dateiverwaltung als Administrator öffnen -> Verwaltung -> Generelle Zusi-Einstellungen öffnen und mit OK Abspeichern.");
       }
       string tmpBaseFolder = Zusi.DataPath[2] + @"Temp\";
       GlobalContext.Properties["LogPath"] = tmpBaseFolder;

@@ -26,12 +26,14 @@ using ZusiKlassenLib2.Buchfahrplan;
 using ZusiKlassenLib2.Common;
 using ZusiKlassenLib2.Fahrplan;
 using ZusiKlassenLib2.Vehicle;
+using ZusiStart.Connection;
 using ZusiStart.Data;
 using ZusiStart.Dialogs;
 using ZusiStart.KlLib2;
 using ZusiStart.Miscellaneous;
 using static System.Net.Mime.MediaTypeNames;
 using static ZusiStart.Data.DataManager;
+using ZusiStart.Controls;
 
 namespace ZusiStart.Controls
 {
@@ -319,7 +321,7 @@ namespace ZusiStart.Controls
     }
 
     //---------------------------------------------------------------------
-    private void OnSourceChanged(Zug zug)
+    public void OnSourceChanged(Zug zug)
     {
       Length = 0;
       Departure = null;
@@ -356,6 +358,17 @@ namespace ZusiStart.Controls
         else
         {
           IsTrainReplaced = false;
+          try
+          {
+            if (zug.Parent is ZugDatei zd)
+            {
+              IsTrainReplaced = zd.Filename.StartsWith(Zusi.DataPath[4]);
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error(ex.ToString());
+          }
         }
 
         if (Properties.Settings.Default.BremsstellungAnzeigen)
@@ -393,6 +406,7 @@ namespace ZusiStart.Controls
         {
           AssembleTrain3(zug);
           DataManager.Instance.main_window.SearchBuchfahrplan();
+          DataManager.Instance.SelectedZug = zug;
 
           /***********************************************************
            * Test creating Streckenelementliste from Zug
@@ -439,6 +453,7 @@ namespace ZusiStart.Controls
           //  System.Windows.Point point = zug.Buchfahrplan.UTM.ToLatLon();
           //  DataManager.Instance.main_window.UpdateMarkerPosition(point.Y, point.X);
           //}
+
         }
         catch (Exception ex)
         {
@@ -850,9 +865,9 @@ namespace ZusiStart.Controls
     //  }
     //  dummywindow.Close();
     //}
-  
 
-  //---------------------------------------------------------------------
+
+    //---------------------------------------------------------------------
     private void AssembleTrain3(Zug zug)
     {
       if (_picsPanel == null || _smallpicsPanel == null)
@@ -870,7 +885,7 @@ namespace ZusiStart.Controls
 
       PictureManager2 pictureManager = new PictureManager2();
 
-       
+
       Grid grd1 = new();
       Grid smallgrd1 = new();
       string filename = "";

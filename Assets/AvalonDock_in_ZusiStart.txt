@@ -1,0 +1,60 @@
+Die neuen Funktionen von ZusiStart, insbesondere Tracking, Routegraph und Bildfahrplan, haben dazu geführt, daß das aktuelle Layout von ZusiStart nicht mehr optimal ist.
+
+Da es kein optimales Layout gibt, daß für jeden Anwender passt, denke ich schon länger über eine flexibles Layout nach, das jeder Anwender nach selbst anpassen kann, so wie es ihm gefällt.
+
+Bevor ich mit dem Bildfahrplan weiter mache, habe ich mich deshalb entschlossen, erst einmal das Layout-Problem anzugehen und eine neue Benutzeroberfläche zu implementieren, die es dem Anwendner erlaubt, die Infromation und Fenster von ZusiStart beliebig anzuordnen. 
+Ich experimentiere schon seit einiger Zeit mit den sogenannten Avalon Docks, die eine Flexibilität ermöglichen, wie sie in vielen Entwicklungsumgebungen vorhanden ist.
+
+Hier ist jetzt eine erste Beta mit der neuen Benutzeroberfläche.
+
+Sie erlaubt es z.B. so ein Layout zu erstellen:
+
+[url=https://zusi-tools.de/img/Screenshot  Screenshot 2026-08-10 114724.jpg][img]https://zusi-tools.de/img/Screenshot 2026-08-10 114724_small.jpg[/img][/url]
+
+Die einzelnen Informationen von ZusiStart werden in unterschiedlichen Fenstern dargestellt.
+
+Das grundlegende Layout und die Handhabung aller Fenster ist sehr einheitlich. Die Größe aller Fenster kann frei verändert werden.
+Jedes Fenster kann in einem der folgenden Zustände erscheinen:
+• Angedockt an den Rahmen des Hauptfensters.
+• Angedockt an andere Fenster.
+• Schwebend an beliebigen Positionen des Bildschirms; entweder allein oder mit anderen Fenstern gruppiert.
+• In Registerkarten zusammen mit anderen Fenstern gruppiert – entweder als Registerkartendokument im Hintergrund des Hauptfensters oder zusammen mit anderen Fenstern in einem schwebenden oder selbst wieder angedockten Rahmen.
+• Schwebende Fenster können durch Ziehen mit der Maus maximiert oder in halber Bildschirmgröße an den Rändern jedes Bildschirms angedockt werden.
+
+Fenster können durch ziehen mit der Maus an dem Titel oder an dem Reiter aus dem Verbund gelöst werden und an anderer Stelle wieder angedockt werden.
+
+Die Fähigkeit, zusammengehörige Fenster in ZusiStart miteinander gruppieren zu können, entweder angedockt oder in Registerkarten angeordnet, im Hauptfenster oder in separaten schwebenden Rahmen, eröffnet neue Möglichkeiten. Es können nun beispielsweise mehrere zusammengehörige Fenster, miteinander gruppiert werden. Eine solche Gruppe zusammengehöriger Fenster kann dann verschoben, vergrößert und selbst an andere Fenster angedockt werden, als wäre es ein einzelnes Fenster. Damit können solche Fenstergruppen sehr komfortabel und effizient verwaltet werden. 
+
+In ZusiStart erfolgt das Andocken von Fenstern sehr einfach und intuitiv. Dies wird durch sogenannte ‚Dockingmarkierungen‘ unterstützt. Diese Markierungen werden während des Verschiebens eines Fensters auf dem Bildschirm sichtbar. Die Markierungen zeigen sehr genau und anschaulich an, wohin man die Maus bewegen muss, um ein Fenster an einer bestimmten Seite eines anderen Fensters anzudocken und wie die Anordnung dann aussehen wird. Dank dieser Funktion, die auch in anderen Entwicklungsumgebungen eingesetzt wird, ist es keine knifflige Aufgabe mehr, ein Fenster zielgerichtet an einem anderen Fenster anzudocken.
+
+Der Screenshot zeigt das Routegraph-Fenster kurz vor dem Andocken an das Tracking-Fenster. 
+[url=https://zusi-tools.de/img/Screenshot 2026-08-10 092700_descrl.jpg][img]https://zusi-tools.de/img/Screenshot 2026-08-10 092700_small.jpg[/img][/url]
+
+Das mittlere Kreuz ermöglicht das Andocken des Routegraph-Fensters oberhalb, unterhalb, links und rechts von dem Tracking-Fenster. Ein leeres Fenster zeigt, wo das Fenster beim Loslassen der Maustaste eingefügt wird. Wir das Routegraph-Fenster auf dem Dockingmarker in der Mitte abgelegt, dann werden bei Fenster als Registerfenster zusammengefügt.
+
+Die Dockingmarker ganz außen rechts, links, oben und unter ermöglichen das Andocken des Fensters am äusseren Rahmen.
+
+Die Erklärung ist komplizierter als es ist. Man muß es ausprobieren, um die Möglichkeiten zu sehen. 
+
+ZusiStart kennt zwei Layouts:
+Layout A wird beim Start von ZusiStart geladen und wenn ZusiStart nach dem Ende eine Zugfahrt wieder angezeigt wird.
+Layout B wird geladen, wenn ein Zug in Zusi gestartet wurde und ZusiStart nicht versteckt wird. Damit ist es möglich ein individuelles ZusiStartlayout anzuzeigen, wenn eine Zugsimulation läuft.
+
+ZusiStart speichert die Anordnung aller Fenster NICHT automatisch. Neue Layouts müssen über das Menu Ansicht mit "Layout A speichern" oder "Layout B speichern" gespeichert werden. Damit wird verhindert, daß unbeabsichtigte Änderungen gespeichert werden.
+Mit den Menu-Kommandos: "Layout A laden" bzw. "Layout B laden", kann der ursprüngliche Zustand wieder hergestellt werden.
+Mit den Menu-Kommandos: "Standard Layout A laden" bzw. "Standard Layout B laden", kann das Standardlayout wieder hergestellt werden.
+
+Achtung!
+Es gibt folgende Einschränkungen:
+1. Die Browser basierten Fenster (inklusive der PDF-Anzeigen) FPL-Doku, Streckenkarte, Zusi-DB, Buchfahrplan, LA Handbuch, Ersatzfahrplan, Streckenbuch und ZusiStart-Handbuch können nicht in einzelne Fenster zerlegt werden, da sie eine gemeinsame Browser Instanz verwenden. Diese Fenster sind deshalb in dem Fenster "Information" zusammengefasst. (Die Reiter sind oberhalb des Fensters angeordnet).
+2. Das Routegraph-Fenster kann nur verschoben werden, wenn noch KEINE Route angezeigt wird. Routen werden deshalb auch nicht mehr sofort angezeigt, sondern nur, wenn man den Menupunkt "Generate Routegraph" anklickt. Das behebt auch das Problem, daß das Routenzeichnen manchmal sehr lange dauern kann und störend sein kann, wenn man es aus versehen auslöst.
+
+Es kann sein, daß durch den Umbau weitere Funktionen nicht mehr so arbeiten, wie vorher, bzw. das Programm beim Layoutändern abstürzt. Ich kann leider nicht alle möglichen Variationen testen.
+
+Die neue Beta von ZusiStart mit der neuen UI könnt Ihr hier herunterladen:
+[url]https://zusi-tools.de/downloads/ZusiStart_beta40.zip[/url]
+
+Viele Spaß damit.
+
+Viele Grüße
+Harold
