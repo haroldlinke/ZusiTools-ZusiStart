@@ -14,7 +14,7 @@
     <Description>ZusiStart</Description>
     <Copyright>Harold Linke</Copyright>
     <Authors>Harold Linke</Authors>
-    <Version>8.8.01</Version>
+    <Version>8.8.4</Version>
     <Title>ZusiStart</Title>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Platforms>AnyCPU;x64</Platforms>

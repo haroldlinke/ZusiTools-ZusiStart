@@ -2549,7 +2549,7 @@ Keine Erklärungen außerhalb des JSON.
 
         using CancellationTokenSource cts = new();
         TimeTables.init_timetabledata();
-        TimeTables.EnumerateTimeTables(_foldersToExclude, cts.Token).ForEach(t => _allTimeTables.Add(t));
+        TimeTables.EnumerateTimeTables(_foldersToExclude, cts.Token).ForEach(t => {if (t != null) _allTimeTables.Add(t)});
 
         //_allTimeTables.ForEach(tt =>
         //             {

@@ -2799,7 +2799,7 @@ Keine Erklärungen außerhalb des JSON.
         LoadVehicleDataAsync2();
       }
 
-      if (true) // continue with KI-data, if not switched off
+      if (false) // continue with KI-data, if not switched off
       {
         _ki = new ZusiLocalKiEngine();
       }
