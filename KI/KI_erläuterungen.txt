@@ -1,0 +1,299 @@
+LLM (lokal)
+Ein kleines Modell wie:
+
+Llama 3 8B
+
+Qwen 2.5 7B
+
+Mistral 7B
+
+reicht völlig aus.
+
+Das LLM muss keine Zusi‑Kenntnisse haben.
+
+Warum ein LLM überhaupt nötig ist
+Du könntest die Antworten auch direkt ausgeben – aber:
+
+Nutzer fragen oft unpräzise
+
+KI kann Rückfragen stellen
+
+KI kann Ergebnisse zusammenfassen
+
+KI kann mehrere Treffer sinnvoll gewichten
+
+KI kann komplexe Fragen verstehen („Züge mit BR 103, die mechanische Stellwerke passieren und im Ruhrgebiet fahren“)
+
+Das LLM ist also die Sprachschicht, nicht die Logik.
+
+Warum die KI hier einen echten Vorteil bringt
+1️⃣ Der Nutzer muss keine Filter mehr kennen
+Ohne KI müsste der Nutzer wissen:
+
+wie ZusiStart Züge filtert
+
+wie Streckenverläufe aufgebaut sind
+
+wie Fahrzeuge benannt sind
+
+wie Fahrpläne heißen
+
+wie Betriebsstellen heißen
+
+wie Stellwerke klassifiziert sind
+
+Mit KI reicht:
+
+„Ich suche einen Zug, der über Schwerte fährt und eine 103 hat.“
+
+Oder sogar:
+
+„Gibt es irgendwo eine 103 im Ruhrgebiet?“
+
+Die KI versteht:
+
+„103“ → BR 103
+
+„Ruhrgebiet“ → Fahrpläne durchsuchen
+
+„über Schwerte“ → Streckenverlauf prüfen
+
+„Zug“ → Query‑Engine starten
+
+Der Nutzer muss keine exakten Begriffe mehr kennen.
+
+2️⃣ Die KI versteht unpräzise, unvollständige oder falsche Fragen
+Beispiel:
+
+„Ich suche einen Zug, der von Hagen nach Dortmund fährt, aber nicht über Witten.“
+
+Ein normaler Parser könnte das nicht interpretieren.
+
+Die KI kann:
+
+Start/Ziel erkennen
+
+„nicht über Witten“ als Ausschlusskriterium interpretieren
+
+alternative Strecken prüfen
+
+passende Züge finden
+
+Oder:
+
+„Ich suche einen Fahrplan mit alten Stellwerken.“
+
+Die KI erkennt:
+
+„alte Stellwerke“ → mechanisch / elektromechanisch
+
+durchsucht Strecken
+
+liefert Treffer
+
+3️⃣ Die KI kann mehrere Kriterien kombinieren
+Beispiel:
+
+„Ich suche einen Zug mit BR 103, der mechanische Stellwerke passiert und im Ruhrgebiet fährt.“
+
+Ohne KI müsstest du:
+
+Fahrpläne filtern
+
+Strecken filtern
+
+Stellwerke filtern
+
+Fahrzeuge filtern
+
+alles kombinieren
+
+Mit KI:
+
+Frage → KI → Query‑Engine → JSON → Ergebnis
+
+4️⃣ Die KI kann Rückfragen stellen
+Beispiel:
+
+„Ich suche einen Zug von Hagen nach Dortmund.“
+
+Die KI kann antworten:
+
+„Meinst du über Schwerte oder über Witten? Beide Strecken existieren.“
+
+Oder:
+
+„Soll die Lok eine bestimmte Baureihe haben?“
+
+Damit wird die Interaktion menschlich und intuitiv.
+
+5️⃣ Die KI kann Ergebnisse erklären
+Beispiel:
+
+„Warum fährt dieser Zug über Schwerte?“
+
+Die KI kann:
+
+Streckenverlauf analysieren
+
+alternative Strecken prüfen
+
+erklären, warum dieser Fahrplan so gebaut ist
+
+Oder:
+
+„Warum gibt es keine 103 im Ruhrgebiet?“
+
+Die KI kann:
+
+Fahrpläne durchsuchen
+
+Fahrzeuge prüfen
+
+erklären, dass die 103 dort nicht eingesetzt wurde
+
+6️⃣ Die KI kann komplexe Fragen beantworten, die du nicht vorhersehen kannst
+Beispiel:
+
+„Welche Züge fahren durch mindestens drei mechanische Stellwerke und haben eine Höchstgeschwindigkeit über 120 km/h?“
+
+Oder:
+
+„Welche Fahrpläne enthalten Züge, die sowohl BR 218 als auch BR 628 einsetzen?“
+
+Oder:
+
+„Welche Strecken haben die meisten Betriebsstellen mit mechanischen Stellwerken?“
+
+Das sind Fragen, die du nicht als feste Filter implementieren willst.
+
+Die KI versteht die Frage → Query‑Engine führt die Logik aus.
+
+🧠 Die KI ist also nicht der Parser.
+Sie ist der Interpreter.
+
+Die Query‑Engine ist der Analysator.
+
+ZusiStart ist der Ausführer.
+
+🔧 Wie die KI konkret hilft (technisch)
+Ohne KI:
+Du müsstest für jede Frageart:
+
+eigene UI‑Filter bauen
+
+eigene Parserlogik erweitern
+
+eigene Suchdialoge bauen
+
+eigene Kombinationslogik implementieren
+
+eigene Fehlermeldungen schreiben
+
+Mit KI:
+Du brauchst nur:
+
+einen Parser
+
+eine Query‑Engine
+
+eine KI, die die Frage in Filterkriterien übersetzt
+
+Die KI übernimmt:
+
+Synonyme
+
+unpräzise Formulierungen
+
+komplexe Bedingungen
+
+Kombinationen
+
+Rückfragen
+
+Zusammenfassungen
+
+🎯 Fazit:
+Die KI macht ZusiStart für den Anwender intuitiv und natürlich.
+
+Der Nutzer muss nicht wissen, wie Zusi intern funktioniert.
+Er muss keine Filter kennen.
+Er muss keine Dateinamen kennen.
+Er muss keine Betriebsstellen kennen.
+Er muss keine Strecken kennen.
+Er muss keine Baureihen kennen.
+
+Er kann einfach fragen.
+
+
+
+Da deine Frage ein klarer technischer Ablauf ist, zeige ich dir die Installation als präzise Schritt‑für‑Schritt‑Anleitung.
+
+⭐ Ollama Installation unter Windows (Schritt‑für‑Schritt)
+01
+Ollama Installer herunterladen
+Start
+Ollama stellt einen offiziellen Windows‑Installer bereit, der alle Komponenten automatisch einrichtet.
+
+https://ollama.com/download
+
+Öffne die Download‑Seite
+
+Wähle Windows aus
+
+Lade die Datei OllamaSetup.exe herunter
+
+02
+Installer ausführen
+Wichtig
+Der Installer richtet den Ollama‑Dienst ein, der später deine lokalen KI‑Modelle ausführt.
+
+OllamaSetup.exe starten
+
+Installation bestätigen
+
+Warten, bis der Dienst eingerichtet ist
+
+Nach Abschluss erscheint keine App – Ollama läuft als Hintergrunddienst
+
+03
+Installation testen
+Prüfe, ob Ollama korrekt läuft.
+
+Öffne PowerShell oder CMD
+
+Befehl eingeben: ollama --version
+
+Wenn eine Versionsnummer erscheint, ist Ollama korrekt installiert
+
+04
+Erstes KI‑Modell herunterladen
+Offline‑fähig
+Ollama lädt Modelle lokal herunter, damit du komplett offline arbeiten kannst.
+
+Beispielmodell laden: ollama pull llama3:8b
+
+Alternativ: ollama pull mistral:7b
+
+Modelle werden in C:\Users\<Name>\.ollama\models gespeichert
+
+05
+Modell testen
+Starte eine lokale KI‑Session, um sicherzustellen, dass alles funktioniert.
+
+ollama run llama3:8b
+
+Frage eingeben, z. B.: Hallo, funktioniert das?
+
+Antwort kommt lokal, ohne Internet
+
+06
+Ollama‑API aktivieren
+Für ZusiStart
+Für ZusiStart brauchst du die lokale HTTP‑API, um Fragen + data.json an die KI zu senden.
+
+Ollama startet automatisch eine API unter: http://localhost:11434
+
+Testen: Browser öffnen → http://localhost:11434/api/version
+
+Wenn JSON erscheint, ist die API aktiv

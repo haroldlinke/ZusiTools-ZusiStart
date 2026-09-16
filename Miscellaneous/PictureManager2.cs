@@ -7,10 +7,11 @@ using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
-using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -654,6 +655,42 @@ namespace ZusiStart.Miscellaneous
     }
 
     //---------------------------------------------------------------------
+    /// <summary>
+    /// Deterministische, eindeutige Objekt-ID aus dem echten Quellpfad -
+    /// wird als ObjectId im Embedding-Index verwendet (und, falls gesetzt,
+    /// auch als Ordnername für Debug-Bilder), damit Resume-/Update-Checks
+    /// stabil funktionieren.
+    /// </summary>
+    private static string ComputeCachefileId(string sourceFile)
+    {
+      string baseId = SanitizeFileName(
+          System.IO.Path.GetFileNameWithoutExtension(sourceFile));
+      string hash = ComputeShortHash(sourceFile);
+      return $"{baseId}_{hash}";
+    }
+
+    //---------------------------------------------------------------------
+    private static string ComputeShortHash(string input)
+    {
+      byte[] hashBytes = SHA1.HashData(Encoding.UTF8.GetBytes(input));
+      return Convert.ToHexString(hashBytes, 0, 4).ToLowerInvariant();
+    }
+
+    //---------------------------------------------------------------------
+    private static string SanitizeFileName(string name)
+    {
+      foreach (char c in System.IO.Path.GetInvalidFileNameChars())
+      {
+        name = name.Replace(c, '_');
+      }
+      if (name.Length > 100)
+      {
+        name = name.Substring(0, 100);
+      }
+      return name;
+    }
+
+    //---------------------------------------------------------------------
     public BitmapImage AssembleTrain(Zug zug, Window? dummywindow, bool zugrichtung_von_links_nach_rechts)
     {
       PictureManager2 pictureManager = new PictureManager2();
@@ -771,10 +808,12 @@ namespace ZusiStart.Miscellaneous
           pictureManager.add_Vehicle(fzg, fv, gedreht, saSchaltung, spitzenlicht, schlusslicht, cachepath, dummywindow, von_rechts_nach_links: !zugrichtung_von_links_nach_rechts);
           spitzenlicht = 0; // nur erstes Fahrzeug hat das Spitzenlicht angeschaltet
           schlusslicht = 0;
-          if (Fahrzeug_num <= 10)
-          {
+
+          // to determine hash of the train composition to use as a cache filename - include all vehicles
+          //if (Fahrzeug_num <= 10)
+          //{
             cachefilename += string.Format("{0}-{1}-{2}", fzg.Name, fv.IDHaupt, fv.IDNeben).ToLower();
-          }
+          //}
 
           //if (fzggd != null)
           //{
@@ -832,14 +871,17 @@ namespace ZusiStart.Miscellaneous
       Grid smallgrd1 = new();
       string filename = "";
 
-      if (cachefilename.Length < 190)
-      {
-        filename = cachefilename;
-      }
-      else
-      {
-        filename = cachefilename.Substring(0, 190) + zug.Gattung + zug.Nummer;
-      }
+
+      // determine hash of the train composition to use as a cache filename
+      filename = ComputeCachefileId(cachefilename);
+      //if (cachefilename.Length < 190)
+      //{
+      //  filename = cachefilename;
+      //}
+      //else
+      //{
+      //  filename = cachefilename.Substring(0, 190) + zug.Gattung + zug.Nummer;
+      //}
 
       float? blickwinkel = null;
 

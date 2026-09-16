@@ -4145,7 +4145,7 @@ setTimeout(() => {
       if (sender is ListBox listBox)
       {
 
-        DataManager.FoundTimeTableIds = null;
+        DataManager.Instance.FoundTimeTableIds = null;
 
         TimeTableGroup? selectedItem2 = listBox.SelectedItem as TimeTableGroup;
         TimeTableRelation? selectedItem = listBox.SelectedItem as TimeTableRelation;
@@ -4426,7 +4426,7 @@ setTimeout(() => {
       {
         DataManager.Instance.FilterZugNummer = "";
         DataManager.Instance.FoundTimeTables.Clear();
-        DataManager.FoundTimeTableIds = null;
+        DataManager.Instance.FoundTimeTableIds = null;
         if (GrpTrains != null)
           GrpTrains.BorderBrush = System.Windows.Media.Brushes.White;
         DataManager_RefreshFilter(sender, e);

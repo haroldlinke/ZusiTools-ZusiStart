@@ -354,15 +354,7 @@ namespace ZusiStart.Data
     //public GMapControl gmap { get; set; }
     public Controls.OSMGmapControl osmGmapControl;
 
-    private string[] _foldersToExclude = Array.Empty<string>();
-
-    /// <summary>
-    /// Vom Anwender frei konfigurierbare, von der Suche auszuschließende Ordner.
-    /// Wird dauerhaft in <see cref="ExcludedFoldersFilePath"/> als JSON gespeichert.
-    /// </summary>
-    public ObservableCollection<string> ExcludedFolders { get; } = new ObservableCollection<string>();
-    public string ExcludedFoldersFilePath = "";
-
+    private readonly string[] _foldersToExclude = Array.Empty<string>();
     private string[] _blackListedClasses = Array.Empty<string>();
     public readonly ObservableCollection<TimeTable> _allTimeTables = new();
 
@@ -932,7 +924,7 @@ namespace ZusiStart.Data
         FrictionPreset = FrictionPreset.Icy;
       }
 
-      LoadExcludedFolders();
+      _foldersToExclude = ArrayEx.SafeConcat(__foldersToExclude, GetExcludedFolders().ToArray());
       ReadReplacementTrains();
       ReadReplacementLocos();
 
@@ -3012,116 +3004,12 @@ Keine Erklärungen außerhalb des JSON.
     }
 
     //---------------------------------------------------------------------
-    /// <summary>
-    /// Lädt die vom Anwender ausgeschlossenen Ordner aus der JSON-Konfigurationsdatei
-    /// und baut anschließend die effektive Ausschlussliste (<see cref="_foldersToExclude"/>) neu auf.
-    /// </summary>
-    public void LoadExcludedFolders()
+    private IEnumerable<string> GetExcludedFolders()
     {
-      if (string.IsNullOrEmpty(ExcludedFoldersFilePath))
+      foreach (string s in Properties.Settings.Default.FoldersToExclude)
       {
-        ExcludedFoldersFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), DataManager.localfoldername, "excludedFolders.json");
+        yield return s;
       }
-
-      _log.Debug("LoadExcludedFolders called with ExcludedFoldersFilePath='" + ExcludedFoldersFilePath + "'");
-
-      ExcludedFolders.Clear();
-
-      try
-      {
-        if (System.IO.File.Exists(ExcludedFoldersFilePath))
-        {
-          string json = System.IO.File.ReadAllText(ExcludedFoldersFilePath);
-          List<string> loaded = JsonSerializer.Deserialize<List<string>>(json) ?? new List<string>();
-          foreach (string folder in loaded)
-          {
-            if (!ExcludedFolders.Contains(folder))
-            {
-              ExcludedFolders.Add(folder);
-            }
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        _log.Error("Fehler beim Laden der ausgeschlossenen Ordner: " + ex.Message);
-      }
-
-      RebuildFoldersToExclude();
-    }
-
-    //---------------------------------------------------------------------
-    /// <summary>
-    /// Speichert die aktuell in <see cref="ExcludedFolders"/> enthaltenen Ordner dauerhaft als JSON
-    /// und aktualisiert die effektive Ausschlussliste.
-    /// </summary>
-    public void SaveExcludedFolders()
-    {
-      if (string.IsNullOrEmpty(ExcludedFoldersFilePath))
-      {
-        ExcludedFoldersFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), DataManager.localfoldername, "excludedFolders.json");
-      }
-
-      _log.Debug("SaveExcludedFolders called with ExcludedFoldersFilePath='" + ExcludedFoldersFilePath + "'");
-
-      try
-      {
-        string directory = Path.GetDirectoryName(ExcludedFoldersFilePath);
-        if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-        {
-          Directory.CreateDirectory(directory);
-        }
-
-        string json = JsonSerializer.Serialize(ExcludedFolders.ToList(), new JsonSerializerOptions { WriteIndented = true });
-        System.IO.File.WriteAllText(ExcludedFoldersFilePath, json);
-      }
-      catch (Exception ex)
-      {
-        _log.Error("Fehler beim Speichern der ausgeschlossenen Ordner: " + ex.Message);
-      }
-
-      RebuildFoldersToExclude();
-    }
-
-    //---------------------------------------------------------------------
-    /// <summary>
-    /// Fügt einen Ordner zur Ausschlussliste hinzu (sofern noch nicht vorhanden) und speichert die Liste.
-    /// </summary>
-    public void AddExcludedFolder(string folder)
-    {
-      if (string.IsNullOrWhiteSpace(folder))
-      {
-        return;
-      }
-
-      if (!ExcludedFolders.Any(f => string.Equals(f, folder, StringComparison.OrdinalIgnoreCase)))
-      {
-        ExcludedFolders.Add(folder);
-        SaveExcludedFolders();
-      }
-    }
-
-    //---------------------------------------------------------------------
-    /// <summary>
-    /// Entfernt einen Ordner aus der Ausschlussliste und speichert die Liste.
-    /// </summary>
-    public void RemoveExcludedFolder(string folder)
-    {
-      if (ExcludedFolders.Remove(folder))
-      {
-        SaveExcludedFolders();
-      }
-    }
-
-    //---------------------------------------------------------------------
-    /// <summary>
-    /// Baut die intern für die Suche verwendete Ausschlussliste aus den fest einprogrammierten
-    /// Ordnern (<see cref="__foldersToExclude"/>) und den vom Anwender konfigurierten
-    /// Ordnern (<see cref="ExcludedFolders"/>) neu auf.
-    /// </summary>
-    private void RebuildFoldersToExclude()
-    {
-      _foldersToExclude = ArrayEx.SafeConcat(__foldersToExclude, ExcludedFolders.ToArray());
     }
 
     //---------------------------------------------------------------------
