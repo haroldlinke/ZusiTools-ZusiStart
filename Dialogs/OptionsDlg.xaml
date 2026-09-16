@@ -181,6 +181,13 @@
         </ComboBox>
       </StackPanel>
 
+      <!-- Ausgeschlossene Ordner -->
+      <StackPanel Orientation="Vertical" Grid.Row="31" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,6,0,0">
+        <TextBlock Text="{Binding Source='Ausgeschlossene Ordner', Converter={StaticResource Loc}}" Margin="0,12,0,0"/>
+        <TextBlock TextWrapping="Wrap" MaxWidth="450" Margin="12,0,0,0" FontSize="10" Text="{Binding Source='Hier können beliebige Ordner verwaltet werden, die bei der Suche nach Zusi-Daten übersprungen werden sollen.', Converter={StaticResource Loc}}"/>
+        <Button Click="ManageExcludedFolders_Click" Content="{Binding Source='Ausgeschlossene Ordner verwalten...', Converter={StaticResource Loc}}" HorizontalAlignment="Left" Margin="12,6,12,0" Style="{StaticResource ZusiStartGreenButtonStyle}"/>
+      </StackPanel>
+
       <StackPanel Orientation="Horizontal" Grid.Row="32" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0,12,0,0">
         <Button Click="SaveOptions_Click" Content="{Binding Source='Übernehmen', Converter={StaticResource Loc}}" IsDefault="True" Style="{StaticResource ZusiStartGreenButtonStyle}" Margin="0,0,6,0"/>
         <Button Content="{Binding Source='Abbrechen', Converter={StaticResource Loc}}" IsCancel="True" Style="{StaticResource ZusiStartRedButtonStyle}"/>

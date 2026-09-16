@@ -681,12 +681,13 @@ namespace ZusiStart.Data
             e.Accepted = e.Accepted && vehiclegroup_found;
           }
         }
-        if (DataManager.FoundTimeTableIds != null)
+        if (DataManager.Instance.FoundTimeTableIds != null)
         {
           if (tvm.Object is Zug z4)
           {
-            string zugID = z4.ID.ToString();
-            e.Accepted = e.Accepted && DataManager.FoundTimeTableIds.Any(p => zugID == p);
+            ulong zugID = z4.ID;
+            //e.Accepted = e.Accepted && DataManager.FoundTimeTableIds.Any(p => zugID == p);
+            e.Accepted = e.Accepted && DataManager.Instance.FoundTimeTableIds.Contains(zugID);
           }
         }
       }

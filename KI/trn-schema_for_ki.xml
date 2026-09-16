@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Zug Gattung="string" Nummer="string" Zuglauf="string" BRAngabe="string" Prio="integer" Standortmodus="integer enum" StartVorschubweg="single" BremsstellungZug="integer enum" FplBremsstellungTextvorgabe="string" EnergieVorgabe="single" spAnfang="single" MBrh="single" FplMasse="single" FplZuglaenge="single" Verkehrstage="string" Grenzlast="bool" spZugNiedriger="single" APBeschl="single" KeineVorplanKorrektur="bool" Dekozug="bool" LODzug="integer enum" ReisendenDichte="single" FahrplanGruppe="string" Rekursionstiefe="integer" ZugsicherungStartmodus="integer enum" ColdMovement="bool" FahrstrName="string" AufgleisenRegisterpruefen="bool" Zugtyp="integer enum" Ueberschrift="string" odtDateiAbs="string" BuchfahrplanEinfach="bool" Buchfahrplandll="string" TuerSystemBezeichner="string">
+<Datei Dateiname="string" inst="integer" NurInfo="bool"/>
+<FahrplanEintrag Ank="date,time" Abf="date,time" Betrst="string" FplEintrag="integer enum" ErsatzsignalzeilePlus1="integer" FzgVerbandAktion="integer enum" FzgVerbandAktionWendesignal="bool" FzgVerbandWendeSignalabstand="single">
+</FahrplanEintrag>
+<FahrzeugVarianten Bezeichnung="string" PerZufallUebernehmen="bool" Gattung="string" ZugTypVorgeben="bool" Zugtyp="integer enum" MBrh="single" FplMasse="single" FplZuglaenge="single" BremsstellungZug="integer enum" FplBremsstellungTextvorgabe="string" spZugNiedriger="single" ZufallsWert="single" FzgPosition="integer">
+<FahrzeugVarianten Bezeichnung="string" PerZufallUebernehmen="bool" Gattung="string" ZugTypVorgeben="bool" Zugtyp="integer enum" MBrh="single" FplMasse="single" FplZuglaenge="single" BremsstellungZug="integer enum" FplBremsstellungTextvorgabe="string" spZugNiedriger="single" ZufallsWert="single" FzgPosition="integer"/>
+</FahrzeugVarianten>
+</Zug>
+</Zusi>

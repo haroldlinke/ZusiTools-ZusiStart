@@ -1,0 +1,47 @@
+﻿<Window x:Class="ZusiStart.Dialogs.ExcludedFoldersDlg"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:cv="clr-namespace:ZusiStart.Converter"
+        xmlns:local="clr-namespace:ZusiStart.Dialogs"
+        Loaded="ExcludedFoldersDialog_Loaded"
+        mc:Ignorable="d"
+        Title="Ausgeschlossene Ordner" WindowStyle="None" AllowsTransparency="True" ResizeMode="NoResize" Background="{x:Null}" UseLayoutRounding="True" SnapsToDevicePixels="True" ShowInTaskbar="False" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner" MinHeight="300">
+
+  <Window.Resources>
+    <cv:LocalizationConverter x:Key="Loc"/>
+  </Window.Resources>
+
+  <Border BorderBrush="Gold" BorderThickness="6,2" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,0,12,24" CornerRadius="12" Background="{DynamicResource Bright.Transparent.Background}" MinWidth="450">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="200"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+
+      <Border Grid.Row="0" Background="{StaticResource Blue.Transparent.Background}" Margin="-12,0,-12,0" Padding="6" CornerRadius="6,6,0,0">
+        <TextBlock Text="{Binding Source='Ausgeschlossene Ordner', Converter={StaticResource Loc}}" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" Foreground="FloralWhite"/>
+      </Border>
+
+      <TextBlock Grid.Row="1" TextWrapping="Wrap" MaxWidth="450" Margin="0,12,0,0" FontSize="10"
+                 Text="{Binding Source='Hier können beliebige Ordner angegeben werden, die bei der Suche nach Zusi-Daten (z. B. Fahrplänen) übersprungen werden sollen.', Converter={StaticResource Loc}}"/>
+
+      <ListBox x:Name="ListBox_ExcludedFolders" Grid.Row="3" Margin="0,12,0,0" MinWidth="450" Background="White" SelectionChanged="ListBox_ExcludedFolders_SelectionChanged"/>
+
+      <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0">
+        <Button Click="AddFolder_Click" Content="{Binding Source='Ordner hinzufügen...', Converter={StaticResource Loc}}" Style="{StaticResource ZusiStartGreenButtonStyle}" Margin="0,0,6,0"/>
+        <Button x:Name="Button_Remove" Click="RemoveFolder_Click" Content="{Binding Source='Entfernen', Converter={StaticResource Loc}}" Style="{StaticResource ZusiStartRedButtonStyle}" IsEnabled="False"/>
+      </StackPanel>
+
+      <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0">
+        <Button Click="Close_Click" Content="{Binding Source='Schließen', Converter={StaticResource Loc}}" IsDefault="True" IsCancel="True" Style="{StaticResource ZusiStartGreenButtonStyle}"/>
+      </StackPanel>
+    </Grid>
+  </Border>
+
+</Window>

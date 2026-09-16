@@ -61,6 +61,15 @@ namespace ZusiStart.Dialogs
       SaveOptions();
     }
 
+    private void ManageExcludedFolders_Click(object sender, RoutedEventArgs e)
+    {
+      var excludedFoldersDlg = new ExcludedFoldersDlg
+      {
+        Owner = this
+      };
+      excludedFoldersDlg.ShowDialog();
+    }
+
     public void SaveOptions(bool programoptions = true)
     {
       // Sprache speichern
